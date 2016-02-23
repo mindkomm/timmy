@@ -3,7 +3,7 @@
  * Plugin Name: Timmy
  * Plugin URI: https://bitbucket.org/mindkomm/timmy
  * Description: Opt-in plugin for Timber Library to make it even more convenient to work with images.
- * Version: 0.1.0
+ * Version: 0.9.0
  * Author: Lukas Gächter <@lgaechter>
  * Author URI: http://www.mind.ch
  */
@@ -13,12 +13,20 @@ require_once( 'functions-images.php' );
 class Timmy
 {
 	public function __construct() {
-		if ( class_exists( 'TimberImageHelper' ) && function_exists( 'get_image_sizes' ) ) {
-			// Add filters to make TimberImages work with normal WordPress functionality
-			add_filter( 'image_downsize', array( $this, 'filter_image_downsize' ), 10, 3 );
-			add_filter( 'image_size_names_choose', array( $this, 'filter_image_size_names_choose' ) );
-			add_filter( 'intermediate_image_sizes', array( $this, 'filter_intermediate_image_sizes' ) );
-			add_filter( 'wp_generate_attachment_metadata', array( $this, 'filter_wp_generate_attachment_metadata' ), 10, 2 );
+
+		if ( class_exists( 'TimberImageHelper' ) ) {
+			/**
+			 * Wait for theme to initialize to make sure that we can access all image sizes
+			 */
+			add_action('after_setup_theme', function() {
+				if ( function_exists( 'get_image_sizes' ) ) {
+					// Add filters to make TimberImages work with normal WordPress image functionality
+					add_filter( 'image_downsize', array( $this, 'filter_image_downsize' ), 10, 3 );
+					add_filter( 'image_size_names_choose', array( $this, 'filter_image_size_names_choose' ) );
+					add_filter( 'intermediate_image_sizes', array( $this, 'filter_intermediate_image_sizes' ) );
+					add_filter( 'wp_generate_attachment_metadata', array( $this, 'filter_wp_generate_attachment_metadata' ), 10, 2 );
+				}
+			});
 
 			// Add filters to integrate Timmy into Timber and Twig
 			add_filter( 'timber_context', array( $this, 'filter_timber_context' ) );
