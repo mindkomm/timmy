@@ -6,16 +6,16 @@ Timmy uses TimberImageHelper to handle images. This gives you the following adva
 
 * **Image resizing on the fly**. Whenever a page is accessed and the image size can’t be found, it will be created on the fly. You can use as many different image sizes as you like, without always having to use plugins like [Regenerate Thumbnails](https://wordpress.org/plugins/regenerate-thumbnails/) when you make a change.
 * **Advanced responsive image sizes**. For each image size, you can define additional sizes that will be used for the responsive image srcset. You will use this together with [Picturefill](https://scottjehl.github.io/picturefill/).
-* **Restrict to Post Types**. If you want to use an image size just for one post type, you can define that.
-* **User can select different image sizes in post**: Normally, a user could only select the sizes *Thumbnail*, *Medium*, *Large* and *Full*. With images defined through Timber a user can select all image sizes that you define.
-* **You can still use Regenerate Thumbnails**. Say you need to edit your images for some reasons (for example if you need to change them from CMYK to RGB) and then upload them again. Just replace the full size images in the uploads folder and use [Regenerate Thumbnails](https://wordpress.org/plugins/regenerate-thumbnails/) to generate all other sizes. It will also clean your uploads folder from image sizes you don’t need anymore.
+* **Restrict to Post Types**. If you want to use an image size just for one post type, you can define that. This will prevent bloating up your uploads folder with image sizes that are never used on the site.
+* **Users can select different image sizes in WYSYWIG editor**: Normally, a user could only select the sizes *Thumbnail*, *Medium*, *Large* and *Full*. With images defined through Timmy, a user can select all image sizes that you define.
+* **You can still use Regenerate Thumbnails**. Say you need to edit your images (for example if you need to change them from CMYK to RGB) and then upload them again. Just replace the full size images in the uploads folder and use [Regenerate Thumbnails](https://wordpress.org/plugins/regenerate-thumbnails/) to generate all other sizes. It will also clean your uploads folder from image sizes you don’t need anymore.
 
 ## Requirements
 
 In order to make this work, you’ll have to
 
 1. Install the [Timber Library Plugin](https://wordpress.org/plugins/timber-library/)
-2. Set all Media Sizes in WordPress Settings to 0
+2. Set all Media Sizes in WordPress Settings to `0`
     
     ![](http://i.imgur.com/CJlkO4Z.png)
 
@@ -43,7 +43,7 @@ function get_image_sizes() {
 }
 ```
 
-* The array key (*custom-4* in the example above) will be used to reference the image when you want to load it in your template.
+The array key (*custom-4* in the example above) will be used to reference the image when you want to load it in your template.
 
 ## Functions
 
@@ -171,11 +171,19 @@ If you do not set a second value in the array, the image will not be cropped.
 'resize' => array( 370 )
 ```
 
+You can use a third param, which is the crop settings.
+
+```
+'resize' => array( 370, 270, 'center' )
+```
+
+> In cropping it will crop starting from the top edge. The other cropping options are: 'default' (which generally crops from the center, but in vertical situations has a bias toward preserving the top of the image), 'center', 'top', 'bottom', 'left' and 'right'. – from <https://github.com/jarednova/timber/wiki/TimberImage>
+
 ### srcset `array(array())` <small>(optional)</small>
 
 These are alternative sizes for responsiveness. Read more about this on <http://scottjehl.github.io/picturefill/>.
 
-For high-density screen support, you can add a bigger size than the standard image, provided the original upload image is at least that size. To save bandwith, it doesn’t necessarily have to be the doubled size, maybe a resize of 1.5 would be enough?
+For high-density screen support, you can add a bigger size than the standard image, provided the original uploaded image is at least that size. To save bandwidth, it doesn’t necessarily have to be the doubled size. Maybe a resize of 1.5 will suffice.
 
 ```
 'srcset' => array(
@@ -184,7 +192,7 @@ For high-density screen support, you can add a bigger size than the standard ima
 )
 ```
 
-If you want, you can also use a ratio number of the size you want to use on the additional src. It will automatically scale the width and the height based on what is set in the 'resize' array.
+If you want to, you can also use a **ratio number** of the size you want to use on the additional src. It will automatically scale the width and the height based on what is set in the 'resize' array.
 
 ```
 'srcset' => array(
@@ -193,6 +201,8 @@ If you want, you can also use a ratio number of the size you want to use on the 
     2 // For a resize of ( 1400, 600 ), this is the same as array( 2800, 1200 )
 )
 ```
+
+The sizes added in the srcset option will automatically be added to the srcset output together with the image size in resize in ascending order.
 
 ### size `string` <small>(optional)</small>
 
@@ -215,7 +225,13 @@ This is the string for the sizes attribute for the picture polyfill. Read more a
 'size' => '(max-width: 61.9375rem) 125vw, 100vw'
 ```
 
-Picturefill will know which image size to use.
+#### Source order matters
+
+Picturefill will know which image size to use, **if you use the right order**.
+
+* The first media condition that matches will be used.
+* If you use `max-width`, arrange them from the smallest to the largest values.
+* If you use `min-width`, arrange the from the largest to the smallest value.
 
 ### post_types `array('', post', page)` <small>(optional)</small>
 
@@ -245,12 +261,15 @@ As per default, All the sizes defined under `srcset` will also be generated.
 
 ## Full Example
 
+You will add this to `functions.php` of your theme:
+
 ```
-return array(
+function get_image_sizes() {
+    return array(
         'thumbnail' => array(
             'resize' => array( 150, 150 ),
             'name' => 'Vorschaubild',
-            'post_types' => array('all'),
+            'post_types' => array( 'all' ),
         ),
         'custom-4' => array(
             'resize' => array( 370 ),
@@ -274,7 +293,7 @@ return array(
             'post_types' => array( 'example' ),
         ),
         // 14:6 crop
-        'wide-normal' => array(
+        'header' => array(
             // This is the normal size at which the image is displayed
             'resize' => array( 1400, 600 ),
             // These are alternative sizes for responsiveness
@@ -288,6 +307,7 @@ return array(
             'resize_srcset' => true,
         ),
     );
+}
 
 ```
 
