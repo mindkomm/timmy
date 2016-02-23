@@ -146,12 +146,8 @@ function get_timber_image_responsive_src( $timber_image, $size ) {
 		}
 	}
 
-	// Sort image srcset by width key depending on option, default is ASC
-	if ( isset( $img_sizes[ $size ]['order'] ) && 'DESC' == $img_sizes[ $size ]['order'] ) {
-		krsort( $srcset );
-	} else {
-		ksort( $srcset );
-	}
+	// Sort entries from smallest to highest
+	ksort( $srcset );
 
 	// Build sizes attribute string
 	$sizes_str = '';
