@@ -105,6 +105,15 @@ class Timmy
 			$sizes[ $key ] = $name;
 		}
 
+		/**
+         * Re-add full size so it can still be selected.
+         *
+         * The full size is needed, if a e.g. a logo has to be
+         * displayed in the page content and no predefined size
+         * fits.
+         */
+        $sizes['full'] = __( 'Full Size' );
+
 		return $sizes;
 	}
 
