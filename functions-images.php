@@ -1,5 +1,6 @@
 <?php
 
+if ( ! function_exists( 'get_timber_image' ) ) :
 /**
  * Outputs the src attr together with optional alt and title attributes
  * for a TimberImage.
@@ -20,7 +21,9 @@ function get_timber_image( $timber_image, $size ) {
 
 	return ' src="' . $src . '" ' . $attr;
 }
+endif;
 
+if ( ! function_exists( 'get_timber_image_src' ) ) :
 /**
  * Returns the src (url) for a TimberImage.
  *
@@ -47,7 +50,9 @@ function get_timber_image_src( $timber_image, $size ) {
 	// Resize the image for that size
 	return TimberImageHelper::resize( $file_src, $width, $height, $crop, $force );
 }
+endif;
 
+if ( ! function_exists( 'get_image_attr_html' ) ) :
 /**
  * Returns the HTML for given alt and title attribute strings.
  *
@@ -67,7 +72,9 @@ function get_image_attr_html( $alt, $title ) {
 
 	return $html;
 }
+endif;
 
+if ( ! function_exists( 'get_timber_image_attr' ) ) :
 /**
  * Get the image attributes (alt and title) for a TimberImage.
  *
@@ -79,7 +86,9 @@ function get_timber_image_attr( $timber_image ) {
 	$title = $timber_image->post_content;
 	return get_image_attr_html( $alt, $title );
 }
+endif;
 
+if ( ! function_exists( 'get_timber_image_responsive' ) ) :
 /**
  * Get the responsive srcset and sizes for a TimberImage.
  *
@@ -98,7 +107,9 @@ function get_timber_image_responsive( $timber_image, $size ) {
 
 	return $src . ' ' . $attr;
 }
+endif;
 
+if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 /**
  * Get srcset and sizes for a TimberImage.
  *
@@ -130,7 +141,7 @@ function get_timber_image_responsive_src( $timber_image, $size ) {
 
 	// Add additional image sizes to srcset.
 	if ( isset( $img_sizes[ $size ]['srcset'] ) ) {
-		foreach ($img_sizes[ $size ]['srcset'] as $src) {
+		foreach ( $img_sizes[ $size ]['srcset'] as $src ) {
 
 			// Get width and height for the additional src
 			if ( is_array( $src ) ) {
@@ -158,7 +169,9 @@ function get_timber_image_responsive_src( $timber_image, $size ) {
 	// Return the html attribute string
 	return ' srcset="' . implode( ',', $srcset ) . '"' . $sizes_str;
 }
+endif;
 
+if ( ! function_exists( 'get_timber_image_responsive_acf' ) ) :
 /**
  * Get a responsive image based on an ACF field.
  *
@@ -175,7 +188,9 @@ function get_timber_image_responsive_acf( $name, $size ) {
 
 	return $src . ' ' . $attr;
 }
+endif;
 
+if ( ! function_exists( 'get_acf_image_attr' ) ) :
 /**
  * Get image attributes for an image accessed via ACF.
  *
@@ -193,7 +208,9 @@ function get_acf_image_attr( $image ) {
 
 	return $html;
 }
+endif;
 
+if ( ! function_exists( 'get_post_thumbnail' ) ) :
 /**
  * Get Post Thumbnail source together with alt and title attributes.
  *
@@ -217,7 +234,9 @@ function get_post_thumbnail( $post_id, $size = 'post-thumbnail' ) {
 
 	return $html;
 }
+endif;
 
+if ( ! function_exists( 'get_post_thumbnail_src' ) ) :
 /**
  * Get Post Thumbnail image source at given size.
  *
@@ -232,3 +251,4 @@ function get_post_thumbnail_src( $post_id, $size = 'post-thumbnail' ) {
 	// Return the image src url
 	return $post_thumbnail[0];
 }
+endif;
