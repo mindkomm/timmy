@@ -21,7 +21,7 @@ sizes="100vw" alt="Your alt text" title="Your image title">
 ---
 
 * [Features](#features)
-* [Getting Started](#getting-started)
+* [Getting Started/Preparations](#getting-startedpreparations)
 * [Functions](#functions)
 * [Image Configuration](#image-configuration)
 * [Full Example](#full-example)
@@ -238,7 +238,7 @@ In Twig combined with Timber you will already have the post thumbnail through `p
 
 Returns the src for a post thumbnail. This is practically the same as `get_post_thumbnail`, just without alt and title tags.
 
-## Image Configuration [image-configuration]
+## Image Configuration
 
 Your image configuration is an array with all the image sizes, wrapped in a function named `get_image_sizes`
 
