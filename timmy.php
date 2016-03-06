@@ -309,4 +309,6 @@ class Timmy
 	}
 }
 
-new Timmy();
+add_action( 'plugins_loaded', function() {
+	new Timmy();
+});
