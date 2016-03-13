@@ -199,14 +199,14 @@ class Timmy
 
 	public static function resize( $img_size, $file_src, $width, $height, $crop, $force ) {
 		// Check if image should be converted to jpg first
-		if ( isset( $img_size['tojpg'] ) ) {
+		if ( isset( $img_size['tojpg'] ) && $img_size['tojpg'] ) {
 			// Sort out background color which will show instead of transparency
 			$bgcolor = is_string($img_size['tojpg']) ? $img_size['tojpg'] : '#FFFFFF';
 			$file_src = TimberImageHelper::img_to_jpg( $file_src, $bgcolor, $force );
 		}
 
 		// Check for letterbox parameter
-		if ( isset( $img_size['letterbox' ] ) ) {
+		if ( isset( $img_size['letterbox' ] ) && $img_size['letterbox'] ) {
 			$color = is_string($img_size['letterbox']) ? $img_size['letterbox'] : '#000000';
 			return TimberImageHelper::letterbox( $file_src, $width, $height, $color );
 		} else {
