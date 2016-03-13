@@ -3,7 +3,7 @@
  * Plugin Name: Timmy
  * Plugin URI: https://bitbucket.org/mindkomm/timmy
  * Description: Opt-in plugin for Timber Library to make it even more convenient to work with images.
- * Version: 0.9.1
+ * Version: 0.9.2
  * Author: Lukas Gächter <@lgaechter>
  * Author URI: http://www.mind.ch
  */
