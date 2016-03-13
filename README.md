@@ -5,7 +5,7 @@ Timmy is an opt-in plugin for [Timber](http://upstatement.com/timber/) to make i
 You can do this:
 
 ```twig
-<img{{post.thumbnail|get_timber_image_responsive('custom-6')}}>
+<img{{ post.thumbnail|get_timber_image_responsive('custom-6') }}>
 ```
 
 To get this:
@@ -134,7 +134,7 @@ Returns the src attribute together with optional alt and title attributes for a 
 For twig, this function is used as a filter on the TimberImage appended with a `|`.
 
 ```twig
-<img{{post.thumbnail|get_timber_image('custom-4-crop')}}>
+<img{{ post.thumbnail|get_timber_image('custom-4-crop') }}>
 ```
 
 ---
@@ -154,7 +154,7 @@ Returns the src for a TimberImage.
 ##### Usage in Twig
 
 ```twig
-<img{{post.thumbnail|get_timber_image_src('custom-4-crop')}}>
+<img{{ post.thumbnail|get_timber_image_src('custom-4-crop') }}>
 ```
 
 ---
@@ -174,7 +174,7 @@ Returns the srcset, size, alt and title attributes for a TimberImage.
 ##### Usage in Twig
 
 ```twig
-<img{{post.thumbnail|get_timber_image_responsive('custom-6')}}>
+<img{{ post.thumbnail|get_timber_image_responsive('custom-6') }}>
 ```
 
 ---
@@ -205,7 +205,7 @@ You can pass in the name of the ACF Field the image is saved in as the first par
 You won’t use this function as a filter like the ones above.
 
 ```twig
-<img{{get_timber_image_responsive_acf('image', 'custom-4-crop')}}>
+<img{{ get_timber_image_responsive_acf('image', 'custom-4-crop') }}>
 ```
 
 ---
