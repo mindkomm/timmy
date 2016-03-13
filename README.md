@@ -5,7 +5,7 @@ Timmy is an opt-in plugin for [Timber](http://upstatement.com/timber/) to make i
 You can do this:
 
 ```twig
-<img{{post.thumbnail|get_timber_image_responsive('custom-6')}}>
+<img{{ post.thumbnail|get_timber_image_responsive('custom-6') }}>
 ```
 
 To get this:
@@ -28,19 +28,15 @@ sizes="100vw" alt="Your alt text" title="Your image title">
 
 ## Features
 
-### What Timber does
+Timber already comes with a set of really nice features for handling images. Especially the [**arbitrary resizing of images**](https://github.com/jarednova/timber/wiki/Image-cookbook#arbitrary-resizing-of-images) is very convenient. Whenever a page is accessed and the image size can’t be found, it will be created on the fly. You can use as many different image sizes as you like, without always having to use plugins like [Regenerate Thumbnails](https://wordpress.org/plugins/regenerate-thumbnails/) when you make a change to the default WordPress image sizes.
 
-Timber already comes with a set of really nice features when it comes to images. Especially the **Arbitrary resizing of images** is very convenient. Whenever a page is accessed and the image size can’t be found, [it will be created on the fly](https://github.com/jarednova/timber/wiki/Image-cookbook#arbitrary-resizing-of-images). You can use as many different image sizes as you like, without always having to use plugins like [Regenerate Thumbnails](https://wordpress.org/plugins/regenerate-thumbnails/) when you make a change to the default WordPress image sizes.
-
-### What Timmy does on top of that
-
-Timmy uses the Timber’s `TimberImageHelper` class to enhance this functionality even more:
+**Timmy** uses Timber’s `TimberImageHelper` class to enhance this functionality even more:
 
 #### Mimicks default WordPress image functionalities in some ways
 
-* **You can have as many defined image sizes as you want**: It’s easier to work with named image sizes like `thumbnail`, `medium`, `portrait` etc. Timmy lets you define each image size with a lot of [handy configuration options](#image-configuration).
+* **You can have as many defined image sizes as you want**. It’s easier to work with named image sizes like `thumbnail`, `medium`, `portrait` etc. Timmy lets you define each image size with a lot of [handy configuration options](#image-configuration).
 
-* **Users can select different image sizes in WYSYWIG editor**: Normally, a user can only select the default WordPress sizes *Thumbnail*, *Medium*, *Large* and *Full*. With images defined through Timmy, a user [can select all image sizes that you define](https://cloud.githubusercontent.com/assets/2084481/13374936/bfb58ec2-dd92-11e5-9e05-cc22fe4f0f88.png), without the default sizes.
+* **Users can select different image sizes in WYSYWIG editor**. Normally, a user can only select the default WordPress sizes *Thumbnail*, *Medium*, *Large* and *Full*. With images defined through Timmy, a user [can select all image sizes that you define](https://cloud.githubusercontent.com/assets/2084481/13374936/bfb58ec2-dd92-11e5-9e05-cc22fe4f0f88.png), without the default sizes.
 
 * **You can still use Regenerate Thumbnails**. Using [Regenerate Thumbnails](https://wordpress.org/plugins/regenerate-thumbnails/) with Timmy will clean your uploads folder from image sizes you don’t need anymore. If you have no image sizes defined with Timmy, Timmy will just delete all image sizes generated with TimberImageHelper. But no worries, remember that Timber automatically creates an image size if it doesn’t already exist.
 
@@ -54,9 +50,9 @@ Timmy uses the Timber’s `TimberImageHelper` class to enhance this functionalit
 
 #### Reasonable image generation
 
-* **Image sizes are generated when they are uploaded**. When you use Timber images you don’t have to care about image sizes being present in the uploads folder. If your frontend is accessed, it creates image sizes when they don’t already exist. You’d always have to visit the frontend to make sure the first visitor of a page doesn’t have really long loading times. Because Timmy knows which sizes you want to use – you defined them – it will generate them for you. There are edge cases where this is useful, e.g. when some posts are created automatically and you also pull in images.
+* **Image sizes are generated when they are uploaded**. When you use Timber images you don’t have to care about image sizes being present in the uploads folder. If your frontend is accessed, Timber creates image sizes when they don’t already exist. You’d always have to visit the frontend to make sure the first visitor of a page doesn’t have really long loading times. Because Timmy knows which sizes you want to use – you defined them – it will generate them for you. There are cases where this is useful, e.g. when some posts are created automatically and you also pull in images.
 
-* **Restrict to post types**. If you want to use an image size just for one post type, you can define that. This will prevent bloating up your uploads folder with image sizes that are never used on the site.
+* **Restrict to post types to prevent bloat**. If you want to use an image size just for one post type, you can define that. This will prevent bloating up your uploads folder with image sizes that are never used on the site.
 
 ## Getting Started/Preparations
 
@@ -138,7 +134,7 @@ Returns the src attribute together with optional alt and title attributes for a 
 For twig, this function is used as a filter on the TimberImage appended with a `|`.
 
 ```twig
-<img{{post.thumbnail|get_timber_image('custom-4-crop')}}>
+<img{{ post.thumbnail|get_timber_image('custom-4-crop') }}>
 ```
 
 ---
@@ -158,7 +154,7 @@ Returns the src for a TimberImage.
 ##### Usage in Twig
 
 ```twig
-<img{{post.thumbnail|get_timber_image_src('custom-4-crop')}}>
+<img{{ post.thumbnail|get_timber_image_src('custom-4-crop') }}>
 ```
 
 ---
@@ -178,7 +174,7 @@ Returns the srcset, size, alt and title attributes for a TimberImage.
 ##### Usage in Twig
 
 ```twig
-<img{{post.thumbnail|get_timber_image_responsive('custom-6')}}>
+<img{{ post.thumbnail|get_timber_image_responsive('custom-6') }}>
 ```
 
 ---
@@ -209,7 +205,7 @@ You can pass in the name of the ACF Field the image is saved in as the first par
 You won’t use this function as a filter like the ones above.
 
 ```twig
-<img{{get_timber_image_responsive_acf('image', 'custom-4-crop')}}>
+<img{{ get_timber_image_responsive_acf('image', 'custom-4-crop') }}>
 ```
 
 ---
@@ -268,6 +264,8 @@ function get_image_sizes() {
 * [resize](#resize)
 * [srcset](#srcset)
 * [size](#size)
+* [letterbox](#letterbox)
+* [tojpg](#tojpg)
 * [post_types](#post_types)
 * [name](#name)
 * [show_in_ui](#show_in_ui)
@@ -283,7 +281,7 @@ When you use a `thumbnail` key, Timmy will tell WordPress to use that size for t
 
 ### resize
 
-`array()`, required
+(`array`), required
 
 This is the normal size at which the image is displayed.
 
@@ -311,7 +309,7 @@ You can use a third param, which is the crop settings.
 
 ### srcset
 
-`array(array())`
+(`array`), optional, Default: `array(array())`
 
 These are alternative sizes when you want to use responsive images. Read more about this on <http://scottjehl.github.io/picturefill/>.
 
@@ -340,11 +338,11 @@ The sizes added in the srcset option will automatically be added to the srcset o
 
 ### size
 
-`string`
+(`string`), optional, Default: `''`
 
 This is the string for the sizes attribute for the picture polyfill. Read more about this on <http://scottjehl.github.io/picturefill/>.
 
-```
+```php
 /**
  * «For all screen widths above 62rem the image will be displayed at 33.333vw 
  * (33% of the viewport width), otherwise it will use 100vw (100% of the
@@ -353,7 +351,7 @@ This is the string for the sizes attribute for the picture polyfill. Read more a
 'size' => '(min-width: 62rem) 33.333vw, 100vw'
 ```
 
-```
+```php
 /**
  * «For all screen widths up until 61.9375rem, the image will displayed at a
  * width of 125vm, for screen widths above at a width of 100vw.»
@@ -361,7 +359,7 @@ This is the string for the sizes attribute for the picture polyfill. Read more a
 'size' => '(max-width: 61.9375rem) 125vw, 100vw'
 ```
 
-#### Source order matters
+#### Source order matters!
 
 Picturefill will know which image size to use, **if you use the right order**.
 
@@ -371,9 +369,47 @@ Picturefill will know which image size to use, **if you use the right order**.
 
 ---
 
+### letterbox
+
+(`bool`|`string`), optional, Default: `#000000`
+
+Letterbox the image to the size given in [`resize`](#resize) with a default black background (`#000000`). [Letterboxing](https://en.wikipedia.org/wiki/Letterboxing_(filming)) contains an image to a certain size without cropping, but with filling the extra space with a color.
+
+```php
+'letterbox' => true,
+```
+
+You can also use another hex color value for the letterbox color:
+
+```php
+'letterbox' => '#bada55',
+```
+
+---
+
+### tojpg
+
+(`bool`|`string`), optional, Default: `#ffffff`
+
+Converts an image to JPG if the source is a PNG image and uses the assigned color to fill the transparent space in the PNG image. The value `true` uses the default white background color (`#ffffff`) to fill transparent space.
+
+```php
+'tojpg' => true,
+```
+
+You can also use another hex color value:
+
+```php
+'tojpg' => '#c0ffee',
+```
+
+Assigning a color to fill the transparent space is not possible with the [normal `tojpg` Timber filter](https://github.com/timber/timber/wiki/Image-cookbook#converting-images).
+
+---
+
 ### post_types
 
-`array('', 'post', page)`
+(`array`), optional, Default: `array('', 'post', page)`
 
 When you want to restrict image sizes to be only used for custom post types, you can define a `post_types` key containing an array with all the post types you want to allow. If you omit that key, post types `post` and `page` as well as attachments not assigned to any post will be used as defaults.
 
@@ -395,7 +431,7 @@ You can use `post_types' => array('all')` to always generate this size, for all 
 
 ### name
 
-`($string = '')`
+(`string`), optional, Default: `''`
 
 The name parameter is used in the backend. When `show_in_ui` is `true`, then this name will be shown to the user, when she selects an image to be inserted into the editor. It’s just for ease of use.
 
@@ -403,7 +439,7 @@ The name parameter is used in the backend. When `show_in_ui` is `true`, then thi
 
 ### show_in_ui
 
-`($bool = true)`
+(`bool`), optional, Default: `true`
 
 When you set this to false, the user will not be able to select that value in the backend, e.g. when she wants to insert a Media file directly into the WYSYWIG content.
 
@@ -413,7 +449,7 @@ If the post type a user is editing is not in the `post_types` array (and if `pos
 
 ### generate_srcset_sizes
 
-`($bool = true)`
+(`bool`), optional, Default: `true`
 
 As per default, All the sizes defined under `srcset` will also be generated when an image is uploaded.
 
@@ -454,6 +490,16 @@ function get_image_sizes() {
             'name' => 'Width 1/2',
             'post_types' => array( 'example' ),
         ),
+        'sponsor-logo' => array(
+            'resize' => array( 370, 370 ),
+            /**
+             * Letterbox the image with white color,
+             * using dimensions 370x370 from "resize" key
+             */
+            'letterbox' => '#ffffff',
+            // And also convert it to JPG if it is a PNG
+            'tojpg' => true,
+        )
         // 14:6 crop
         'header' => array(
             // This is the normal size at which the image is displayed
