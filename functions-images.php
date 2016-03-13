@@ -48,7 +48,7 @@ function get_timber_image_src( $timber_image, $size ) {
 	$force  = isset( $resize[3] ) ? $resize[3] : false;
 
 	// Resize the image for that size
-	return TimberImageHelper::resize( $file_src, $width, $height, $crop, $force );
+	return Timmy::resize( $img_sizes[$size], $file_src, $width, $height, $crop, $force );
 }
 endif;
 
@@ -137,7 +137,7 @@ function get_timber_image_responsive_src( $timber_image, $size ) {
 	$srcset = array();
 
 	// We add the image sources with the width as the key so we can sort them later
-	$srcset[ $width ] = TimberImageHelper::resize( $file_src, $width, $height, $crop, $force ) . ' ' . $resize[0] . 'w';
+	$srcset[ $width ] = Timmy::resize( $img_sizes[ $size ], $file_src, $width, $height, $crop, $force ) . ' ' . $resize[0] . 'w';
 
 	// Add additional image sizes to srcset.
 	if ( isset( $img_sizes[ $size ]['srcset'] ) ) {
@@ -153,7 +153,7 @@ function get_timber_image_responsive_src( $timber_image, $size ) {
 			}
 
 			// For the new source, we use the same $crop and $force values as the default image
-			$srcset[ $width ] = TimberImageHelper::resize( $file_src, $width, $height, $crop, $force ) . ' ' . $width . 'w';
+			$srcset[ $width ] = Timmy::resize( $img_sizes[ $size ], $file_src, $width, $height, $crop, $force ) . ' ' . $width . 'w';
 		}
 	}
 

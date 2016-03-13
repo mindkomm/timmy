@@ -15,9 +15,7 @@ class Timmy
 	public function __construct() {
 
 		if ( class_exists( 'TimberImageHelper' ) ) {
-			/**
-			 * Wait for theme to initialize to make sure that we can access all image sizes
-			 */
+			// Wait for theme to initialize to make sure that we can access all image sizes
 			add_action('after_setup_theme', function() {
 				if ( function_exists( 'get_image_sizes' ) ) {
 					// Add filters to make TimberImages work with normal WordPress image functionality
@@ -183,7 +181,7 @@ class Timmy
 		$force    = isset( $resize[3] ) ? $resize[3] : false;
 
 		// Resize the image for that size
-		$src = TimberImageHelper::resize( $file_src, $width, $height, $crop, $force );
+		$src = self::resize( $img_size, $file_src, $width, $height, $crop, $force );
 
 		// When the input size is an array of width and height
 		if ( is_array( $size ) ) {
@@ -197,6 +195,23 @@ class Timmy
 		 * a resized image, false if it is the original.
 		 */
 		return array( $src, $width, $height, true );
+	}
+
+	public static function resize( $img_size, $file_src, $width, $height, $crop, $force ) {
+		// Check if image should be converted to jpg first
+		if ( isset( $img_size['tojpg'] ) ) {
+			// Sort out background color which will show instead of transparency
+			$bgcolor = is_string($img_size['tojpg']) ? $img_size['tojpg'] : '#FFFFFF';
+			$file_src = TimberImageHelper::img_to_jpg( $file_src, $bgcolor, $force );
+		}
+
+		// Check for letterbox parameter
+		if ( isset( $img_size['letterbox' ] ) ) {
+			$color = is_string($img_size['letterbox']) ? $img_size['letterbox'] : '#000000';
+			return TimberImageHelper::letterbox( $file_src, $width, $height, $color );
+		} else {
+			return TimberImageHelper::resize( $file_src, $width, $height, $crop, $force );
+		}
 	}
 
 	/**
@@ -255,7 +270,7 @@ class Timmy
 					}
 
 					// For the new source, we use the same $crop and $force values as the default image
-					TimberImageHelper::resize( $file_src, $width, $height, $crop, $force );
+					self::resize( $img_size, $file_src, $width, $height, $crop, $force );
 				}
 			}
 		}
