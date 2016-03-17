@@ -197,21 +197,62 @@ class Timmy
 		return array( $src, $width, $height, true );
 	}
 
+	/**
+	 * Resize an image and apply letterbox and tojpg filters when defined
+	 *
+	 * @since 0.9.2
+	 *
+	 * @param  array $img_size 	Configuration values for an image size
+	 * @param  string $file_src The src of the original image
+	 * @param  int $width    	The width the new image should be resized to
+	 * @param  int $height   	The height the new image should be resized to
+	 * @param  string $crop     Cropping option
+	 * @param  bool $force    	Force cropping
+	 * @return string           The src of the image
+	 */
 	public static function resize( $img_size, $file_src, $width, $height, $crop, $force ) {
 		// Check if image should be converted to jpg first
 		if ( isset( $img_size['tojpg'] ) && $img_size['tojpg'] ) {
 			// Sort out background color which will show instead of transparency
-			$bgcolor = is_string($img_size['tojpg']) ? $img_size['tojpg'] : '#FFFFFF';
+			$bgcolor = is_string( $img_size['tojpg'] ) ? $img_size['tojpg'] : '#FFFFFF';
 			$file_src = TimberImageHelper::img_to_jpg( $file_src, $bgcolor, $force );
 		}
 
 		// Check for letterbox parameter
 		if ( isset( $img_size['letterbox' ] ) && $img_size['letterbox'] ) {
-			$color = is_string($img_size['letterbox']) ? $img_size['letterbox'] : '#000000';
+			$color = is_string( $img_size['letterbox'] ) ? $img_size['letterbox'] : '#000000';
 			return TimberImageHelper::letterbox( $file_src, $width, $height, $color );
 		} else {
 			return TimberImageHelper::resize( $file_src, $width, $height, $crop, $force );
 		}
+	}
+
+	/**
+	 * Get the actual width at which the image will be displayed.
+	 *
+	 * When 0 is passed to Timber as a width, it calculates the image ratio based on
+	 * the height of the image. We have to account for that, when we use the responsive
+	 * image, because in the srcset, there cant be a value like "image.jpg 0w". So we
+	 * have to calculate the width based on the values we have.
+	 *
+	 * @since 0.9.3
+	 *
+	 * @param  int $width        The value of the resize parameter for width
+	 * @param  int $height		 The value of the resize parameter for height
+	 * @param  obj $timber_image Instance of TimberImage
+	 * @return int               The width at which the image will be displayed.
+	 */
+	public static function get_width_key( $width, $height, $timber_image ) {
+		if ( $width == 0 ) {
+			/**
+			 * Calculate image width based on image ratio and height.
+			 * We need a rounded value because we will use this number as an
+			 * array key and for defining the srcset size in pixel values.
+			 */
+			return round( $timber_image->height / $timber_image->width * $height );
+		}
+
+		return $width;
 	}
 
 	/**
