@@ -215,6 +215,34 @@ class Timmy
 	}
 
 	/**
+	 * Get the actual width at which the image will be displayed.
+	 *
+	 * When 0 is passed to Timber as a width, it calculates the image ratio based on
+	 * the height of the image. We have to account for that, when we use the responsive
+	 * image, because in the srcset, there cant be a value like "image.jpg 0w". So we
+	 * have to calculate the width based on the values we have.
+	 *
+	 * @since 0.9.3
+	 *
+	 * @param  int $width        The value of the resize parameter for width
+	 * @param  int $height		 The value of the resize parameter for height
+	 * @param  obj $timber_image Instance of TimberImage
+	 * @return int               The width at which the image will be displayed.
+	 */
+	public static function get_width_key( $width, $height, $timber_image ) {
+		if ( $width == 0 ) {
+			/**
+			 * Calculate image width based on image ratio and height.
+			 * We need a rounded value because we will use this number as an
+			 * array key and for defining the srcset size in pixel values.
+			 */
+			return round( $timber_image->height / $timber_image->width * $height );
+		}
+
+		return $width;
+	}
+
+	/**
 	 * Generate image sizes defined for Timmy with TimberImageHelper
 	 *
 	 * @param  int	$attachment_id	The attachment ID for which all images should be resized
