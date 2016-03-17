@@ -197,17 +197,30 @@ class Timmy
 		return array( $src, $width, $height, true );
 	}
 
+	/**
+	 * Resize an image and apply letterbox and tojpg filters when defined
+	 *
+	 * @since 0.9.2
+	 *
+	 * @param  array $img_size 	Configuration values for an image size
+	 * @param  string $file_src The src of the original image
+	 * @param  int $width    	The width the new image should be resized to
+	 * @param  int $height   	The height the new image should be resized to
+	 * @param  string $crop     Cropping option
+	 * @param  bool $force    	Force cropping
+	 * @return string           The src of the image
+	 */
 	public static function resize( $img_size, $file_src, $width, $height, $crop, $force ) {
 		// Check if image should be converted to jpg first
 		if ( isset( $img_size['tojpg'] ) && $img_size['tojpg'] ) {
 			// Sort out background color which will show instead of transparency
-			$bgcolor = is_string($img_size['tojpg']) ? $img_size['tojpg'] : '#FFFFFF';
+			$bgcolor = is_string( $img_size['tojpg'] ) ? $img_size['tojpg'] : '#FFFFFF';
 			$file_src = TimberImageHelper::img_to_jpg( $file_src, $bgcolor, $force );
 		}
 
 		// Check for letterbox parameter
 		if ( isset( $img_size['letterbox' ] ) && $img_size['letterbox'] ) {
-			$color = is_string($img_size['letterbox']) ? $img_size['letterbox'] : '#000000';
+			$color = is_string( $img_size['letterbox'] ) ? $img_size['letterbox'] : '#000000';
 			return TimberImageHelper::letterbox( $file_src, $width, $height, $color );
 		} else {
 			return TimberImageHelper::resize( $file_src, $width, $height, $crop, $force );
