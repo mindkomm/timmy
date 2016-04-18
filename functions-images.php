@@ -38,7 +38,7 @@ function get_timber_image_src( $timber_image, $size ) {
 
 	$img_sizes = get_image_sizes();
 
-	$file_src  = $timber_image->get_src();
+	$file_src  = $timber_image->src();
 	$resize    = $img_sizes[ $size ]['resize'];
 
 	$width  = $resize[0];
@@ -124,7 +124,7 @@ function get_timber_image_responsive_src( $timber_image, $size ) {
 
 	$img_sizes = get_image_sizes();
 
-	$file_src  = $timber_image->get_src();
+	$file_src  = $timber_image->src();
 	$resize    = $img_sizes[ $size ]['resize'];
 
 	// Get values for the default image
