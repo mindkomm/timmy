@@ -25,6 +25,7 @@ sizes="100vw" alt="Your alt text" title="Your image title">
 * [Functions](#functions)
 * [Image Configuration](#image-configuration)
 * [Full Example](#full-example)
+* [FAQ](#faq)
 
 ## Features
 
@@ -53,6 +54,9 @@ Timber already comes with a set of really nice features for handling images. Esp
 * **Image sizes are generated when they are uploaded**. When you use Timber images you don’t have to care about image sizes being present in the uploads folder. If your frontend is accessed, Timber creates image sizes when they don’t already exist. You’d always have to visit the frontend to make sure the first visitor of a page doesn’t have really long loading times. Because Timmy knows which sizes you want to use – you defined them – it will generate them for you. There are cases where this is useful, e.g. when some posts are created automatically and you also pull in images.
 
 * **Restrict to post types to prevent bloat**. If you want to use an image size just for one post type, you can define that. This will prevent bloating up your uploads folder with image sizes that are never used on the site.
+
+#### Limitations
+* Timmy probably doesn’t work with images hosted on Content Delivery Networks (CDN). We haven’t looked into that yet and we don’t know if we ever will.
 
 ## Getting Started/Preparations
 
@@ -536,6 +540,19 @@ function get_image_sizes() {
     );
 }
 
+```
+
+## FAQ
+
+### How to make the full size unavailable when an image is inserted into WP WYSIWYG Editor?
+
+Timmy uses the filter `image_size_names_choose` with standard priority 10 to return the image sizes configured with Timmy and additionally adds the full size of an image. Add the following filter to your theme functions to remove the full size again. 
+
+```php
+add_filter( 'image_size_names_choose', function( $sizes ) {
+    unset( $sizes['full'] );
+    return $sizes;
+}, 20 );
 ```
 
 ## Lookahead
