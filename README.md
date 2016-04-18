@@ -248,7 +248,7 @@ function get_image_sizes() {
             'name' => 'Thumbnail',
             'post_types' => array( 'all' ),
         ),
-        'custom-4' => array(
+        'col-4' => array(
             'resize' => array( 370 ),
             'srcset' => array( 2 ),
             'size' => '(min-width: 992px) 33.333vw, 100vw',
@@ -273,11 +273,30 @@ function get_image_sizes() {
 
 ---
 
-### `thumbnail` key
+### Image Keys (the image size identifier)
+
+Choose your image keys so you can identify or remember them best.
+
+```php
+'gallery-thumbnail' => array( /* Image size options come here */ )
+```
+
+However, consider this when choosing keys:
+
+#### The `thumbnail` key
 
 Use a `thumbnail` key in your configuration. This image size will be used to show thumbnails in the backend. Remember when you set all image sizes to `0`? We deactivated thumbnails there. WordPress would now show the original size of the images in a small thumbnail. This leads to long page load times and a lot of traffic when you visit Media in the backend.
 
 When you use a `thumbnail` key, Timmy will tell WordPress to use that size for thumbnails in the backend. Otherwise it will just use the first size that you define in the array. Because of this, you probably want to start with smaller images and go up to the biggest.
+
+#### Reserved keys
+
+You shoudn’t use the following keys in your configuration
+
+* `full`
+* `original`
+
+These sizes are reserved for the original size of the image. If you define these, you will get errors when you upload images.
 
 ### resize
 
@@ -344,7 +363,7 @@ This is the string for the sizes attribute for the picture polyfill. Read more a
 
 ```php
 /**
- * «For all screen widths above 62rem the image will be displayed at 33.333vw 
+ * «For all screen widths above 62rem the image will be displayed at 33.333vw
  * (33% of the viewport width), otherwise it will use 100vw (100% of the
  * viewport width).»
  */
