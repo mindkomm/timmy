@@ -542,3 +542,4 @@ function get_image_sizes() {
 
 * Include responsive image functions for `<picture>` element.
 * Write tests.
+* Use 'sizes' instead of 'size' as parameter
