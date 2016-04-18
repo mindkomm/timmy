@@ -5,10 +5,9 @@ if ( ! function_exists( 'get_timber_image' ) ) :
  * Outputs the src attr together with optional alt and title attributes
  * for a TimberImage.
  *
- * @param  int|TimberImage  $timber_image       The ID of the attachment or a
- *                                              TimberImage instance
- * @param  string           $size               The size which you want to access
- * @return string                               Src, alt and title attributes
+ * @param  int|TimberImage  $timber_image   Instance of TimberImage or Attachment ID
+ * @param  string           $size           The size which you want to access
+ * @return string                           Src, alt and title attributes
  */
 function get_timber_image( $timber_image, $size ) {
 	// When we just have the post id, we convert it to a TimberImage
@@ -27,9 +26,9 @@ if ( ! function_exists( 'get_timber_image_src' ) ) :
 /**
  * Returns the src (url) for a TimberImage.
  *
- * @param  obj|int 	$timber_image 	Instance of TimberImage or Attachment ID
- * @param  string	$size         	Size key of the image to return
- * @return string					Image src
+ * @param  TimberImage|int  $timber_image   Instance of TimberImage or Attachment ID
+ * @param  string           $size           Size key of the image to return
+ * @return string                           Image src
  */
 function get_timber_image_src( $timber_image, $size ) {
 	// When we just have the post id, we convert it to a TimberImage
@@ -78,8 +77,8 @@ if ( ! function_exists( 'get_timber_image_attr' ) ) :
 /**
  * Get the image attributes (alt and title) for a TimberImage.
  *
- * @param  obj 		$timber_image 	Instance of TimberImage
- * @return strings			 		HTML string for alt and title attributes
+ * @param  TimberImage  $timber_image   Instance of TimberImage
+ * @return string                       HTML string for alt and title attributes
  */
 function get_timber_image_attr( $timber_image ) {
 	$alt   = $timber_image->_wp_attachment_image_alt;
@@ -92,9 +91,9 @@ if ( ! function_exists( 'get_timber_image_responsive' ) ) :
 /**
  * Get the responsive srcset and sizes for a TimberImage.
  *
- * @param  obj|int		$timber_image	Instance of TimberImage or Attachment ID
- * @param  string		$size         	Size key of the image to return
- * @return string						Image srcset, sizes, alt and title attributes
+ * @param  TimberImage|int  $timber_image   Instance of TimberImage or Attachment ID
+ * @param  string           $size           Size key of the image to return
+ * @return string                           Image srcset, sizes, alt and title attributes
  */
 function get_timber_image_responsive( $timber_image, $size ) {
 	// When we just have the post id, we convert it to a TimberImage
@@ -113,9 +112,9 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 /**
  * Get srcset and sizes for a TimberImage.
  *
- * @param  obj|int	$timber_image	Instance of TimberImage or Attachment ID
- * @param  string 	$size         	Size key of the image to return
- * @return string					Image srcset and sizes attributes
+ * @param  TimberImage|int  $timber_image   Instance of TimberImage or Attachment ID
+ * @param  string           $size           Size key of the image to return
+ * @return string                           Image srcset and sizes attributes
  */
 function get_timber_image_responsive_src( $timber_image, $size ) {
 	// When we just have the post id, we convert it to a TimberImage
