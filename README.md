@@ -88,7 +88,7 @@ function get_image_sizes() {
         'custom-4' => array(
             'resize' => array( 370 ),
             'srcset' => array( 2 ),
-            'size' => '(min-width: 992px) 33.333vw, 100vw',
+            'sizes' => '(min-width: 992px) 33.333vw, 100vw',
             'name' => 'Width 1/4 fix',
             'post_types' => array( 'post', 'page' ),
         ),
@@ -251,7 +251,7 @@ function get_image_sizes() {
         'col-4' => array(
             'resize' => array( 370 ),
             'srcset' => array( 2 ),
-            'size' => '(min-width: 992px) 33.333vw, 100vw',
+            'sizes' => '(min-width: 992px) 33.333vw, 100vw',
             'name' => 'Width 1/4',
             'post_types' => array( 'post', 'page' ),
         ),
@@ -355,7 +355,7 @@ The sizes added in the srcset option will automatically be added to the srcset o
 
 ---
 
-### size
+### sizes
 
 (`string`), optional, Default: `''`
 
@@ -367,7 +367,7 @@ This is the string for the sizes attribute for the picture polyfill. Read more a
  * (33% of the viewport width), otherwise it will use 100vw (100% of the
  * viewport width).»
  */
-'size' => '(min-width: 62rem) 33.333vw, 100vw'
+'sizes' => '(min-width: 62rem) 33.333vw, 100vw'
 ```
 
 ```php
@@ -375,7 +375,7 @@ This is the string for the sizes attribute for the picture polyfill. Read more a
  * «For all screen widths up until 61.9375rem, the image will displayed at a
  * width of 125vm, for screen widths above at a width of 100vw.»
  */
-'size' => '(max-width: 61.9375rem) 125vw, 100vw'
+'sizes' => '(max-width: 61.9375rem) 125vw, 100vw'
 ```
 
 #### Source order matters!
@@ -490,13 +490,13 @@ function get_image_sizes() {
         ),
         'custom-4' => array(
             'resize' => array( 370 ),
-            'size' => '(min-width: 62rem) 33.333vw, 100vw',
+            'sizes' => '(min-width: 62rem) 33.333vw, 100vw',
             'name' => 'Width 1/4',
         ),
         'custom-4-crop' => array(
             'resize' => array( 370, 270 ),
             'srcset' => array( 2 ),
-            'size' => '(min-width: 62rem) 33.333vw, 100vw',
+            'sizes' => '(min-width: 62rem) 33.333vw, 100vw',
             'name' => 'Width 1/4 fix',
             'show_in_ui' => false,
             'post_types' => array( 'example', 'post', 'page' ),
@@ -505,7 +505,7 @@ function get_image_sizes() {
             // If you do not set a second value in the array, the image will not be cropped
             'resize' => array( 570 ),
             'srcset' => array( 0.5, 2 ),
-            'size' => '(min-width: 62rem) 50vw, 100vw',
+            'sizes' => '(min-width: 62rem) 50vw, 100vw',
             'name' => 'Width 1/2',
             'post_types' => array( 'example' ),
         ),
@@ -529,7 +529,7 @@ function get_image_sizes() {
                 array( 480, 206 ),
                 2, // This is the same as array(2800, 1200)
             ),
-            'size' => '(max-width: 61.9375rem) 125vw, 100vw',
+            'sizes' => '(max-width: 61.9375rem) 125vw, 100vw',
             'show_in_ui' => false,
             'resize_srcset' => true,
         ),
@@ -542,4 +542,3 @@ function get_image_sizes() {
 
 * Include responsive image functions for `<picture>` element.
 * Write tests.
-* Use 'sizes' instead of 'size' as parameter

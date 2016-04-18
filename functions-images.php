@@ -155,7 +155,7 @@ function get_timber_image_responsive_src( $timber_image, $size ) {
 			}
 
 			$width_key = Timmy::get_width_key( $width, $height, $timber_image );
-			
+
 			// For the new source, we use the same $crop and $force values as the default image
 			$srcset[ $width_key ] = Timmy::resize( $img_sizes[ $size ], $file_src, $width, $height, $crop, $force ) . ' ' . $width_key . 'w';
 		}
@@ -166,7 +166,21 @@ function get_timber_image_responsive_src( $timber_image, $size ) {
 
 	// Build sizes attribute string
 	$sizes_str = '';
-	if ( isset( $img_sizes[ $size ]['size'] ) ) {
+
+	/**
+	 * Check for 'sizes' option in image configuration.
+	 * Before v0.10.0, this was just `sizes'.
+	 *
+	 * @since 0.10.0
+	 */
+	if ( isset( $img_sizes[ $size ]['sizes'] ) ) {
+		$sizes_str = ' sizes="' . $img_sizes[ $size ]['sizes'] . '"';
+
+	/**
+	 * For backwards compatibility
+	 * @deprecated since 0.10.0
+	 */
+	} else if ( isset( $img_sizes[ $size ]['size'] ) ) {
 		$sizes_str = ' sizes="' . $img_sizes[ $size ]['size'] . '"';
 	}
 
