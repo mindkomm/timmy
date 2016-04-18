@@ -118,7 +118,7 @@ class Timmy
 	/**
 	 * Creates an image size based on the parameters given in the image configuration
 	 */
-	public function filter_image_downsize( $false = false, $attachment_id, $size ) {
+	public function filter_image_downsize( $return = false, $attachment_id, $size ) {
 		$attachment = get_post( $attachment_id );
 
 		/**
@@ -127,8 +127,8 @@ class Timmy
 		 *
 		 * GIFs are also resized, but only the first still.
 		 * We want to load the full GIF only in the frontend, because GIFs might
-		 * get quite big. This would slow down the Backend big time, if we want
-		 * to load the Media library with several GIFs.
+		 * get quite big. It would slow down the backend big time, if we wanted
+		 * to load the media library with several GIFs.
 		 */
 		if ( 'image/svg+xml' === $attachment->post_mime_type ) {
 			return false;
@@ -137,7 +137,6 @@ class Timmy
 		}
 
 		$img_sizes = get_image_sizes();
-		$should_resize = false;
 
 		// Sort out which image size we need to take from our own image configuration
 		if ( ! is_array( $size ) && isset( $img_sizes[ $size ] ) ) {
@@ -145,7 +144,7 @@ class Timmy
 
 			$should_resize = $this->timber_should_resize( $attachment->post_parent, $img_sizes[ $size ] );
 			if ( ! $should_resize ) {
-				return $false;
+				return $return;
 			}
 		} else {
 			/**
@@ -287,8 +286,6 @@ class Timmy
 			$resize = $img_size['resize'];
 
 			// Get values for the default image
-			$width    = $resize[0];
-			$height   = isset( $resize[1] ) ? $resize[1] : 0;
 			$crop     = isset( $resize[2] ) ? $resize[2] : 'default';
 			$force    = isset( $resize[3] ) ? $resize[3] : false;
 
