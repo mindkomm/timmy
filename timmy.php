@@ -237,19 +237,19 @@ class Timmy
 	 *
 	 * @since 0.9.3
 	 *
-	 * @param  int $width        The value of the resize parameter for width
-	 * @param  int $height		 The value of the resize parameter for height
-	 * @param  obj $timber_image Instance of TimberImage
-	 * @return int               The width at which the image will be displayed.
+	 * @param  int          $width          The value of the resize parameter for width
+	 * @param  int          $height         The value of the resize parameter for height
+	 * @param  TimberImage  $timber_image   Instance of TimberImage
+	 * @return int                          The width at which the image will be displayed.
 	 */
 	public static function get_width_key( $width, $height, $timber_image ) {
-		if ( $width == 0 ) {
+		if ( 0 === $width ) {
 			/**
 			 * Calculate image width based on image ratio and height.
 			 * We need a rounded value because we will use this number as an
 			 * array key and for defining the srcset size in pixel values.
 			 */
-			return round( $timber_image->height / $timber_image->width * $height );
+			return (int) round( $timber_image->height() / $timber_image->width() * $height );
 		}
 
 		return $width;
@@ -306,8 +306,8 @@ class Timmy
 						$width = $src[0];
 						$height = isset( $src[1] ) ? $src[1] : 0;
 					} else {
-						$width = round( $resize[0] * $src );
-						$height = isset( $resize[1] ) ? round( $resize[1] * $src ) : 0;
+						$width = (int) round( $resize[0] * $src );
+						$height = isset( $resize[1] ) ? (int) round( $resize[1] * $src ) : 0;
 					}
 
 					// For the new source, we use the same $crop and $force values as the default image

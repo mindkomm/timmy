@@ -150,12 +150,12 @@ function get_timber_image_responsive_src( $timber_image, $size ) {
 				$width  = $src[0];
 				$height = isset( $src[1] ) ? $src[1] : 0;
 			} else {
-				$width  = round( $resize[0] * $src );
-				$height = isset( $resize[1] ) ? round( $resize[1] * $src ) : 0;
+				$width  = (int) round( $resize[0] * $src );
+				$height = isset( $resize[1] ) ? (int) round( $resize[1] * $src ) : 0;
 			}
 
 			$width_key = Timmy::get_width_key( $width, $height, $timber_image );
-
+			
 			// For the new source, we use the same $crop and $force values as the default image
 			$srcset[ $width_key ] = Timmy::resize( $img_sizes[ $size ], $file_src, $width, $height, $crop, $force ) . ' ' . $width_key . 'w';
 		}
