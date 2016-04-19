@@ -20,9 +20,20 @@ class Timmy
 				if ( function_exists( 'get_image_sizes' ) ) {
 					// Add filters to make TimberImages work with normal WordPress image functionality
 					add_filter( 'image_downsize', array( $this, 'filter_image_downsize' ), 10, 3 );
-					add_filter( 'image_size_names_choose', array( $this, 'filter_image_size_names_choose' ) );
+					add_filter( 'image_size_names_choose', array( $this, 'filter_image_size_names_choose' ), 10 );
 					add_filter( 'intermediate_image_sizes', array( $this, 'filter_intermediate_image_sizes' ) );
+					add_filter( 'intermediate_image_sizes_advanced', array( $this, 'filter_intermediate_image_sizes_advanced' ) );
 					add_filter( 'wp_generate_attachment_metadata', array( $this, 'filter_wp_generate_attachment_metadata' ), 10, 2 );
+
+					// Set global $_wp_additional_image_sizes
+					$this->set_wp_additional_image_sizes();
+
+					/**
+					 * Third party filters
+					 *
+					 * - Make image sizes selectable in ACF
+					 */
+					add_filter( 'acf/get_image_sizes', array( $this, 'filter_acf_get_image_sizes' ) );
 				}
 			});
 
@@ -53,13 +64,45 @@ class Timmy
 	}
 
 	/**
-	 * We tell WordPress that we don’t have a intermedia sizes, because
+	 * Define global $_wp_additional_image_sizes with Timmy sizes
+	 *
+	 * Many WordPress functions and plugins rely on this global variable to
+	 * integrate with images. We want this functionality to return all image
+	 * sizes we defined ourselves.
+	 *
+	 * @since 0.10.0
+	 */
+	public function set_wp_additional_image_sizes() {
+		global $_wp_additional_image_sizes;
+
+		foreach ( get_image_sizes() as $key => $size ) {
+			$sizes[] = $key;
+
+			$width = absint( $size['resize'][0] );
+			$height = isset( $size['resize'][1] ) ? absint( $size['resize'][1] ) : 0;
+			$crop = isset( $size['resize'][1] ) ? true : false;
+
+			$_wp_additional_image_sizes[ $key ] = array(
+				'width'  => $width,
+				'height' => $height,
+				'crop'   => $crop,
+			);
+		}
+	}
+
+	public function filter_intermediate_image_sizes( $sizes ) {
+		return array_keys( get_image_sizes() );
+	}
+
+	/**
+	 * Filter the image sizes automatically generated when uploading an image.
+	 *
+	 * We tell WordPress that we don’t have intermediate sizes, because
 	 * we have our own image thingy we want to work with.
 	 *
-	 * This might bring some small performance improvements (might, because
-	 * not tested).
+	 * @since 0.10.0
 	 */
-	public function filter_intermediate_image_sizes( $sizes ) {
+	public function filter_intermediate_image_sizes_advanced( $sizes ) {
 		return array();
 	}
 
@@ -83,11 +126,9 @@ class Timmy
 	 * Replace the default image sizes with the sizes from the image config.
 	 *
 	 * The image will only be shown, if the config key 'show_in_ui' is not false.
-	 *
-	 * If you want to make the full size of the image available, create a new filter
-	 * and add $sizes['full'] = __( 'Full Size' ); to the array.
 	 */
-	public function filter_image_size_names_choose( $sizes ) {
+	public function filter_image_size_names_choose( $sizes = array() ) {
+		// We start from scratch and build our own sizes array
 		$sizes = array();
 		$img_sizes = get_image_sizes();
 
@@ -110,9 +151,22 @@ class Timmy
          * displayed in the page content and no predefined size
          * fits.
          */
-        $sizes['full'] = __( 'Full Size' );
+	    $sizes['full'] = __( 'Full Size' );
 
 		return $sizes;
+	}
+
+	/**
+	 * Add the same sizes to ACF image field options as when we choose an image
+	 * size in the content editor.
+	 *
+	 * @since 0.10.0
+	 *
+	 * @param  array $sizes     Sizes prepared by ACF
+	 * @return array            Our own image sizes
+	 */
+	public function filter_acf_get_image_sizes( $sizes ) {
+		return $this->filter_image_size_names_choose();
 	}
 
 	/**
