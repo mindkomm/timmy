@@ -239,7 +239,7 @@ if ( ! function_exists( 'get_acf_image_attr' ) ) :
 function get_acf_image_attr( $image ) {
 	$alt = ! empty( $image['alt'] ) ? $image['alt'] : '';
 
-	$html = ' alt="' . $image['alt'] . '"';
+	$html = ' alt="' . $alt . '"';
 
 	if ( ! empty( $image['description'] ) ) {
 		$html .= ' title="' . $image['description'] . '"';
