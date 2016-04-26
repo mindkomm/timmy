@@ -401,6 +401,8 @@ Picturefill will know which image size to use, **if you use the right order**.
 
 Letterbox the image to the size given in [`resize`](#resize) with a default black background (`#000000`). [Letterboxing](https://en.wikipedia.org/wiki/Letterboxing_(filming)) contains an image to a certain size without cropping, but with filling the extra space with a color.
 
+Letterboxing only works if both **width and height are not** `0`.
+
 ```php
 'letterbox' => true,
 ```

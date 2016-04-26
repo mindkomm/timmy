@@ -351,7 +351,9 @@ class Timmy
 		}
 
 		// Check for letterbox parameter
-		if ( isset( $img_size['letterbox'] ) && $img_size['letterbox'] ) {
+		if ( isset( $img_size['letterbox'] ) && $img_size['letterbox']
+			&& $width > 0 && $height > 0
+		) {
 			$color = is_string( $img_size['letterbox'] ) ? $img_size['letterbox'] : '#000000';
 			return TimberImageHelper::letterbox( $file_src, $width, $height, $color );
 		} else {
