@@ -44,10 +44,13 @@ class Timmy
 	}
 
 	/**
-	 * Image Functions for Timber context
+	 * Add functions to Timber context
+	 *
+	 * @param   array   $context    Timber context
+	 * @return  array   $context    Adapted Timber context
 	 */
 	public function filter_timber_context( $context ) {
-		$context['get_timber_image_responsive_acf'] = TimberHelper::function_wrapper( 'get_timber_image_responsive_acf' );
+		TimberHelper::function_wrapper( 'get_timber_image_responsive_acf' );
 		return $context;
 	}
 
@@ -113,6 +116,11 @@ class Timmy
 	 * This function will also run if you run Regenerate Thumbnails,
 	 * so all additional images sizes registered with Timber will be
 	 * first deleted and then regenerated through Timber.
+	 *
+	 * @param array $metadata
+	 * @param int   $attachment_id
+	 *
+	 * @return  array    $metadata
 	 */
 	public function filter_wp_generate_attachment_metadata( $metadata, $attachment_id ) {
 		if ( wp_attachment_is_image( $attachment_id ) ) {
@@ -133,7 +141,7 @@ class Timmy
 		$img_sizes = get_image_sizes();
 
 		foreach ($img_sizes as $key => $size) {
-			if ( isset( $size['show_in_ui'] ) && false == $size['show_in_ui'] ) {
+			if ( isset( $size['show_in_ui'] ) && false === $size['show_in_ui'] ) {
 				continue;
 			}
 
@@ -145,13 +153,13 @@ class Timmy
 		}
 
 		/**
-         * Re-add full size so it can still be selected.
-         *
-         * The full size is needed, if a e.g. a logo has to be
-         * displayed in the page content and no predefined size
-         * fits.
-         */
-	    $sizes['full'] = __( 'Full Size' );
+		 * Re-add full size so it can still be selected.
+		 *
+		 * The full size is needed, if a e.g. a logo has to be
+		 * displayed in the page content and no predefined size
+		 * fits.
+		 */
+		$sizes['full'] = __( 'Full Size' );
 
 		return $sizes;
 	}
@@ -171,6 +179,14 @@ class Timmy
 
 	/**
 	 * Creates an image size based on the parameters given in the image configuration
+	 *
+	 * @param bool          $return         Whether to short-circuit the image downsize.
+	 * @param int           $attachment_id  Attachment ID for image.
+	 * @param array|string  $size           Size of image. Image size or array of width
+	 *                                      and height values (in that order).
+	 *
+	 * @return false|array  Array containing the image URL, width, height, and boolean for
+	 *                      whether the image is an intermediate size. False on failure.
 	 */
 	public function filter_image_downsize( $return = false, $attachment_id, $size ) {
 		$attachment = get_post( $attachment_id );
@@ -221,7 +237,7 @@ class Timmy
 		 *
 		 * WP SEO for example asks for the original size, which we’ll return here.
 		 */
-		if ( in_array( $size, array( 'original', 'full' ) ) ) {
+		if ( in_array( $size, array( 'original', 'full' ), true ) ) {
 			$file_meta = wp_get_attachment_metadata( $attachment_id );
 			return array( $file_src, $file_meta['width'], $file_meta['height'], false );
 		}
@@ -272,7 +288,7 @@ class Timmy
 		}
 
 		// Check for letterbox parameter
-		if ( isset( $img_size['letterbox' ] ) && $img_size['letterbox'] ) {
+		if ( isset( $img_size['letterbox'] ) && $img_size['letterbox'] ) {
 			$color = is_string( $img_size['letterbox'] ) ? $img_size['letterbox'] : '#000000';
 			return TimberImageHelper::letterbox( $file_src, $width, $height, $color );
 		} else {
@@ -309,7 +325,7 @@ class Timmy
 	}
 
 	/**
-	 * Generate image sizes defined for Timmy with TimberImageHelper
+	 * Generate image sizes defined for Timmy with TimberImageHelper.
 	 *
 	 * @param  int	$attachment_id	The attachment ID for which all images should be resized
 	 * @return void
@@ -332,7 +348,6 @@ class Timmy
 		TimberImageHelper::delete_generated_files( $file_src );
 
 		foreach ($img_sizes as $key => $img_size) {
-
 			if ( ! $this->timber_should_resize( $attachment->post_parent, $img_size ) ) {
 				continue;
 			}
@@ -345,7 +360,7 @@ class Timmy
 
 			image_downsize( $attachment_id, $key );
 
-			if ( isset( $img_size['generate_srcset_sizes'] ) && false == $img_size['generate_srcset_sizes'] ) {
+			if ( isset( $img_size['generate_srcset_sizes'] ) && false === $img_size['generate_srcset_sizes'] ) {
 				continue;
 			}
 
@@ -401,7 +416,7 @@ class Timmy
 			$post_types_to_apply = $img_size['post_types'];
 		}
 
-		if ( ! in_array( 'all', $post_types_to_apply ) ) {
+		if ( ! in_array( 'all', $post_types_to_apply, true ) ) {
 			// Check if we should really resize that picture
 			$intersections = array_intersect( $post_types_to_apply, $attachment_post_type );
 

@@ -47,7 +47,7 @@ function get_timber_image_src( $timber_image, $size ) {
 	$force  = isset( $resize[3] ) ? $resize[3] : false;
 
 	// Resize the image for that size
-	return Timmy::resize( $img_sizes[$size], $file_src, $width, $height, $crop, $force );
+	return Timmy::resize( $img_sizes[ $size ], $file_src, $width, $height, $crop, $force );
 }
 endif;
 
@@ -138,7 +138,7 @@ function get_timber_image_responsive_src( $timber_image, $size ) {
 	// Get proper width_key to handle width values of 0
 	$width_key = Timmy::get_width_key( $width, $height, $timber_image );
 
-	// We add the image sources with the width as the key so we can sort them later
+	// Add the image source with the width as the key so they can be sorted later.
 	$srcset[ $width_key ] = Timmy::resize( $img_sizes[ $size ], $file_src, $width, $height, $crop, $force ) . ' ' . $width_key . 'w';
 
 	// Add additional image sizes to srcset.
@@ -184,8 +184,8 @@ function get_timber_image_responsive_src( $timber_image, $size ) {
 		$sizes_str = ' sizes="' . $img_sizes[ $size ]['size'] . '"';
 	}
 
-	// Return the html attribute string
 	return ' srcset="' . implode( ',', $srcset ) . '"' . $sizes_str;
+	// Return the HTML attribute string
 }
 endif;
 
