@@ -206,7 +206,7 @@ function get_timber_image_responsive_src( $timber_image, $size ) {
 	}
 
 	// Return the HTML attribute string
-	return ' srcset="' . implode( ',', $srcset ) . '"' . $attr_str;
+	return ' srcset="' . implode( ', ', $srcset ) . '"' . $attr_str;
 }
 endif;
 
