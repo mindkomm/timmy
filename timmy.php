@@ -278,19 +278,27 @@ class Timmy
 	 *                                          (in that order). Thought to be used with list().
 	 */
 	public static function get_image_params( $timber_image, $img_size ) {
-		$file_src  = $timber_image->src();
-		$max_width = $timber_image->width();
+		$file_src   = $timber_image->src();
+		$max_width  = $timber_image->width();
 		$max_height = $timber_image->height();
 
-		$allow_oversize = true;
+		// Defaults
+		$oversize_defaults = array(
+			'allow' => false,
+			'style_attr' => true,
+		);
 
-		if ( ( ! isset( $img_size['oversize'] ) || ! $img_size['oversize'] )
-			&& ( ! isset( $img_size['letterbox'] ) || ! $img_size['letterbox'] )
-		) {
-			$allow_oversize = false;
-		} else if ( isset( $img_size['oversize'] ) && is_array( $img_size['oversize'] ) ) {
-			$allow_oversize = $img_size['oversize'];
+		if ( ! isset( $img_size['oversize'] ) ) {
+			$oversize = array( 'allow' => false );
+		} else {
+			if ( ! is_array( $img_size['oversize'] ) ) {
+				$oversize = array( 'allow' => $img_size['oversize'] );
+			} else {
+				$oversize = $img_size['oversize'];
+			}
 		}
+
+		$oversize = wp_parse_args( $oversize, $oversize_defaults );
 
 		$resize = $img_size['resize'];
 
@@ -298,8 +306,13 @@ class Timmy
 		$width  = $resize[0];
 		$height = isset( $resize[1] ) ? $resize[1] : 0;
 
-		// Check whether the image source is smaller than the desired width
-		if ( ! $allow_oversize || is_array( $allow_oversize ) ) {
+		if ( ! $oversize['allow'] ) {
+			$restrict = $oversize['style_attr'];
+
+			/**
+			 * Check whether the image source width is smaller than the desired width
+			 * or the image source height is smaller than the desired height.
+			 */
 			if ( $width > $max_width ) {
 				// Overwrite $width to use a max width
 				$width = $max_width;
@@ -308,9 +321,18 @@ class Timmy
 				if ( isset( $resize[1] ) ) {
 					$height = (int) round( $width * ( $resize[1] / $resize[0] ) );
 				}
-			} else if ( 0 === $width && $height > 0 && $height > $max_height ) {
+
+				$restrict = 'width';
+
+			} else if ( $height > 0 && $height > $max_height ) {
 				$height = $max_height;
 				$width = (int) round( $max_width / $max_height * $height );
+
+				$restrict = 'height';
+			}
+
+			if ( false !== $restrict ) {
+				$oversize['style_attr'] = $restrict;
 			}
 		}
 
@@ -325,7 +347,7 @@ class Timmy
 			$force,
 			$max_width,
 			$max_height,
-			$allow_oversize,
+			$oversize,
 		);
 	}
 
