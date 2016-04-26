@@ -585,4 +585,5 @@ add_filter( 'image_size_names_choose', function( $sizes ) {
 ## Lookahead
 
 * Include responsive image functions for `<picture>` element.
+* Make `letterbox` option work with in combination with `oversize` option.
 * Write tests.

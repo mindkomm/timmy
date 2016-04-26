@@ -285,6 +285,7 @@ class Timmy
 		$allow_oversize = true;
 
 		if ( ( ! isset( $img_size['oversize'] ) || ! $img_size['oversize'] )
+			&& ( ! isset( $img_size['letterbox'] ) || ! $img_size['letterbox'] )
 		) {
 			$allow_oversize = false;
 		} else if ( isset( $img_size['oversize'] ) && is_array( $img_size['oversize'] ) ) {
