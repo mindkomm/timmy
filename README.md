@@ -276,6 +276,7 @@ function get_image_sizes() {
 * [name](#name)
 * [show_in_ui](#show_in_ui)
 * [generate_srcset_sizes](#generate_srcset_sizes)
+* [oversize](#oversize)
 
 ---
 
@@ -477,6 +478,22 @@ If the post type a user is editing is not in the `post_types` array (and if `pos
 (`bool`), optional, Default: `true`
 
 As per default, All the sizes defined under `srcset` will also be generated when an image is uploaded.
+
+---
+
+### oversize
+
+(`bool`), optional, Default: `false`
+
+Timmy checks the size of the original image to see if it is big enough to be resized with the given parameters. If not, it returns the image at the original size, but still considering additional image sizes smaller than the original size for responsive image markup.
+
+If you want to disable this and let images grow bigger than the original size, set the value to `true`:
+
+```
+'oversize' => true,
+```
+
+---
 
 ## Full Example
 

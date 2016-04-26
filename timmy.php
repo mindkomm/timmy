@@ -267,17 +267,74 @@ class Timmy
 	}
 
 	/**
-	 * Resize an image and apply letterbox and tojpg filters when defined
+	 * Get an array with image parameters required for generating a new size.
+	 *
+	 * @since 0.10.0
+	 *
+	 * @param TimberImage|int   $timber_image   Instance of TimberImage
+	 * @param array             $img_size       Image configuration array for image size to be used
+	 * @return array                            An non-associative array with $file_src, $width,
+	 *                                          $height, $crop, $force, $max_width, $undersized
+	 *                                          (in that order). Thought to be used with list().
+	 */
+	public static function get_image_params( $timber_image, $img_size ) {
+		$file_src  = $timber_image->src();
+		$max_width = $timber_image->width();
+		$max_height = $timber_image->height();
+
+		$undersized = false;
+
+		$resize = $img_size['resize'];
+
+		// Get values for the default image size
+		$width  = $resize[0];
+		$height = isset( $resize[1] ) ? $resize[1] : 0;
+
+		// Check whether the image source is smaller than the desired width
+		if ( ! isset( $img_size['oversize'] ) || ! $img_size['oversize'] ) {
+			$undersized = true;
+
+			if ( $width > $max_width ) {
+				// Overwrite $width to use a max width
+				$width = $max_width;
+
+				// Calculate new height based on new width
+				if ( isset( $resize[1] ) ) {
+					$height = (int) round( $width * ( $resize[1] / $resize[0] ) );
+				}
+			} else if ( 0 === $width && $height > 0 && $height > $max_height ) {
+				$height = $max_height;
+				$width = (int) round( $max_width / $max_height * $height );
+			}
+		}
+
+		$crop   = isset( $resize[2] ) ? $resize[2] : 'default';
+		$force  = isset( $resize[3] ) ? $resize[3] : false;
+
+		return array(
+			$file_src,
+			$width,
+			$height,
+			$crop,
+			$force,
+			$max_width,
+			$max_height,
+			$undersized,
+		);
+	}
+
+	/**
+	 * Resize an image and apply letterbox and tojpg filters when defined.
 	 *
 	 * @since 0.9.2
 	 *
-	 * @param  array $img_size 	Configuration values for an image size
-	 * @param  string $file_src The src of the original image
-	 * @param  int $width    	The width the new image should be resized to
-	 * @param  int $height   	The height the new image should be resized to
-	 * @param  string $crop     Cropping option
-	 * @param  bool $force    	Force cropping
-	 * @return string           The src of the image
+	 * @param  array    $img_size 	Configuration values for an image size
+	 * @param  string   $file_src   The src of the original image
+	 * @param  int      $width    	The width the new image should be resized to
+	 * @param  int      $height   	The height the new image should be resized to
+	 * @param  string   $crop       Cropping option
+	 * @param  bool     $force    	Force cropping
+	 * @return string               The src of the image
 	 */
 	public static function resize( $img_size, $file_src, $width, $height, $crop, $force ) {
 		// Check if image should be converted to jpg first
@@ -318,7 +375,7 @@ class Timmy
 			 * We need a rounded value because we will use this number as an
 			 * array key and for defining the srcset size in pixel values.
 			 */
-			return (int) round( $timber_image->height() / $timber_image->width() * $height );
+			return (int) round( $timber_image->aspect() * $height );
 		}
 
 		return $width;
