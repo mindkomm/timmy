@@ -133,7 +133,7 @@ function get_timber_image_responsive_src( $timber_image, $size ) {
 		$force,
 		$max_width,
 		$max_height,
-		$undersized
+		$allow_oversize,
 	) = Timmy::get_image_params( $timber_image, $img_sizes[ $size ] );
 
 	$srcset = array();
@@ -158,7 +158,7 @@ function get_timber_image_responsive_src( $timber_image, $size ) {
 			}
 
 			// Bail out if the current size’s width is bigger than available width
-			if ( $undersized && ( $width > $max_width || ( 0 === $width && $height > $max_height ) ) ) {
+			if ( $allow_oversize && ( $width > $max_width || ( 0 === $width && $height > $max_height ) ) ) {
 				continue;
 			}
 
@@ -197,7 +197,9 @@ function get_timber_image_responsive_src( $timber_image, $size ) {
 	 *
 	 * @since 0.10.0
 	 */
-	if ( $undersized ) {
+	if ( false === $allow_oversize
+		|| ( isset( $allow_oversize['attr'] ) && $allow_oversize['attr'] )
+	) {
 		if ( 0 === $resize[0] ) {
 			$attr_str = ' style="max-height:' . $max_height . 'px;"';
 		} else {

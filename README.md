@@ -493,6 +493,14 @@ If you want to disable this and let images grow bigger than the original size, s
 'oversize' => true,
 ```
 
+Timmy also adds a style attr to the image markup to set the max-width or max-height in px. If you want to disable this, use an array with `attr` set to `false`.
+
+```
+'oversize' => array(
+    'attr' => false,
+),
+```
+
 ---
 
 ## Full Example

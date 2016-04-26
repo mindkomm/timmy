@@ -282,7 +282,14 @@ class Timmy
 		$max_width = $timber_image->width();
 		$max_height = $timber_image->height();
 
-		$undersized = false;
+		$allow_oversize = true;
+
+		if ( ( ! isset( $img_size['oversize'] ) || ! $img_size['oversize'] )
+		) {
+			$allow_oversize = false;
+		} else if ( isset( $img_size['oversize'] ) && is_array( $img_size['oversize'] ) ) {
+			$allow_oversize = $img_size['oversize'];
+		}
 
 		$resize = $img_size['resize'];
 
@@ -291,9 +298,7 @@ class Timmy
 		$height = isset( $resize[1] ) ? $resize[1] : 0;
 
 		// Check whether the image source is smaller than the desired width
-		if ( ! isset( $img_size['oversize'] ) || ! $img_size['oversize'] ) {
-			$undersized = true;
-
+		if ( ! $allow_oversize || is_array( $allow_oversize ) ) {
 			if ( $width > $max_width ) {
 				// Overwrite $width to use a max width
 				$width = $max_width;
@@ -319,7 +324,7 @@ class Timmy
 			$force,
 			$max_width,
 			$max_height,
-			$undersized,
+			$allow_oversize,
 		);
 	}
 
