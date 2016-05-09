@@ -199,9 +199,9 @@ function get_timber_image_responsive_src( $timber_image, $size ) {
 	 */
 	if ( ! $oversize['allow'] && $oversize['style_attr'] ) {
 		if ( 'width' === $oversize['style_attr'] ) {
-			$attr_str = ' style="max-width:' . $max_width . 'px;"';
+			$attr_str = ' style="width:' . $max_width . 'px;"';
 		} else if ( 'height' === $oversize['style_attr'] ) {
-			$attr_str = ' style="max-height:' . $max_height . 'px;"';
+			$attr_str = ' style="height:' . $max_height . 'px;"';
 		}
 	}
 
