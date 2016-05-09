@@ -14,7 +14,7 @@ class Timmy
 {
 	public function __construct() {
 
-		if ( class_exists( 'TimberImageHelper' ) ) {
+		if ( class_exists( 'Timber\ImageHelper' ) ) {
 			// Wait for theme to initialize to make sure that we can access all image sizes
 			add_action('after_setup_theme', function() {
 				if ( function_exists( 'get_image_sizes' ) ) {
@@ -50,7 +50,7 @@ class Timmy
 	 * @return  array   $context    Adapted Timber context
 	 */
 	public function filter_timber_context( $context ) {
-		TimberHelper::function_wrapper( 'get_timber_image_responsive_acf' );
+		Timber\Helper::function_wrapper( 'get_timber_image_responsive_acf' );
 		return $context;
 	}
 
@@ -271,7 +271,7 @@ class Timmy
 	 *
 	 * @since 0.10.0
 	 *
-	 * @param TimberImage|int   $timber_image   Instance of TimberImage
+	 * @param Timber\Image|int  $timber_image   Instance of TimberImage
 	 * @param array             $img_size       Image configuration array for image size to be used
 	 * @return array                            An non-associative array with $file_src, $width,
 	 *                                          $height, $crop, $force, $max_width, $undersized
@@ -369,7 +369,7 @@ class Timmy
 		if ( isset( $img_size['tojpg'] ) && $img_size['tojpg'] ) {
 			// Sort out background color which will show instead of transparency
 			$bgcolor = is_string( $img_size['tojpg'] ) ? $img_size['tojpg'] : '#FFFFFF';
-			$file_src = TimberImageHelper::img_to_jpg( $file_src, $bgcolor, $force );
+			$file_src = Timber\ImageHelper::img_to_jpg( $file_src, $bgcolor, $force );
 		}
 
 		// Check for letterbox parameter
@@ -377,9 +377,9 @@ class Timmy
 			&& $width > 0 && $height > 0
 		) {
 			$color = is_string( $img_size['letterbox'] ) ? $img_size['letterbox'] : '#000000';
-			return TimberImageHelper::letterbox( $file_src, $width, $height, $color );
+			return Timber\ImageHelper::letterbox( $file_src, $width, $height, $color );
 		} else {
-			return TimberImageHelper::resize( $file_src, $width, $height, $crop, $force );
+			return Timber\ImageHelper::resize( $file_src, $width, $height, $crop, $force );
 		}
 	}
 
@@ -395,7 +395,7 @@ class Timmy
 	 *
 	 * @param  int          $width          The value of the resize parameter for width
 	 * @param  int          $height         The value of the resize parameter for height
-	 * @param  TimberImage  $timber_image   Instance of TimberImage
+	 * @param  Timber\Image $timber_image   Instance of TimberImage
 	 * @return int                          The width at which the image will be displayed.
 	 */
 	public static function get_width_key( $width, $height, $timber_image ) {
@@ -432,7 +432,7 @@ class Timmy
 		 * Because Timber creates image sizes when they’re needed,
 		 * we can safely do this.
 		 */
-		TimberImageHelper::delete_generated_files( $file_src );
+		Timber\ImageHelper::delete_generated_files( $file_src );
 
 		foreach ($img_sizes as $key => $img_size) {
 			if ( ! $this->timber_should_resize( $attachment->post_parent, $img_size ) ) {

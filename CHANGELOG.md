@@ -8,6 +8,7 @@
 - Improved README with section about image size keys. See README.
 - Fixed call to deprecated method.
 - Fixed error when `0` was used for the width parameter.
+- Namespaced all instances of calls to Timber classes. Timber classes are namespaced since Timber v1.0.0.
 
 ## 0.9.3 - 2016-03-17
 
