@@ -56,6 +56,9 @@ class Timmy
 
 	/**
 	 * Sets filters to use Timmy functions in Twig
+	 *
+	 * @param   Twig_Environment    $twig
+	 * @return  Twig_Environment    $twig
 	 */
 	public function filter_get_twig( $twig ) {
 		$twig->addFilter( new Twig_SimpleFilter( 'get_timber_image', 'get_timber_image' ) );

@@ -253,9 +253,9 @@ if ( ! function_exists( 'get_post_thumbnail' ) ) :
 /**
  * Get Post Thumbnail source together with alt and title attributes.
  *
- * @param  int		$post_id	The post id to get the thumbnail from
- * @param  string	$size   	Size key of the image to return
- * @return string				Image src together with alt and title attributes
+ * @param  int      $post_id    The post id to get the thumbnail from
+ * @param  string   $size       Size key of the image to return
+ * @return string               Image src together with alt and title attributes
  */
 function get_post_thumbnail( $post_id, $size = 'post-thumbnail' ) {
 	$html = ' src="' . get_post_thumbnail_src( $post_id, $size ) . '"';
@@ -279,9 +279,9 @@ if ( ! function_exists( 'get_post_thumbnail_src' ) ) :
 /**
  * Get Post Thumbnail image source at given size.
  *
- * @param	int		$post_id	The post id to get the thumbnail from
- * @param	int		$size		Size key of the image to return
- * @return 	string				Image src
+ * @param   int     $post_id    The post id to get the thumbnail from
+ * @param   string  $size       Size key of the image to return
+ * @return  string              Image src
  */
 function get_post_thumbnail_src( $post_id, $size = 'post-thumbnail' ) {
 	$post_thumbnail_id = get_post_thumbnail_id( $post_id );
