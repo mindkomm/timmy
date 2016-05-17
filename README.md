@@ -269,7 +269,7 @@ function get_image_sizes() {
 
 * [resize](#resize)
 * [srcset](#srcset)
-* [size](#size)
+* [sizes](#sizes)
 * [letterbox](#letterbox)
 * [tojpg](#tojpg)
 * [post_types](#post_types)
