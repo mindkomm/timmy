@@ -7,7 +7,7 @@
     },
     "autoload": {
       "psr-4": {
-        "Timmy\\": "src/"
+        "Timmy\\": "lib/"
       },
       "files": [
         "init.php",
