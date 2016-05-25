@@ -242,7 +242,10 @@ class Timmy
 		 */
 		if ( in_array( $size, array( 'original', 'full' ), true ) ) {
 			$file_meta = wp_get_attachment_metadata( $attachment_id );
-			return array( $file_src, $file_meta['width'], $file_meta['height'], false );
+
+			if ( isset( $file_meta['width'] ) && isset( $file_meta['height'] ) ) {
+				return array( $file_src, $file_meta['width'], $file_meta['height'], false );
+			}
 		}
 
 		$resize   = $img_size['resize'];
