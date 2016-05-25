@@ -1,5 +1,7 @@
 <?php
 
+use Timmy\Timmy;
+
 if ( ! function_exists( 'get_timber_image' ) ) :
 /**
  * Outputs the src attr together with optional alt and title attributes
