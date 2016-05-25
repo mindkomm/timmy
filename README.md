@@ -64,9 +64,31 @@ Timber already comes with a set of really nice features for handling images. Esp
 
 In order to make Timmy work, you’ll have to
 
-### 1. Install Timber
+### 1. Install Timber and Timmy
 
-Install [Timber Library Plugin](https://wordpress.org/plugins/timber-library/). You don’t have to necessarily go full Timber with your theme or template. You can also just use Timber and Timmy to handle your images.
+You can either install both Timmy and Timber as plugins or use Composer.
+
+#### Install as Plugin
+
+1. Install [Timber Library Plugin](https://wordpress.org/plugins/timber-library/). You don’t have to necessarily go full Timber with your theme or template. You can also just use Timber and Timmy to handle your images.
+
+2. Then [download and install the latest version of Timmy](<https://github.com/MINDKomm/Timmy/releases/latest>). (Timmy currently can’t be found in the official WordPress plugin directory. Maybe it will be soon.)
+
+#### Install with Composer
+
+```
+composer require mindkomm/timmy
+```
+
+The benefit of installing Timmy through composer is that you add it as a dependency of your theme, which puts you in full control of the version you want to work with. Timmy requires Timber, so you won’t have to install Timber separately.
+
+Require the autoload file at the top of your **functions.php** and you’re good to go:
+
+```php
+require_once( __DIR__ . '/vendor/autoload.php' );
+```
+
+
 
 ### 2. Prepare Media Settings
 
