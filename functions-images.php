@@ -15,7 +15,11 @@ function get_timber_image( $timber_image, $size ) {
 	$src  = get_timber_image_src( $timber_image, $size );
 	$attr = get_timber_image_attr( $timber_image );
 
-	return ' src="' . $src . '" ' . $attr;
+	if ( $src ) {
+		return ' src="' . $src . '" ' . $attr;
+	}
+
+	return '';
 }
 endif;
 
@@ -29,6 +33,10 @@ if ( ! function_exists( 'get_timber_image_src' ) ) :
  */
 function get_timber_image_src( $timber_image, $size ) {
 	$timber_image = Timmy::get_timber_image( $timber_image );
+
+	if ( ! $timber_image ) {
+		return false;
+	}
 
 	$img_sizes = get_image_sizes();
 
@@ -77,6 +85,10 @@ if ( ! function_exists( 'get_timber_image_attr' ) ) :
 function get_timber_image_attr( $timber_image ) {
 	$timber_image = Timmy::get_timber_image( $timber_image );
 
+	if ( ! $timber_image ) {
+		return '';
+	}
+
 	$alt   = $timber_image->_wp_attachment_image_alt;
 	$title = $timber_image->post_content;
 	return get_image_attr_html( $alt, $title );
@@ -95,7 +107,11 @@ function get_timber_image_responsive( $timber_image, $size ) {
 	$src = get_timber_image_responsive_src( $timber_image, $size );
 	$attr = get_timber_image_attr( $timber_image );
 
-	return $src . ' ' . $attr;
+	if ( $src ) {
+		return $src . ' ' . $attr;
+	}
+
+	return '';
 }
 endif;
 
@@ -109,6 +125,10 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
  */
 function get_timber_image_responsive_src( $timber_image, $size ) {
 	$timber_image = Timmy::get_timber_image( $timber_image );
+
+	if ( ! $timber_image ) {
+		return false;
+	}
 
 	$img_sizes = get_image_sizes();
 	$resize    = $img_sizes[ $size ]['resize'];
@@ -208,12 +228,16 @@ if ( ! function_exists( 'get_timber_image_responsive_acf' ) ) :
  */
 function get_timber_image_responsive_acf( $name, $size ) {
 	$image = get_field( $name );
-	$timber_image = new Timber\Image( $image['id'] );
+	$timber_image = Timmy::get_timber_image( $image );
 
 	$src  = get_timber_image_responsive_src( $timber_image, $size );
 	$attr = get_acf_image_attr( $image );
 
-	return $src . ' ' . $attr;
+	if ( $src ) {
+		return $src . ' ' . $attr;
+	}
+
+	return '';
 }
 endif;
 

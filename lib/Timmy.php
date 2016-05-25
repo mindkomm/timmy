@@ -281,13 +281,21 @@ class Timmy {
 	 * @return \Timber\Image        Instance of Timber\Image.
 	 */
 	public static function get_timber_image( $timber_image ) {
-		if ( $timber_image instanceof Timber\Image ) {
-			return $timber_image;
-		} elseif ( is_numeric( $timber_image ) ) {
-			return new Timber\Image( $timber_image );
+		if ( is_numeric( $timber_image ) ) {
+			$timber_image = new Timber\Image( $timber_image );
+
 		} elseif ( is_array( $timber_image ) && isset( $timber_image['ID'] ) ) {
-			return new Timber\Image( $timber_image['ID'] );
+			$timber_image = new Timber\Image( $timber_image['ID'] );
 		}
+
+		// Check if non-empty TimberImage was found before returning it
+		if ( ! $timber_image instanceof Timber\Image
+			 || ! isset( $timber_image->post_type )
+		     || 'attachment' !== $timber_image->post_type
+		) {
+			return false;
+		}
+
 		return $timber_image;
 	}
 

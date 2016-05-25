@@ -584,8 +584,9 @@ add_filter( 'image_size_names_choose', function( $sizes ) {
 }, 20 );
 ```
 
-## Plans
+## Future Plans
 
+* Optimize handling of images that were not found
 * Include responsive image functions for `<picture>` element.
 * Make `letterbox` option work properly in combination with `oversize` option.
 * Write tests.

@@ -2,6 +2,7 @@
 
 ## 0.10.1
 
+- Added check for valid and non-empty TimberImage. Frontend functions now return an empty string when no image was found.
 - Made sure image arrays (like used in ACF) are also converted to a TimberImage. This way, it doesn’t matter if an image ID or an array is returned by ACF, Timmy will convert it to a TimberImage.
 
 ## 0.10.0 - 2016-05-09
