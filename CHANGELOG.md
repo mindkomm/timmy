@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.10.1
+
+- Made sure image arrays (like used in ACF) are also converted to a TimberImage. This way, it doesn’t matter if an image ID or an array is returned by ACF, Timmy will convert it to a TimberImage.
+
 ## 0.10.0 - 2016-05-09
 
 - **Changed image configuration option `size` to `sizes`** to use the attribute name that is also used in the HTML markup. This means you have to update your image configuration.

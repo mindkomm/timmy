@@ -275,6 +275,8 @@ class Timmy
 	/**
 	 * Convert an image into a TimberImage.
 	 *
+	 * @since 0.10.1
+	 *
 	 * @param mixed $timber_image   The ID of the image, an array containing an ID key or
 	 *                              an instance of Timber\Image.
 	 * @return \Timber\Image        Instance of Timber\Image.
