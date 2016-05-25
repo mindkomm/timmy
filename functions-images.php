@@ -10,11 +10,6 @@ if ( ! function_exists( 'get_timber_image' ) ) :
  * @return string                           Src, alt and title attributes
  */
 function get_timber_image( $timber_image, $size ) {
-	// When we just have the post id, we convert it to a TimberImage
-	if ( is_numeric( $timber_image ) ) {
-		$timber_image = new Timber\Image( $timber_image );
-	}
-
 	$src  = get_timber_image_src( $timber_image, $size );
 	$attr = get_timber_image_attr( $timber_image );
 
@@ -31,10 +26,7 @@ if ( ! function_exists( 'get_timber_image_src' ) ) :
  * @return string                           Image src
  */
 function get_timber_image_src( $timber_image, $size ) {
-	// When we just have the post id, we convert it to a TimberImage
-	if ( is_numeric( $timber_image ) ) {
-		$timber_image = new Timber\Image( $timber_image );
-	}
+	$timber_image = Timmy::get_timber_image( $timber_image );
 
 	$img_sizes = get_image_sizes();
 
@@ -81,6 +73,8 @@ if ( ! function_exists( 'get_timber_image_attr' ) ) :
  * @return string                       HTML string for alt and title attributes
  */
 function get_timber_image_attr( $timber_image ) {
+	$timber_image = Timmy::get_timber_image( $timber_image );
+
 	$alt   = $timber_image->_wp_attachment_image_alt;
 	$title = $timber_image->post_content;
 	return get_image_attr_html( $alt, $title );
@@ -96,11 +90,6 @@ if ( ! function_exists( 'get_timber_image_responsive' ) ) :
  * @return string                           Image srcset, sizes, alt and title attributes
  */
 function get_timber_image_responsive( $timber_image, $size ) {
-	// When we just have the post id, we convert it to a TimberImage
-	if ( is_numeric( $timber_image ) ) {
-		$timber_image = new Timber\Image( $timber_image );
-	}
-
 	$src = get_timber_image_responsive_src( $timber_image, $size );
 	$attr = get_timber_image_attr( $timber_image );
 
@@ -117,10 +106,7 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
  * @return string                           Image srcset and sizes attributes
  */
 function get_timber_image_responsive_src( $timber_image, $size ) {
-	// When we just have the post id, we convert it to a TimberImage
-	if ( is_numeric( $timber_image ) ) {
-		$timber_image = new Timber\Image( $timber_image );
-	}
+	$timber_image = Timmy::get_timber_image( $timber_image );
 
 	$img_sizes = get_image_sizes();
 	$resize    = $img_sizes[ $size ]['resize'];
