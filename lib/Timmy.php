@@ -274,6 +274,24 @@ class Timmy {
 	}
 
 	/**
+	 * Convert an image into a TimberImage.
+	 *
+	 * @param mixed $timber_image   The ID of the image, an array containing an ID key or
+	 *                              an instance of Timber\Image.
+	 * @return \Timber\Image        Instance of Timber\Image.
+	 */
+	public static function get_timber_image( $timber_image ) {
+		if ( $timber_image instanceof Timber\Image ) {
+			return $timber_image;
+		} elseif ( is_numeric( $timber_image ) ) {
+			return new Timber\Image( $timber_image );
+		} elseif ( is_array( $timber_image ) && isset( $timber_image['ID'] ) ) {
+			return new Timber\Image( $timber_image['ID'] );
+		}
+		return $timber_image;
+	}
+
+	/**
 	 * Get an array with image parameters required for generating a new size.
 	 *
 	 * @since 0.10.0
