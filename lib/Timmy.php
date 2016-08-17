@@ -278,7 +278,7 @@ class Timmy {
 	 *
 	 * @param mixed $timber_image   The ID of the image, an array containing an ID key or
 	 *                              an instance of Timber\Image.
-	 * @return \Timber\Image        Instance of Timber\Image.
+	 * @return mixed                Instance of Timber\Image.
 	 */
 	public static function get_timber_image( $timber_image ) {
 		if ( is_numeric( $timber_image ) ) {
