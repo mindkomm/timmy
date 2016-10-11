@@ -1,10 +1,10 @@
 <?php
 /**
  * Plugin Name: Timmy
- * Plugin URI: https://bitbucket.org/mindkomm/timmy
- * Description: Opt-in plugin for Timber Library to make it even more convenient to work with images.
- * Version: 0.10.1
- * Author: Lukas Gächter <@lgaechter>
+ * Plugin URI: https://github.com/MINDKomm/timmy/
+ * Description: Advanced image manipulation for Timber.
+ * Version: 0.10.2
+ * Author: Lukas Gächter<@lgaechter>
  * Author URI: http://www.mind.ch
  */
 require_once( 'functions-images.php' );
