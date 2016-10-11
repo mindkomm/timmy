@@ -191,7 +191,7 @@ Returns the src for a TimberImage.
 
 `get_timber_image_responsive(int $post_id|TimberImage $timber_image, string $size)`
 
-Returns the srcset, size, alt and title attributes for a TimberImage.
+Returns the srcset, size, alt and title attributes for a TimberImage. If this function is used with an SVG or GIF image, the single src will be returned instead of srcset.
 
 ##### Usage in WordPress Templates
 
