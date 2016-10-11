@@ -1,6 +1,6 @@
 {
     "name": "mindkomm/timmy",
-    "description": "Opt-in plugin for Timber Library to make it even more convenient to work with images.",
+    "description": "Opt-in plugin for Timber Library to make it more convenient to work with images.",
     "license": "MIT",
     "require": {
       "php": ">=5.3.0",
