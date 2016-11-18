@@ -206,9 +206,9 @@ class Timmy {
 		 * to load the media library with several GIFs.
 		 */
 		if ( 'image/svg+xml' === $attachment->post_mime_type ) {
-			return false;
+			return $return;
 		} elseif ( ! is_admin() && 'image/gif' === $attachment->post_mime_type ) {
-			return false;
+			return $return;
 		}
 
 		$img_sizes = get_image_sizes();
