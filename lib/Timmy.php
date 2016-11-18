@@ -138,22 +138,44 @@ class Timmy {
 	/**
 	 * Replace the default image sizes with the sizes from the image config.
 	 *
-	 * The image will only be shown, if the config key 'show_in_ui' is not false.
+	 * The image will only be shown if the config key 'show_in_ui' is not false.
+	 *
+	 * This filter will also define the sizes that are returned for the Media Grid
+	 * in the backend. We make sure to not include any of your own image sizes in
+	 * that view, except for 'thumbnail'.
 	 */
 	public function filter_image_size_names_choose( $sizes = array() ) {
 		// We start from scratch and build our own sizes array
 		$sizes = array();
 		$img_sizes = get_image_sizes();
 
-		foreach ($img_sizes as $key => $size) {
-			if ( isset( $size['show_in_ui'] ) && false === $size['show_in_ui'] ) {
+		/**
+		 * When media files are requested through an AJAX call, an action will
+		 * be present in $_POST.
+		 *
+		 * @since 0.10.3
+		 */
+		$action = isset( $_POST['action'] )
+			? filter_var( $_POST['action'], FILTER_SANITIZE_STRING )
+			: false;
+
+		foreach ( $img_sizes as $key => $size ) {
+			/**
+			 * Do not add our own size if it is set to false in the image config
+			 * or if it is the Media Grid that is requesting image sizes.
+			 */
+			if ( isset( $size['show_in_ui'] ) && false === $size['show_in_ui']
+				|| 'query-attachments' === $action
+			) {
 				continue;
 			}
 
 			$name = $key;
+
 			if ( isset( $size['name'] ) ) {
 				$name = $size['name'] . ' (' . $key . ')';
 			}
+
 			$sizes[ $key ] = $name;
 		}
 
