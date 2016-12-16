@@ -337,21 +337,17 @@ class Timmy {
 		$max_width  = $timber_image->width();
 		$max_height = $timber_image->height();
 
-		// Defaults
+		$oversize = isset( $img_size['oversize'] ) ? $img_size['oversize'] : array();
+
+		// Turn shortcut boolean value for oversize into array
+		if ( ! is_array( $img_size['oversize'] ) ) {
+			$oversize = array( 'allow' => $img_size['oversize'] );
+		}
+
 		$oversize_defaults = array(
 			'allow' => false,
 			'style_attr' => true,
 		);
-
-		if ( ! isset( $img_size['oversize'] ) ) {
-			$oversize = array( 'allow' => false );
-		} else {
-			if ( ! is_array( $img_size['oversize'] ) ) {
-				$oversize = array( 'allow' => $img_size['oversize'] );
-			} else {
-				$oversize = $img_size['oversize'];
-			}
-		}
 
 		$oversize = wp_parse_args( $oversize, $oversize_defaults );
 
@@ -377,12 +373,14 @@ class Timmy {
 					$height = (int) round( $width * ( $resize[1] / $resize[0] ) );
 				}
 
+				// Restrict to width
 				$restrict = 'width';
 
 			} else if ( $height > 0 && $height > $max_height ) {
 				$height = $max_height;
 				$width = (int) round( $max_width / $max_height * $height );
 
+				// Restrict to height
 				$restrict = 'height';
 			}
 

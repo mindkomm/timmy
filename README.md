@@ -505,23 +505,45 @@ As per default, All the sizes defined under `srcset` will also be generated when
 
 ### oversize
 
-(`bool`), optional, Default: `false`
+(`bool|array`), optional, Default: `array( 'allow' => false, 'style_attr' => true )`
 
-Timmy checks the size of the original image to see if it is big enough to be resized with the given parameters. If not, it returns the image at the original size, but still considering additional image sizes smaller than the original size for responsive image markup.
+Allows the image to be resized to a bigger size than its original size.
 
-If you want to disable this and let images grow bigger than the original size, set the value to `true`:
+Timmy checks the size of the original image to see if it’s big enough to be resized with the given parameters. If not, Timmy returns the image at the original size, but still considers additional image sizes smaller than the original size to be added to srcset.
+
+If you want to disable this and allow images grow bigger than the original size, set the value to `true`:
 
 ```php
 'oversize' => true,
 ```
 
-Timmy also adds a style attr to the image markup to set the max-width or max-height in px. If you want to disable this, use an array with `attr` set to `false`.
+This is a shortcut for: 
 
 ```php
+// Allow srcset sizes bigger than the original size of the image
 'oversize' => array(
-    'attr' => false,
+    'allow' => true,
+);
+```
+
+#### Inline style attributes
+
+Timmy adds inline style attributes to the image to set the width or height in px. This prevents the image to be displayed bigger than its size. This is useful if you autosize the image to the size of its container with CSS (`max-width: 100%; height: auto;`).
+
+If you want to disable inline style attributes, set `style_attr` to `false`.
+
+```php
+/*
+ * Only output srcset sizes smaller or equal the original size of the image,
+ * but do not add style attributes.
+ */ 
+'oversize' => array(
+    'allow' => false,
+    'style_attr' => false,
 ),
 ```
+
+If `allow` is set to `true`, inline styles will never be applied.
 
 ---
 

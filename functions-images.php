@@ -206,7 +206,8 @@ function get_timber_image_responsive_src( $timber_image, $size ) {
 	}
 
 	/**
-	 * Set max-width|max-height in px to prevent the image to be displayed bigger than it is
+	 * Set width or height in px as a style attribute to act as max-width and max-height
+	 * and prevent the image to be displayed bigger than it is.
 	 *
 	 * @since 0.10.0
 	 */
