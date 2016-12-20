@@ -357,11 +357,14 @@ class Timmy {
 		$width  = $resize[0];
 		$height = isset( $resize[1] ) ? $resize[1] : 0;
 
-		if ( $oversize['style_attr'] ) {
-			/**
-			 * Check whether the image source width is smaller than the desired width
-			 * or the image source height is smaller than the desired height.
-			 */
+		/**
+		 * Check whether the image source width is smaller than the desired width
+		 * or the image source height is smaller than the desired height.
+		 *
+		 * Inline styles will only be applied if $oversize['allow'] is false. It doesn’t make
+		 * sense to include bigger, low-quality sizes and still constrain an image’s dimensions.
+		 */
+		if ( ! $oversize['allow'] && $oversize['style_attr'] ) {
 			if ( $width > $max_width ) {
 				// Overwrite $width to use a max width
 				$width = $max_width;

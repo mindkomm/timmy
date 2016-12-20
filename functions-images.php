@@ -209,12 +209,9 @@ function get_timber_image_responsive_src( $timber_image, $size ) {
 	 * Set width or height in px as a style attribute to act as max-width and max-height
 	 * and prevent the image to be displayed bigger than it is.
 	 *
-	 * Inline styles will only be applied if $oversize['allow'] is false. It doesn’t make
-	 * sense to include bigger, low-quality sizes and still constrain an image’s dimensions.
-	 *
 	 * @since 0.10.0
 	 */
-	if ( ! $oversize['allow'] && $oversize['style_attr'] ) {
+	if ( $oversize['style_attr'] ) {
 		if ( 'width' === $oversize['style_attr'] ) {
 			$attr_str = ' style="width:' . $max_width . 'px;"';
 		} else if ( 'height' === $oversize['style_attr'] ) {
