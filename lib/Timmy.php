@@ -313,7 +313,7 @@ class Timmy {
 		// Check if non-empty TimberImage was found before returning it
 		if ( ! $timber_image instanceof Timber\Image
 			 || ! isset( $timber_image->post_type )
-		     || 'attachment' !== $timber_image->post_type
+			 || 'attachment' !== $timber_image->post_type
 		) {
 			return false;
 		}
