@@ -357,9 +357,7 @@ class Timmy {
 		$width  = $resize[0];
 		$height = isset( $resize[1] ) ? $resize[1] : 0;
 
-		if ( ! $oversize['allow'] ) {
-			$restrict = $oversize['style_attr'];
-
+		if ( $oversize['style_attr'] ) {
 			/**
 			 * Check whether the image source width is smaller than the desired width
 			 * or the image source height is smaller than the desired height.
@@ -374,18 +372,14 @@ class Timmy {
 				}
 
 				// Restrict to width
-				$restrict = 'width';
+				$oversize['style_attr'] = 'width';
 
 			} else if ( $height > 0 && $height > $max_height ) {
 				$height = $max_height;
 				$width = (int) round( $max_width / $max_height * $height );
 
 				// Restrict to height
-				$restrict = 'height';
-			}
-
-			if ( false !== $restrict ) {
-				$oversize['style_attr'] = $restrict;
+				$oversize['style_attr'] = 'height';
 			}
 		}
 
