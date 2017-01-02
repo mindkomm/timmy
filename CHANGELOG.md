@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.10.4 - 2017-01-02
+
+- Fixed `oversize` parameter and updated documentation.
+
 ## 0.10.3 - 2016-11-18
 
 - Fixed an error when Timmy blocked images showing up in the Media Grid view in the backend.
