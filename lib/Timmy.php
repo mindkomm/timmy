@@ -219,6 +219,13 @@ class Timmy {
 		$attachment = get_post( $attachment_id );
 
 		/**
+		 * Bail out if passed attachment id does not yield to a correct attachment.
+		 */
+		if ( $attachment === NULL ) {
+			return $return;
+		}
+
+		/**
 		 * Bail out if we try to downsize an SVG file or if we are in the backend
 		 * and want to load a GIF.
 		 *
