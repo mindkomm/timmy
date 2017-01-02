@@ -340,8 +340,8 @@ class Timmy {
 		$oversize = isset( $img_size['oversize'] ) ? $img_size['oversize'] : array();
 
 		// Turn shortcut boolean value for oversize into array
-		if ( ! is_array( $img_size['oversize'] ) ) {
-			$oversize = array( 'allow' => $img_size['oversize'] );
+		if ( is_bool( $oversize ) ) {
+			$oversize = array( 'allow' => $oversize );
 		}
 
 		$oversize_defaults = array(
