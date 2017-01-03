@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.10.5 - 2017-01-03
+
+- Fixed notice that occurred when oversize parameter was not set in image config.
+
 ## 0.10.4 - 2017-01-02
 
 - Fixed `oversize` parameter and updated documentation.
