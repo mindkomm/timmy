@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.10.6 - 2017-02-21
+
+- Fixed compatibility issue with Timber 1.2.2, where Timber returned the thumbnail size of an image instead of the full size.
+
 ## 0.10.5 - 2017-01-03
 
 - Fixed notice that occurred when oversize parameter was not set in image config.

@@ -333,7 +333,7 @@ class Timmy {
 	 *                                          (in that order). Thought to be used with list().
 	 */
 	public static function get_image_params( $timber_image, $img_size ) {
-		$file_src   = $timber_image->src();
+		$file_src   = $timber_image->src( 'full' );
 		$max_width  = $timber_image->width();
 		$max_height = $timber_image->height();
 
@@ -377,7 +377,7 @@ class Timmy {
 				// Restrict to width
 				$oversize['style_attr'] = 'width';
 
-			} else if ( $height > 0 && $height > $max_height ) {
+			} elseif ( $height > 0 && $height > $max_height ) {
 				$height = $max_height;
 				$width = (int) round( $max_width / $max_height * $height );
 
