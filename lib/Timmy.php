@@ -133,7 +133,7 @@ class Timmy {
 	 *
 	 * The image will only be shown if the config key 'show_in_ui' is not false.
 	 *
-	 * This filter will also define the sizes that are returned for the Media Grid
+	 * This filter will also define the sizes that are returned for the Media Library
 	 * in the backend. We make sure to not include any of your own image sizes in
 	 * that view, except for 'thumbnail'.
 	 */
@@ -152,7 +152,7 @@ class Timmy {
 			? filter_var( $_POST['action'], FILTER_SANITIZE_STRING )
 			: false;
 
-		// Return thumbnail size if the Media Grid is requesting an image.
+		// Return thumbnail size if the Media Library is requesting an image.
 		if ( 'query-attachments' === $action ) {
 			return array( 'thumbnail' => __( 'Thumbnail' ) );
 		}
@@ -176,9 +176,8 @@ class Timmy {
 		/**
 		 * Re-add full size so it can still be selected.
 		 *
-		 * The full size is needed, if a e.g. a logo has to be
-		 * displayed in the page content and no predefined size
-		 * fits.
+		 * The full size is needed, if a e.g. a logo has to be displayed in
+		 * the page content and no predefined size fits.
 		 */
 		$sizes['full'] = __( 'Full Size' );
 
@@ -199,7 +198,7 @@ class Timmy {
 	}
 
 	/**
-	 * Creates an image size based on the parameters given in the image configuration
+	 * Creates an image size based on the parameters given in the image configuration.
 	 *
 	 * @param bool          $return         Whether to short-circuit the image downsize.
 	 * @param int           $attachment_id  Attachment ID for image.
@@ -257,14 +256,14 @@ class Timmy {
 			$img_size = $img_sizes[ $size ];
 
 			$should_resize = $this->timber_should_resize( $attachment->post_parent, $img_sizes[ $size ] );
+
 			if ( ! $should_resize ) {
 				return $return;
 			}
 		} else {
 			/**
-			 * When an image is requested without a size name or with
-			 * dimensions only, we try to return the thumbnail. Otherwise
-			 * we just take the first image in the image array.
+			 * When an image is requested without a size name or with dimensions only, try to return the thumbnail.
+			 * Otherwise take the first image in the image array.
 			 */
 			if ( isset( $img_sizes['thumbnail'] ) ) {
 				$img_size = $img_sizes['thumbnail'];
@@ -288,12 +287,12 @@ class Timmy {
 			}
 		}
 
-		$resize   = $img_size['resize'];
+		$resize = $img_size['resize'];
 
-		$width    = $resize[0];
-		$height   = isset( $resize[1] ) ? $resize[1] : 0;
-		$crop     = isset( $resize[2] ) ? $resize[2] : 'default';
-		$force    = isset( $resize[3] ) ? $resize[3] : false;
+		$width  = $resize[0];
+		$height = isset( $resize[1] ) ? $resize[1] : 0;
+		$crop   = isset( $resize[2] ) ? $resize[2] : 'default';
+		$force  = isset( $resize[3] ) ? $resize[3] : false;
 
 		// Resize the image for that size
 		$src = self::resize( $img_size, $file_src, $width, $height, $crop, $force );
@@ -323,6 +322,7 @@ class Timmy {
 		if ( is_numeric( $timber_image ) ) {
 			$timber_image = new Timber\Image( $timber_image );
 
+		// Convert an ACF image array into a Timber image
 		} elseif ( is_array( $timber_image ) && isset( $timber_image['ID'] ) ) {
 			$timber_image = new Timber\Image( $timber_image['ID'] );
 		}
@@ -343,8 +343,8 @@ class Timmy {
 	 *
 	 * @since 0.10.0
 	 *
-	 * @param Timber\Image|int  $timber_image   Instance of TimberImage
-	 * @param array             $img_size       Image configuration array for image size to be used
+	 * @param Timber\Image|int $timber_image    Instance of TimberImage
+	 * @param array            $img_size        Image configuration array for image size to be used
 	 * @return array                            An non-associative array with $file_src, $width,
 	 *                                          $height, $crop, $force, $max_width, $undersized
 	 *                                          (in that order). Thought to be used with list().
@@ -503,14 +503,12 @@ class Timmy {
 		/**
 		 * Delete all existing image sizes for that file.
 		 *
-		 * This way, when Regenerate Thumbnails will be used,
-		 * all non-registered image sizes will be deleted as well.
-		 * Because Timber creates image sizes when they’re needed,
-		 * we can safely do this.
+		 * This way, when Regenerate Thumbnails will be used, all non-registered image sizes will be deleted as well.
+		 * Because Timber creates image sizes when they’re needed, we can safely do this.
 		 */
 		Timber\ImageHelper::delete_generated_files( $file_src );
 
-		foreach ($img_sizes as $key => $img_size) {
+		foreach ( $img_sizes as $key => $img_size ) {
 			if ( ! $this->timber_should_resize( $attachment->post_parent, $img_size ) ) {
 				continue;
 			}
@@ -518,8 +516,8 @@ class Timmy {
 			$resize = $img_size['resize'];
 
 			// Get values for the default image
-			$crop     = isset( $resize[2] ) ? $resize[2] : 'default';
-			$force    = isset( $resize[3] ) ? $resize[3] : false;
+			$crop  = isset( $resize[2] ) ? $resize[2] : 'default';
+			$force = isset( $resize[3] ) ? $resize[3] : false;
 
 			image_downsize( $attachment_id, $key );
 
@@ -529,7 +527,7 @@ class Timmy {
 
 			// Generate additional image sizes used for srcset
 			if ( isset( $img_size['srcset'] ) ) {
-				foreach ($img_size['srcset'] as $src) {
+				foreach ( $img_size['srcset'] as $src ) {
 					// Get width and height for the additional src
 					if ( is_array( $src ) ) {
 						$width = $src[0];
@@ -549,9 +547,9 @@ class Timmy {
 	/**
 	 * Check if we should pregenerate an image size based on the image configuration.
 	 *
-	 * @param  int      $attachment_parent_id
-	 * @param  string   $img_size               The key of the size in the image configuration
-	 * @return bool                             Whether the image should or can be resized
+	 * @param  int   $attachment_parent_id
+	 * @param  array $img_size The image configuration array.
+	 * @return bool Whether the image should or can be resized.
 	 */
 	private function timber_should_resize( $attachment_parent_id, $img_size ) {
 		/**
