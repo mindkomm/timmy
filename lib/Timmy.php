@@ -17,8 +17,7 @@ class Timmy {
 		// Wait for theme to initialize to make sure that we can access all image sizes
 		add_action( 'after_setup_theme', array( $this, 'after_setup_theme' ) );
 
-		// Add filters to integrate Timmy into Timber and Twig
-		add_filter( 'timber_context', array( $this, 'filter_timber_context' ) );
+		// Add filters and functions to integrate Timmy into Timber and Twig
 		add_filter( 'get_twig', array( $this, 'filter_get_twig' ) );
 	}
 
@@ -46,27 +45,18 @@ class Timmy {
 	}
 
 	/**
-	 * Add functions to Timber context
+	 * Set filters to use Timmy filters and functions in Twig.
 	 *
-	 * @param   array   $context    Timber context
-	 * @return  array   $context    Adapted Timber context
-	 */
-	public function filter_timber_context( $context ) {
-		Timber\Helper::function_wrapper( 'get_timber_image_responsive_acf' );
-		return $context;
-	}
-
-	/**
-	 * Sets filters to use Timmy functions in Twig
-	 *
-	 * @param   Twig_Environment    $twig
-	 * @return  Twig_Environment    $twig
+	 * @param   Twig_Environment $twig
+	 * @return  Twig_Environment $twig
 	 */
 	public function filter_get_twig( $twig ) {
 		$twig->addFilter( new Twig_SimpleFilter( 'get_timber_image', 'get_timber_image' ) );
 		$twig->addFilter( new Twig_SimpleFilter( 'get_timber_image_src', 'get_timber_image_src' ) );
 		$twig->addFilter( new Twig_SimpleFilter( 'get_timber_image_responsive', 'get_timber_image_responsive' ) );
 		$twig->addFilter( new Twig_SimpleFilter( 'get_timber_image_responsive_src', 'get_timber_image_responsive_src' ) );
+
+		$twig->addFunction( new \Twig_SimpleFunction( 'get_timber_image_responsive_acf', 'get_timber_image_responsive_acf' ) );
 
 		return $twig;
 	}
