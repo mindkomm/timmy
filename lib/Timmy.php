@@ -3,6 +3,7 @@
 namespace Timmy;
 
 use Timber;
+use Timber\Helper;
 use Twig_Environment;
 use Twig_SimpleFilter;
 
@@ -25,6 +26,8 @@ class Timmy {
 		if ( ! function_exists( 'get_image_sizes' ) ) {
 			return;
 		}
+
+		$this->validate_get_image_sizes();
 
 		// Add filters to make TimberImages work with normal WordPress image functionality
 		add_filter( 'image_downsize', array( $this, 'filter_image_downsize' ), 10, 3 );
@@ -555,5 +558,20 @@ class Timmy {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Check for errors in image size config.
+	 *
+	 * This function only runs when WP_DEBUG is set to true.
+	 */
+	public function validate_get_image_sizes() {
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG && class_exists( 'Timber\Helper' ) ) {
+			$sizes = get_image_sizes();
+
+			if ( isset( $sizes['full'] ) ) {
+				Helper::warn( 'You can’t use "full" as a key for an image size in get_image_sizes(). The key "full" is reserved for the full size of an image in WordPress.' );
+			}
+		}
 	}
 }
