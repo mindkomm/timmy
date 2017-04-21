@@ -126,13 +126,13 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 	function get_timber_image_responsive_src( $timber_image, $size ) {
 		$timber_image = Timmy::get_timber_image( $timber_image );
 
-		// Directly return source when we have an SVG or GIF image.
-		if ( in_array( $timber_image->post_mime_type, [ 'image/svg+xml', 'image/gif' ], true ) ) {
-			return ' src="' . $timber_image->src . '"';
-		}
-
 		if ( ! $timber_image ) {
 			return false;
+		}
+
+		// Directly return full source when we have an SVG image.
+		if ( 'image/svg+xml' === $timber_image->post_mime_type ) {
+			return ' src="' . $timber_image->src . '"';
 		}
 
 		$img_sizes = get_image_sizes();

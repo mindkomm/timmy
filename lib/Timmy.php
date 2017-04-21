@@ -148,18 +148,19 @@ class Timmy {
 		 *
 		 * @since 0.10.3
 		 */
-		$action = isset( $_POST['action'] )
+		$action = is_admin() && isset( $_POST['action'] )
 			? filter_var( $_POST['action'], FILTER_SANITIZE_STRING )
 			: false;
 
+		// Return thumbnail size if the Media Grid is requesting an image.
+		if ( 'query-attachments' === $action ) {
+			return array( 'thumbnail' => __( 'Thumbnail' ) );
+		}
+
+		// Build up new array of image sizes
 		foreach ( $img_sizes as $key => $size ) {
-			/**
-			 * Do not add our own size if it is set to false in the image config
-			 * or if it is the Media Grid that is requesting image sizes.
-			 */
-			if ( isset( $size['show_in_ui'] ) && false === $size['show_in_ui']
-				|| 'query-attachments' === $action
-			) {
+			// Do not add our own size if it is set to false in the image config
+			if ( isset( $size['show_in_ui'] ) && false === $size['show_in_ui'] ) {
 				continue;
 			}
 
@@ -212,21 +213,44 @@ class Timmy {
 		$attachment = get_post( $attachment_id );
 
 		/**
-		 * Bail out if we try to downsize an SVG file or if we are in the backend
-		 * and want to load a GIF.
 		 *
-		 * GIFs are also resized, but only the first still.
-		 * We want to load the full GIF only in the frontend, because GIFs might
-		 * get quite big. It would slow down the backend big time, if we wanted
-		 * to load the media library with several GIFs.
 		 */
+
+		// Bail out if we try to downsize an SVG file
 		if ( 'image/svg+xml' === $attachment->post_mime_type ) {
-			return $return;
-		} elseif ( ! is_admin() && 'image/gif' === $attachment->post_mime_type ) {
 			return $return;
 		}
 
 		$img_sizes = get_image_sizes();
+
+		/**
+		 * Bailout if a GIF is uploaded in the backend and a size other than the thumbnail size is requested.
+		 *
+		 * Generating sizes for a GIF takes a lot of performance. When uploading a GIF, this could quickly lead to an
+		 * error if the maximum execution time is reached. That’s why Timmy only generates the thumbnail size. This
+		 * leads to better performance in the Media Library, when only small GIFs have to be loaded. Other GIF sizes
+		 * will still be generated on the fly.
+		 *
+		 * When media files are requested through an AJAX call, an action will be present in $_POST.
+		 *
+		 * @since 0.11.0
+		 */
+		if ( is_admin() ) {
+			$action = isset( $_POST['action'] )
+				? filter_var( $_POST['action'], FILTER_SANITIZE_STRING )
+				: false;
+
+			if ( 'upload-attachment' === $action
+			     && 'image/gif' === $attachment->post_mime_type
+			) {
+				$image_size_keys = array_keys( $img_sizes );
+				$thumbnail_key = reset( $image_size_keys );
+
+				if ( $thumbnail_key !== $size ) {
+					return $return;
+				}
+			}
+		}
 
 		// Sort out which image size we need to take from our own image configuration
 		if ( ! is_array( $size ) && isset( $img_sizes[ $size ] ) ) {
@@ -463,6 +487,15 @@ class Timmy {
 	private function timber_generate_sizes( $attachment_id ) {
 		$img_sizes = get_image_sizes();
 		$attachment = get_post( $attachment_id );
+
+		/**
+		 * Never automatically generate image sizes on upload for SVG and GIF images.
+		 *
+		 * SVG and GIF images will still be resized when requested on the fly.
+		 */
+		if ( in_array( $attachment->post_mime_type, array( 'image/svg+xml', 'image/gif' ), true ) ) {
+			return;
+		}
 
 		// Timber needs the file src as an url
 		$file_src = wp_get_attachment_url( $attachment_id );

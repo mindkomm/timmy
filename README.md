@@ -616,8 +616,32 @@ function get_image_sizes() {
 ## FAQ
 
 ### How to make the full size unavailable when an image is inserted into WP WYSIWYG Editor?
+### How does Timmy handle SVG images?
+
+Timmy will always try to return the image src for an SVG image, without any responsive markup (even if you call it with a function that normally returns responsive markup, like `get_timber_image_responsive()`).
+
+### How does Timmy handle GIF images?
+
+Timber can resize GIF images when you have Imagick installed. So GIF images behave the same way than normal images. However, resizing GIF images takes quite some time. That’s why Timmy tries to reduce the amount of sizes that have to be generated.
+
+When a GIF is uploaded to the backend, it will only be resized to the `thumbnail` size defined in your image configuration. GIF images in the Media Library will be loaded in a smaller size, because this makes the Media Grid load faster. All other image size are ignored when uploading an image. GIF images are still resized on the fly.
+
+### How can I better control the markup for SVG and GIF images?
+
+If you want more control over the markup for SVG or GIF images, you can catch them through the mime type:
 
 Timmy uses the filter `image_size_names_choose` with standard priority 10 to return the image sizes configured with Timmy and additionally adds the full size of an image. Add the following filter to your theme functions to remove the full size again. 
+```twig
+{# Assuming that image is an instance of Timber\Image #}
+{% if image.post_mime_type == 'image/svg+xml' %}
+    <img class="img-svg" src="{{ image.src }}" alt="">
+{% elseif image.post_mime_type == 'image/gif'}
+    <img class="img-gif" src="{{ image.src }}" alt="">
+{% else %}
+    {# Default for images #}
+    <img{{ image|get_timber_image_responsive('your-size') }}>
+{% endif %}
+```
 
 ```php
 add_filter( 'image_size_names_choose', function( $sizes ) {
