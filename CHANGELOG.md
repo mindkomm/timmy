@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.11.0 - 2017-04
+
+- Made Timmy compatible with newest version 1.3.0 of Timber, which is now also the minimum required version.
+- Added warning when key "full" is used in image size config.
+- Added warning when an image size does not exist in the image configuration.
+- Improved how Timmy selects the correct image source internally.
+- Improved how SVG and GIF images are handled. See the [FAQ section](https://github.com/MINDKomm/timmy/tree/develop#how-does-timmy-handle-svg-images) for more information.
+- Improved how Timmy handles images it can’t find. Now, it will return `false` for all images it can’t find. This means that it will silently fail without any error messages.
+
 ## 0.10.6 - 2017-02-21
 
 - Fixed compatibility issue with Timber 1.2.2, where Timber returned the thumbnail size of an image instead of the full size.
