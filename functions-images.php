@@ -38,6 +38,11 @@ if ( ! function_exists( 'get_timber_image_src' ) ) :
 			return false;
 		}
 
+		// Directly return full source when an SVG image is requested.
+		if ( 'image/svg+xml' === $timber_image->post_mime_type ) {
+			return wp_get_attachment_url( $timber_image->ID );
+		}
+
 		$img_sizes = get_image_sizes();
 
 		list(
@@ -130,9 +135,9 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 			return false;
 		}
 
-		// Directly return full source when we have an SVG image.
+		// Directly return full source when an SVG image is requested.
 		if ( 'image/svg+xml' === $timber_image->post_mime_type ) {
-			return ' src="' . $timber_image->src . '"';
+			return ' src="' . wp_get_attachment_url( $timber_image->ID ) . '"';
 		}
 
 		$img_sizes = get_image_sizes();
