@@ -209,11 +209,33 @@ class Timmy {
 	 *                      whether the image is an intermediate size. False on failure.
 	 */
 	public function filter_image_downsize( $return = false, $attachment_id, $size ) {
-		$attachment = get_post( $attachment_id );
+		// Timber needs the file src as an url. Checks if ID belongs to an attachment.
+		$file_src = wp_get_attachment_url( $attachment_id );
+
+		if ( ! $file_src ) {
+			return false;
+		}
 
 		/**
+		 * Return full size when full size of image is requested.
 		 *
+		 * Certain functions or plugins ask for the full size of an image.
+		 * - WP SEO asks for the size 'original'
 		 */
+		if ( in_array( $size, array( 'original', 'full' ), true ) ) {
+			$file_meta = wp_get_attachment_metadata( $attachment_id );
+
+			if ( isset( $file_meta['width'] ) && isset( $file_meta['height'] ) ) {
+				return array(
+					$file_src,
+					$file_meta['width'],
+					$file_meta['height'],
+					false,
+				);
+			}
+		}
+
+		$attachment = get_post( $attachment_id );
 
 		// Bail out if we try to downsize an SVG file
 		if ( 'image/svg+xml' === $attachment->post_mime_type ) {
@@ -269,21 +291,6 @@ class Timmy {
 				$img_size = $img_sizes['thumbnail'];
 			} else {
 				$img_size = reset( $img_sizes );
-			}
-		}
-
-		// Timber needs the file src as an url
-		$file_src = wp_get_attachment_url( $attachment_id );
-
-		/**
-		 * Certain functions ask for the full size of an image
-		 *
-		 * WP SEO for example asks for the original size, which we’ll return here.
-		 */
-		if ( in_array( $size, array( 'original', 'full' ), true ) ) {
-			$file_meta = wp_get_attachment_metadata( $attachment_id );
-			if ( isset( $file_meta['width'] ) && isset( $file_meta['height'] ) ) {
-				return array( $file_src, $file_meta['width'], $file_meta['height'], false );
 			}
 		}
 
@@ -350,9 +357,11 @@ class Timmy {
 	 *                                          (in that order). Thought to be used with list().
 	 */
 	public static function get_image_params( $timber_image, $img_size ) {
-		$file_src   = $timber_image->src( 'full' );
-		$max_width  = $timber_image->width();
-		$max_height = $timber_image->height();
+		list(
+			$file_src,
+			$max_width,
+			$max_height
+		) = wp_get_attachment_image_src( $timber_image->ID, 'full' );
 
 		$oversize = isset( $img_size['oversize'] ) ? $img_size['oversize'] : array();
 
