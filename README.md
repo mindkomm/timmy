@@ -35,7 +35,7 @@ You can use Timmy with non-Timber WordPress themes.
 
 ## Features
 
-Timber already comes with a set of really nice features for handling images. Especially the [**arbitrary resizing of images**](https://github.com/timber/timber/wiki/Image-cookbook#arbitrary-resizing-of-images) is very convenient. Whenever a page is accessed and the image size can’t be found, it will be created on the fly. You can use as many different image sizes as you like, without always having to use plugins like [Regenerate Thumbnails](https://wordpress.org/plugins/regenerate-thumbnails/) when you make a change to the default WordPress image sizes.
+Timber already comes with a set of really nice features for handling images. Especially the [**arbitrary resizing of images**](http://timber.github.io/timber/#arbitrary-resizing-of-images) is very convenient. Whenever a page is accessed and the image size can’t be found, it will be created on the fly. You can use as many different image sizes as you like, without always having to use plugins like [Regenerate Thumbnails](https://wordpress.org/plugins/regenerate-thumbnails/) when you make a change to the default WordPress image sizes.
 
 **Timmy** uses Timber’s `TimberImageHelper` class to enhance this functionality even more:
 
@@ -49,7 +49,7 @@ Timber already comes with a set of really nice features for handling images. Esp
 
 * **You can still use Regenerate Thumbnails**. Using [Regenerate Thumbnails](https://wordpress.org/plugins/regenerate-thumbnails/) with Timmy will clean your uploads folder from image sizes you don’t need anymore. If you have no image sizes defined with Timmy, Timmy will just delete all image sizes generated with TimberImageHelper. But no worries, remember that Timber automatically creates an image size if it doesn’t already exist. If you have existing image sizes from the default WordPress resize functionality that weren’t resized with Timber, you can use [Force Regenerate Thumbnails](https://wordpress.org/plugins/force-regenerate-thumbnails/) to also delete all of those.
 
-* **You can still use Timber’s resize functions**. Timber has some [really neat image manipulation functions](https://github.com/timber/timber/wiki/Image-cookbook). You can still use these or you can also use a mix of the two.
+* **You can still use Timber’s resize functions**. Timber has some [really neat image manipulation functions](http://timber.github.io/timber/#image-cookbook). You can still use these or you can also use a mix of the two.
 
 ### Helps you with image HTML output
 
@@ -353,7 +353,7 @@ These sizes are reserved for the original size of the image. If you define these
 
 This is the normal size at which the image is displayed.
 
-For each images size, you need to define a `resize` key that contains the parameters later given to the resize function (more about this on <https://github.com/timber/timber/wiki/Image-cookbook#arbitrary-resizing-of-images>).
+For each images size, you need to define a `resize` key that contains the parameters later given to the resize function (more about this on <http://timber.github.io/timber/#arbitrary-resizing-of-images>).
 
 ```php
 'resize' => array( 370, 270 ),
@@ -371,7 +371,7 @@ You can use a third param, which is the crop settings.
 'resize' => array( 370, 270, 'center' ),
 ```
 
-> In cropping it will crop starting from the top edge. The other cropping options are: 'default' (which generally crops from the center, but in vertical situations has a bias toward preserving the top of the image), 'center', 'top', 'bottom', 'left' and 'right'. – from <https://github.com/timber/timber/wiki/TimberImage>
+> In cropping it will crop starting from the top edge. The other cropping options are: 'default' (which generally crops from the center, but in vertical situations has a bias toward preserving the top of the image), 'center', 'top', 'bottom', 'left' and 'right'. – from <http://timber.github.io/timber/#timber-image>
 
 ---
 
@@ -473,7 +473,7 @@ You can also use another hex color value:
 'tojpg' => '#c0ffee',
 ```
 
-Assigning a color to fill the transparent space is not possible with the [normal `tojpg` Timber filter](https://github.com/timber/timber/wiki/Image-cookbook#converting-images).
+Assigning a color to fill the transparent space is not possible with the [normal `tojpg` Timber filter](http://timber.github.io/timber/#converting-images).
 
 ---
 
