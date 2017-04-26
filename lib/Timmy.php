@@ -601,17 +601,54 @@ class Timmy {
 	}
 
 	/**
+	 * Get an image size from the image config.
+	 *
+	 * @since 0.11.0
+	 *
+	 * @param $size
+	 * @return array|bool Image size configuration array.
+	 */
+	public static function get_image_size( $size ) {
+		$sizes = get_image_sizes();
+
+		if ( isset( $sizes[ $size ] ) ) {
+			return $sizes[ $size ];
+		}
+
+		self::notice( "Image size \"{$size}\" does not exist in your image configuration." );
+
+		return false;
+	}
+
+	/**
 	 * Check for errors in image size config.
 	 *
 	 * This function only runs when WP_DEBUG is set to true.
+	 *
+	 * @since 0.11.0
 	 */
 	public function validate_get_image_sizes() {
-		if ( defined( 'WP_DEBUG' ) && WP_DEBUG && class_exists( 'Timber\Helper' ) ) {
+		if ( WP_DEBUG ) {
 			$sizes = get_image_sizes();
 
 			if ( isset( $sizes['full'] ) ) {
-				Helper::warn( 'You can’t use "full" as a key for an image size in get_image_sizes(). The key "full" is reserved for the full size of an image in WordPress.' );
+				self::notice( 'You can’t use "full" as a key for an image size in get_image_sizes(). The key "full" is reserved for the full size of an image in WordPress.' );
 			}
+		}
+	}
+
+	/**
+	 * Output an error message.
+	 *
+	 * Triggers a notice, but only in development environments, when WP_DEBUG is set to true.
+	 *
+	 * @since 0.11.0
+	 *
+	 * @param string $message The message to output.
+	 */
+	public static function notice( $message ) {
+		if ( WP_DEBUG ) {
+			trigger_error( $message, E_USER_NOTICE );
 		}
 	}
 }

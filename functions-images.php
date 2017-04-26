@@ -51,7 +51,11 @@ if ( ! function_exists( 'get_timber_image_src' ) ) :
 			return wp_get_attachment_url( $timber_image->ID );
 		}
 
-		$img_sizes = get_image_sizes();
+		$img_size = Timmy::get_image_size( $size );
+
+		if ( ! $img_size ) {
+			return false;
+		}
 
 		list(
 			$file_src,
@@ -59,10 +63,10 @@ if ( ! function_exists( 'get_timber_image_src' ) ) :
 			$height,
 			$crop,
 			$force,
-		) = Timmy::get_image_params( $timber_image, $img_sizes[ $size ] );
+		) = Timmy::get_image_params( $timber_image, $img_size );
 
 		// Resize the image for that size
-		return Timmy::resize( $img_sizes[ $size ], $file_src, $width, $height, $crop, $force );
+		return Timmy::resize( $img_size, $file_src, $width, $height, $crop, $force );
 	}
 endif;
 
@@ -151,8 +155,13 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 			return ' src="' . wp_get_attachment_url( $timber_image->ID ) . '"';
 		}
 
-		$img_sizes = get_image_sizes();
-		$resize    = $img_sizes[ $size ]['resize'];
+		$img_size = Timmy::get_image_size( $size );
+
+		if ( ! $img_size ) {
+			return false;
+		}
+
+		$resize = $img_size['resize'];
 
 		list(
 			$file_src,
@@ -163,7 +172,7 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 			$max_width,
 			$max_height,
 			$oversize,
-		) = Timmy::get_image_params( $timber_image, $img_sizes[ $size ] );
+		) = Timmy::get_image_params( $timber_image, $img_size );
 
 		$srcset = array();
 
@@ -171,11 +180,11 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 		$width_key = Timmy::get_width_key( $width, $height, $timber_image );
 
 		// Add the image source with the width as the key so they can be sorted later.
-		$srcset[ $width_key ] = Timmy::resize( $img_sizes[ $size ], $file_src, $width, $height, $crop, $force ) . ' ' . $width_key . 'w';
+		$srcset[ $width_key ] = Timmy::resize( $img_size, $file_src, $width, $height, $crop, $force ) . ' ' . $width_key . 'w';
 
 		// Add additional image sizes to srcset.
-		if ( isset( $img_sizes[ $size ]['srcset'] ) ) {
-			foreach ( $img_sizes[ $size ]['srcset'] as $src ) {
+		if ( isset( $img_size['srcset'] ) ) {
+			foreach ( $img_size['srcset'] as $src ) {
 
 				// Get width and height for the additional src
 				if ( is_array( $src ) ) {
@@ -194,7 +203,7 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 				$width_key = Timmy::get_width_key( $width, $height, $timber_image );
 
 				// For the new source, we use the same $crop and $force values as the default image
-				$srcset[ $width_key ] = Timmy::resize( $img_sizes[ $size ], $file_src, $width, $height, $crop, $force ) . ' ' . $width_key . 'w';
+				$srcset[ $width_key ] = Timmy::resize( $img_size, $file_src, $width, $height, $crop, $force ) . ' ' . $width_key . 'w';
 			}
 		}
 
@@ -210,15 +219,15 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 		 *
 		 * @since 0.10.0
 		 */
-		if ( isset( $img_sizes[ $size ]['sizes'] ) ) {
-			$attr_str = ' sizes="' . $img_sizes[ $size ]['sizes'] . '"';
+		if ( isset( $img_size['sizes'] ) ) {
+			$attr_str = ' sizes="' . $img_size['sizes'] . '"';
 
 		/**
 		 * For backwards compatibility
 		 * @deprecated since 0.10.0
 		 */
-		} elseif ( isset( $img_sizes[ $size ]['size'] ) ) {
-			$attr_str = ' sizes="' . $img_sizes[ $size ]['size'] . '"';
+		} elseif ( isset( $img_size['size'] ) ) {
+			$attr_str = ' sizes="' . $img_size['size'] . '"';
 		}
 
 		/**
