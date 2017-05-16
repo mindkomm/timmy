@@ -219,6 +219,8 @@ class Timmy {
 		/**
 		 * Return full size when full size of image is requested.
 		 *
+		 * Fall back to a width and height of '0' if metadata can’t be read.
+		 *
 		 * Certain functions or plugins ask for the full size of an image.
 		 * - WP SEO asks for the size 'original'
 		 */
@@ -233,6 +235,8 @@ class Timmy {
 					false,
 				);
 			}
+
+			return array( $file_src, 0, 0, false );
 		}
 
 		$attachment = get_post( $attachment_id );
