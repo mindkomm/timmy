@@ -19,7 +19,7 @@ class Timmy {
 		add_action( 'after_setup_theme', array( $this, 'after_setup_theme' ) );
 
 		// Add filters and functions to integrate Timmy into Timber and Twig
-		add_filter( 'get_twig', array( $this, 'filter_get_twig' ) );
+		add_filter( 'timber/twig', array( $this, 'filter_twig' ) );
 	}
 
 	public function after_setup_theme() {
@@ -53,7 +53,7 @@ class Timmy {
 	 * @param   Twig_Environment $twig
 	 * @return  Twig_Environment $twig
 	 */
-	public function filter_get_twig( $twig ) {
+	public function filter_twig( $twig ) {
 		$twig->addFilter( new Twig_SimpleFilter( 'get_timber_image', 'get_timber_image' ) );
 		$twig->addFilter( new Twig_SimpleFilter( 'get_timber_image_src', 'get_timber_image_src' ) );
 		$twig->addFilter( new Twig_SimpleFilter( 'get_timber_image_responsive', 'get_timber_image_responsive' ) );
