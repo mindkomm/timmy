@@ -24,12 +24,13 @@ You can use Timmy with non-Timber WordPress themes.
 
 ### Contents
 
-* [Features](#features)
-* [Getting Started/Preparations](#getting-startedpreparations)
-* [Functions](#functions)
-* [Image Configuration](#image-configuration)
-* [Image Configuration Example](#image-configuration-example)
-* [FAQ](#faq)
+- [Features](#features)
+- [Getting Started/Preparations](#getting-startedpreparations)
+- [Functions](#functions)
+- [Image Configuration](#image-configuration)
+- [Image Configuration Example](#image-configuration-example)
+- [Best Practices](#best-practices)
+- [FAQ](#faq)
 
 ---
 
@@ -638,7 +639,9 @@ function get_image_sizes() {
 
 ### Working with Advanced Custom Fields
 
-The functions provided by Timmy accept ACF image arrays, but they only take the value of `ID` to convert it to a TimberImage. To save a little bit of performance, it’s maybe better to only return the image ID in the ACF field group settings instead of the whole image array.
+The functions provided by Timmy accept ACF image arrays, but they only take the value of `ID` to convert it to a TimberImage. To save performance and to prevent ACF from looping through all your defined image sizes, it’s better to **only return the image ID** in the ACF field group settings instead of the whole image array.
+
+![](https://cloud.githubusercontent.com/assets/2084481/26151756/6fd5bf78-3b04-11e7-86ac-d7523f47684b.png)
 
 ## FAQ
 
