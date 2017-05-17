@@ -6,7 +6,7 @@
 - Added warning when key "full" is used in image size config.
 - Added warning when an image size does not exist in the image configuration.
 - Improved how Timmy selects the correct image source internally.
-- Improved how SVG and GIF images are handled. See the [FAQ section](https://github.com/MINDKomm/timmy/tree/develop#how-does-timmy-handle-svg-images) for more information.
+- Improved how SVG and GIF images are handled. See the [FAQ section](https://github.com/MINDKomm/timmy#how-does-timmy-handle-svg-images) for more information.
 - Improved how Timmy handles images it can’t find. Now, it will return `false` for all images it can’t find. This means that it will silently fail without any error messages.
 
 ## 0.10.6 - 2017-02-21
