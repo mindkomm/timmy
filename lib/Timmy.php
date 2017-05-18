@@ -8,6 +8,13 @@ use Twig_Environment;
 use Twig_SimpleFilter;
 
 class Timmy {
+	/**
+	 * Image sizes that can be selected in the backend.
+	 *
+	 * @var array
+	 */
+	public $image_sizes_for_ui = array();
+
 	public function __construct() {
 		if ( class_exists( 'Timber\ImageHelper' ) ) {
 			$this->init();
@@ -45,6 +52,10 @@ class Timmy {
 		 * - Make image sizes selectable in ACF
 		 */
 		add_filter( 'acf/get_image_sizes', array( $this, 'filter_acf_get_image_sizes' ) );
+
+		if ( is_admin() ) {
+			$this->image_sizes_for_ui = $this->get_image_sizes_for_ui();
+		}
 	}
 
 	/**
@@ -132,33 +143,37 @@ class Timmy {
 	 * Replace the default image sizes with the sizes from the image config.
 	 *
 	 * The image will only be shown if the config key 'show_in_ui' is not false.
-	 *
-	 * This filter will also define the sizes that are returned for the Media Library
-	 * in the backend. We make sure to not include any of your own image sizes in
-	 * that view, except for 'thumbnail'.
 	 */
-	public function filter_image_size_names_choose( $sizes = array() ) {
+	public function filter_image_size_names_choose() {
+		return $this->image_sizes_for_ui;
+	}
+
+	/**
+	 * Add the same sizes to ACF image field options as when we choose an image
+	 * size in the content editor.
+	 *
+	 * @since 0.10.0
+	 *
+	 * @param  array $sizes Sizes prepared by ACF
+	 * @return array        Our own image sizes
+	 */
+	public function filter_acf_get_image_sizes( $sizes ) {
+		return $this->image_sizes_for_ui;
+	}
+
+	/**
+	 * Build up array of image sizes to choose from in the backend.
+	 *
+	 * @since 0.11.1
+	 *
+	 * @return array Array of image sizes from image config for Timmy.
+	 */
+	public function get_image_sizes_for_ui() {
 		// We start from scratch and build our own sizes array
 		$sizes = array();
-		$img_sizes = get_image_sizes();
-
-		/**
-		 * When media files are requested through an AJAX call, an action will
-		 * be present in $_POST.
-		 *
-		 * @since 0.10.3
-		 */
-		$action = is_admin() && isset( $_POST['action'] )
-			? filter_var( $_POST['action'], FILTER_SANITIZE_STRING )
-			: false;
-
-		// Return thumbnail size if the Media Library is requesting an image.
-		if ( 'query-attachments' === $action ) {
-			return array( 'thumbnail' => __( 'Thumbnail' ) );
-		}
 
 		// Build up new array of image sizes
-		foreach ( $img_sizes as $key => $size ) {
+		foreach ( get_image_sizes() as $key => $size ) {
 			// Do not add our own size if it is set to false in the image config
 			if ( isset( $size['show_in_ui'] ) && false === $size['show_in_ui'] ) {
 				continue;
@@ -182,19 +197,6 @@ class Timmy {
 		$sizes['full'] = __( 'Full Size' );
 
 		return $sizes;
-	}
-
-	/**
-	 * Add the same sizes to ACF image field options as when we choose an image
-	 * size in the content editor.
-	 *
-	 * @since 0.10.0
-	 *
-	 * @param  array $sizes     Sizes prepared by ACF
-	 * @return array            Our own image sizes
-	 */
-	public function filter_acf_get_image_sizes( $sizes ) {
-		return $this->filter_image_size_names_choose();
 	}
 
 	/**
