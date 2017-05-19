@@ -43,6 +43,8 @@ class Timmy {
 		add_filter( 'intermediate_image_sizes_advanced', array( $this, 'filter_intermediate_image_sizes_advanced' ) );
 		add_filter( 'wp_generate_attachment_metadata', array( $this, 'filter_wp_generate_attachment_metadata' ), 10, 2 );
 
+		add_filter( 'wp_prepare_attachment_for_js', array( $this, 'filter_wp_prepare_attachment_for_js' ), 10, 3 );
+
 		// Set global $_wp_additional_image_sizes
 		$this->set_wp_additional_image_sizes();
 
@@ -219,6 +221,50 @@ class Timmy {
 		}
 
 		/**
+		 * Return thumbnail size when media files are requested through an AJAX call.
+		 *
+		 * When image data is prepared for the Media view, WordPress calls 'image_size_names_choose' to get all
+		 * selectable sizes for the backend and then 'image_downsize' to get all the image data. All image sizes that
+		 * don’t exist yet would be generated, which probably causes a max execution timeout error.
+		 *
+		 * We make sure that for the Media view, we only return the thumbnail size for an image. If the thumbnail size
+		 * doesn’t exist yet, it is generated.
+		 *
+		 * @see wp_prepare_attachment_for_js()
+		 *
+		 * @since 0.12.0
+		 */
+
+		// When media files are requested through an AJAX call, an action will be present in $_POST.
+		$action = is_admin() && isset( $_POST['action'] )
+			? filter_var( $_POST['action'], FILTER_SANITIZE_STRING )
+			: false;
+
+		if ( 'query-attachments' === $action ) {
+			$thumbnail_size = Helper::get_thumbnail_size( get_image_sizes() );
+			$resize         = $thumbnail_size['resize'];
+
+			list( $width, $height ) = self::get_dimensions_for_size( $thumbnail_size );
+
+			$crop   = self::get_crop_for_size( $resize );
+			$force  = self::get_force_for_size( $resize );
+
+			// Resize to thumbnail size
+			$src = self::resize( $thumbnail_size, $file_src, $width, $height, $crop, $force );
+
+			/**
+			 * Get original dimensions for a file that are used for the image data and the select input when an image
+			 * size can be chosen in the backend.
+			 *
+			 * The src is still the thumbnail size, so that it doesn’t trigger a resize.
+			 */
+			$original_size = self::get_image_size( $size );
+			list( $width, $height ) = self::get_dimensions_for_size( $original_size );
+
+			return array( $src, $width, $height, true );
+		}
+
+		/**
 		 * Return full size when full size of image is requested.
 		 *
 		 * Fall back to a width and height of '0' if metadata can’t be read.
@@ -322,6 +368,27 @@ class Timmy {
 		 * a resized image, false if it is the original.
 		 */
 		return array( $src, $width, $height, true );
+	}
+
+	/**
+	 * Filters image data before it is returned to the Media view.
+	 *
+	 * When the details for an image are requested, WordPress takes the large size of an image to display if it exists.
+	 * Otherwise it takes the full size. If the large size exists, this filter replaces the large size with the full
+	 * size of an image, because if the large size is changed, it would cause regeneration of all the images, which
+	 * results in the Media view to become unresponsive and finally run into a max excecution time error.
+	 *
+	 * @param array $response   Response data.
+	 * @param array $attachment Attachment data.
+	 * @param array $meta       Meta data for an image.
+	 * @return array
+	 */
+	public function filter_wp_prepare_attachment_for_js( $response, $attachment, $meta ) {
+		if ( isset( $response['sizes']['large'] ) ) {
+			$response['sizes']['large'] = $response['sizes']['full'];
+		}
+
+		return $response;
 	}
 
 	/**
@@ -465,6 +532,38 @@ class Timmy {
 		}
 	}
 
+	/**
+	 * Get width and height for an image size.
+	 *
+	 * @param array $img_size Image size configuration array.
+	 * @return array Width and height.
+	 */
+	public static function get_dimensions_for_size( $img_size ) {
+		$width = absint( $img_size['resize'][0] );
+		$height = isset( $img_size['resize'][1] ) ? absint( $img_size['resize'][1] ) : 0;
+
+		return array( $width, $height );
+	}
+
+	/**
+	 * Get crop value from a resize parameter.
+	 *
+	 * @param array $resize Resize parameter from image config.
+	 * @return string Crop value.
+	 */
+	public static function get_crop_for_size( $resize ) {
+		return isset( $resize[2] ) ? $resize[2] : 'default';
+	}
+
+	/**
+	 * Get force value from a resize parameter.
+	 *
+	 * @param array $resize Resize parameter from image config.
+	 * @return bool Force value.
+	 */
+	public static function get_force_for_size( $resize ) {
+		return isset( $resize[3] ) ? $resize[3] : false;
+	}
 	/**
 	 * Get the actual width at which the image will be displayed.
 	 *
