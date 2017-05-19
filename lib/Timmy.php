@@ -3,7 +3,6 @@
 namespace Timmy;
 
 use Timber;
-use Timber\Helper;
 use Twig_Environment;
 use Twig_SimpleFilter;
 
@@ -42,7 +41,6 @@ class Timmy {
 		add_filter( 'intermediate_image_sizes', array( $this, 'filter_intermediate_image_sizes' ) );
 		add_filter( 'intermediate_image_sizes_advanced', array( $this, 'filter_intermediate_image_sizes_advanced' ) );
 		add_filter( 'wp_generate_attachment_metadata', array( $this, 'filter_wp_generate_attachment_metadata' ), 10, 2 );
-
 		add_filter( 'wp_prepare_attachment_for_js', array( $this, 'filter_wp_prepare_attachment_for_js' ), 10, 3 );
 
 		// Set global $_wp_additional_image_sizes
@@ -91,8 +89,7 @@ class Timmy {
 		foreach ( get_image_sizes() as $key => $size ) {
 			$sizes[] = $key;
 
-			$width = absint( $size['resize'][0] );
-			$height = isset( $size['resize'][1] ) ? absint( $size['resize'][1] ) : 0;
+			list( $width, $height ) = Helper::get_dimensions_for_size( $size );
 			$crop = isset( $size['resize'][1] ) ? true : false;
 
 			$_wp_additional_image_sizes[ $key ] = array(
@@ -239,13 +236,12 @@ class Timmy {
 			: false;
 
 		if ( 'query-attachments' === $action ) {
-			$thumbnail_size = Helper::get_thumbnail_size( get_image_sizes() );
-			$resize         = $thumbnail_size['resize'];
+			$thumbnail_size = Helper::get_thumbnail_size();
 
-			list( $width, $height ) = self::get_dimensions_for_size( $thumbnail_size );
+			list( $width, $height ) = Helper::get_dimensions_for_size( $thumbnail_size );
 
-			$crop   = self::get_crop_for_size( $resize );
-			$force  = self::get_force_for_size( $resize );
+			$crop   = Helper::get_crop_for_size( $thumbnail_size );
+			$force  = Helper::get_force_for_size( $thumbnail_size );
 
 			// Resize to thumbnail size
 			$src = self::resize( $thumbnail_size, $file_src, $width, $height, $crop, $force );
@@ -256,8 +252,8 @@ class Timmy {
 			 *
 			 * The src is still the thumbnail size, so that it doesn’t trigger a resize.
 			 */
-			$original_size = self::get_image_size( $size );
-			list( $width, $height ) = self::get_dimensions_for_size( $original_size );
+			$original_size = Helper::get_image_size( $size );
+			list( $width, $height ) = Helper::get_dimensions_for_size( $original_size );
 
 			return array( $src, $width, $height, true );
 		}
@@ -332,23 +328,13 @@ class Timmy {
 				return $return;
 			}
 		} else {
-			/**
-			 * When an image is requested without a size name or with dimensions only, try to return the thumbnail.
-			 * Otherwise take the first image in the image array.
-			 */
-			if ( isset( $img_sizes['thumbnail'] ) ) {
-				$img_size = $img_sizes['thumbnail'];
-			} else {
-				$img_size = reset( $img_sizes );
-			}
+			$img_size = Helper::get_thumbnail_size();
 		}
 
-		$resize = $img_size['resize'];
+		list( $width, $height ) = Helper::get_dimensions_for_size( $img_size );
 
-		$width  = $resize[0];
-		$height = isset( $resize[1] ) ? $resize[1] : 0;
-		$crop   = isset( $resize[2] ) ? $resize[2] : 'default';
-		$force  = isset( $resize[3] ) ? $resize[3] : false;
+		$crop   = Helper::get_crop_for_size( $img_size );
+		$force  = Helper::get_force_for_size( $img_size );
 
 		// Resize the image for that size
 		$src = self::resize( $img_size, $file_src, $width, $height, $crop, $force );
@@ -369,10 +355,12 @@ class Timmy {
 	/**
 	 * Filters image data before it is returned to the Media view.
 	 *
-	 * When the details for an image are requested, WordPress takes the large size of an image to display if it exists.
-	 * Otherwise it takes the full size. If the large size exists, this filter replaces the large size with the full
-	 * size of an image, because if the large size is changed, it would cause regeneration of all the images, which
-	 * results in the Media view to become unresponsive and finally run into a max excecution time error.
+	 * When the details for an image are requested in the Media view, WordPress displays the large size of an image if
+	 * it exists, otherwise it displays the full size. If the large size exists, this filter replaces the large size
+	 * with the full size of an image, because if the large size is changed, it would cause regeneration of all the
+	 * images, which results in the Media view to become unresponsive and finally run into a max excecution time error.
+	 *
+	 * @see wp-includes/media-template.php
 	 *
 	 * @param array $response   Response data.
 	 * @param array $attachment Attachment data.
@@ -447,8 +435,7 @@ class Timmy {
 		$resize = $img_size['resize'];
 
 		// Get values for the default image size
-		$width  = $resize[0];
-		$height = isset( $resize[1] ) ? $resize[1] : 0;
+		list( $width, $height ) = Helper::get_dimensions_for_size( $img_size );
 
 		/**
 		 * Check whether the image source width is smaller than the desired width
@@ -479,8 +466,8 @@ class Timmy {
 			}
 		}
 
-		$crop   = isset( $resize[2] ) ? $resize[2] : 'default';
-		$force  = isset( $resize[3] ) ? $resize[3] : false;
+		$crop  = Helper::get_crop_for_size( $img_size );
+		$force = Helper::get_force_for_size( $img_size );
 
 		return array(
 			$file_src,
@@ -527,69 +514,35 @@ class Timmy {
 	}
 
 	/**
-	 * Get width and height for an image size.
-	 *
-	 * @param array $img_size Image size configuration array.
-	 * @return array Width and height.
-	 */
-	public static function get_dimensions_for_size( $img_size ) {
-		$width = absint( $img_size['resize'][0] );
-		$height = isset( $img_size['resize'][1] ) ? absint( $img_size['resize'][1] ) : 0;
-
-		return array( $width, $height );
-	}
-
-	/**
-	 * Get crop value from a resize parameter.
-	 *
-	 * @param array $resize Resize parameter from image config.
-	 * @return string Crop value.
-	 */
-	public static function get_crop_for_size( $resize ) {
-		return isset( $resize[2] ) ? $resize[2] : 'default';
-	}
-
-	/**
-	 * Get force value from a resize parameter.
-	 *
-	 * @param array $resize Resize parameter from image config.
-	 * @return bool Force value.
-	 */
-	public static function get_force_for_size( $resize ) {
-		return isset( $resize[3] ) ? $resize[3] : false;
-	}
-	/**
 	 * Get the actual width at which the image will be displayed.
 	 *
-	 * When 0 is passed to Timber as a width, it calculates the image ratio based on
-	 * the height of the image. We have to account for that, when we use the responsive
-	 * image, because in the srcset, there cant be a value like "image.jpg 0w". So we
-	 * have to calculate the width based on the values we have.
+	 * When 0 is passed to Timber as a width, it calculates the image ratio based on the height of the image.
+	 * We have to account for that, when we use the responsive image, because in the srcset, there cant be a value
+	 * like "image.jpg 0w". So we have to calculate the width based on the values we have.
 	 *
 	 * @since 0.9.3
 	 *
-	 * @param  int          $width          The value of the resize parameter for width
-	 * @param  int          $height         The value of the resize parameter for height
-	 * @param  Timber\Image $timber_image   Instance of TimberImage
+	 * @param  int          $width          The value of the resize parameter for width.
+	 * @param  int          $height         The value of the resize parameter for height.
+	 * @param  Timber\Image $timber_image   Instance of TimberImage.
 	 * @return int                          The width at which the image will be displayed.
 	 */
 	public static function get_width_key( $width, $height, $timber_image ) {
-		if ( 0 === $width ) {
+		if ( 0 === (int) $width ) {
 			/**
-			 * Calculate image width based on image ratio and height.
-			 * We need a rounded value because we will use this number as an
-			 * array key and for defining the srcset size in pixel values.
+			 * Calculate image width based on image ratio and height. We need a rounded value because we will use this
+			 * number as an array key and for defining the srcset size in pixel values.
 			 */
 			return (int) round( $timber_image->aspect() * $height );
 		}
 
-		return $width;
+		return (int) $width;
 	}
 
 	/**
 	 * Generate image sizes defined for Timmy with TimberImageHelper.
 	 *
-	 * @param  int	$attachment_id	The attachment ID for which all images should be resized
+	 * @param  int	$attachment_id	The attachment ID for which all images should be resized.
 	 * @return void
 	 */
 	private function timber_generate_sizes( $attachment_id ) {
@@ -621,29 +574,20 @@ class Timmy {
 				continue;
 			}
 
-			$resize = $img_size['resize'];
-
-			// Get values for the default image
-			$crop  = isset( $resize[2] ) ? $resize[2] : 'default';
-			$force = isset( $resize[3] ) ? $resize[3] : false;
-
 			image_downsize( $attachment_id, $key );
 
 			if ( isset( $img_size['generate_srcset_sizes'] ) && false === $img_size['generate_srcset_sizes'] ) {
 				continue;
 			}
 
+			// Get values for the default image
+			$crop  = Helper::get_crop_for_size( $img_size );
+			$force = Helper::get_force_for_size( $img_size );
+
 			// Generate additional image sizes used for srcset
 			if ( isset( $img_size['srcset'] ) ) {
-				foreach ( $img_size['srcset'] as $src ) {
-					// Get width and height for the additional src
-					if ( is_array( $src ) ) {
-						$width = $src[0];
-						$height = isset( $src[1] ) ? $src[1] : 0;
-					} else {
-						$width = (int) round( $resize[0] * $src );
-						$height = isset( $resize[1] ) ? (int) round( $resize[1] * $src ) : 0;
-					}
+				foreach ( $img_size['srcset'] as $srcset_size ) {
+					list( $width, $height ) = Helper::get_dimensions_for_srcset_size( $img_size['resize'], $srcset_size );
 
 					// For the new source, we use the same $crop and $force values as the default image
 					self::resize( $img_size, $file_src, $width, $height, $crop, $force );
@@ -674,6 +618,21 @@ class Timmy {
 			$attachment_post_type = array( $parent->post_type );
 		}
 
+		return self::is_size_for_post_type( $img_size, $attachment_post_type );
+	}
+
+	/**
+	 * Checks whether an image size is restricted to certain post types.
+	 *
+	 * @param array        $img_size             Image configuration array.
+	 * @param string|array $attachment_post_type Post type for attachment.
+	 * @return bool
+	 */
+	public static function is_size_for_post_type( $img_size, $attachment_post_type ) {
+		if ( ! is_array( $attachment_post_type ) ) {
+			$attachment_post_type = array( $attachment_post_type );
+		}
+
 		// Reset post types that should be applied as a standard
 		$post_types_to_apply = array( '', 'page', 'post' );
 
@@ -700,26 +659,6 @@ class Timmy {
 	}
 
 	/**
-	 * Get an image size from the image config.
-	 *
-	 * @since 0.11.0
-	 *
-	 * @param $size
-	 * @return array|bool Image size configuration array.
-	 */
-	public static function get_image_size( $size ) {
-		$sizes = get_image_sizes();
-
-		if ( isset( $sizes[ $size ] ) ) {
-			return $sizes[ $size ];
-		}
-
-		self::notice( "Image size \"{$size}\" does not exist in your image configuration." );
-
-		return false;
-	}
-
-	/**
 	 * Check for errors in image size config.
 	 *
 	 * This function only runs when WP_DEBUG is set to true.
@@ -731,23 +670,8 @@ class Timmy {
 			$sizes = get_image_sizes();
 
 			if ( isset( $sizes['full'] ) ) {
-				self::notice( 'You can’t use "full" as a key for an image size in get_image_sizes(). The key "full" is reserved for the full size of an image in WordPress.' );
+				Helper::notice( 'You can’t use "full" as a key for an image size in get_image_sizes(). The key "full" is reserved for the full size of an image in WordPress.' );
 			}
-		}
-	}
-
-	/**
-	 * Output an error message.
-	 *
-	 * Triggers a notice, but only in development environments, when WP_DEBUG is set to true.
-	 *
-	 * @since 0.11.0
-	 *
-	 * @param string $message The message to output.
-	 */
-	public static function notice( $message ) {
-		if ( WP_DEBUG ) {
-			trigger_error( $message, E_USER_NOTICE );
 		}
 	}
 }

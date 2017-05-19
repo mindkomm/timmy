@@ -51,7 +51,7 @@ if ( ! function_exists( 'get_timber_image_src' ) ) :
 			return wp_get_attachment_url( $timber_image->ID );
 		}
 
-		$img_size = Timmy::get_image_size( $size );
+		$img_size = Helper::get_image_size( $size );
 
 		if ( ! $img_size ) {
 			return false;
@@ -155,7 +155,7 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 			return ' src="' . wp_get_attachment_url( $timber_image->ID ) . '"';
 		}
 
-		$img_size = Timmy::get_image_size( $size );
+		$img_size = Helper::get_image_size( $size );
 
 		if ( ! $img_size ) {
 			return false;
