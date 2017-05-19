@@ -80,9 +80,8 @@ class Timmy {
 	/**
 	 * Define global $_wp_additional_image_sizes with Timmy sizes
 	 *
-	 * Many WordPress functions and plugins rely on this global variable to
-	 * integrate with images. We want this functionality to return all image
-	 * sizes we defined ourselves.
+	 * Many WordPress functions and plugins rely on this global variable to integrate with images.
+	 * We want this functionality to return all image sizes we defined ourselves.
 	 *
 	 * @since 0.10.0
 	 */
@@ -166,7 +165,7 @@ class Timmy {
 	/**
 	 * Build up array of image sizes to choose from in the backend.
 	 *
-	 * @since 0.11.1
+	 * @since 0.12.0
 	 *
 	 * @return array Array of image sizes from image config for Timmy.
 	 */
@@ -193,8 +192,7 @@ class Timmy {
 		/**
 		 * Re-add full size so it can still be selected.
 		 *
-		 * The full size is needed, if a e.g. a logo has to be displayed in
-		 * the page content and no predefined size fits.
+		 * The full size is needed, if a e.g. a logo has to be displayed in the page content and no predefined size fits.
 		 */
 		$sizes['full'] = __( 'Full Size' );
 
@@ -303,12 +301,11 @@ class Timmy {
 		 * error if the maximum execution time is reached. That’s why Timmy only generates the thumbnail size. This
 		 * leads to better performance in the Media Library, when only small GIFs have to be loaded. Other GIF sizes
 		 * will still be generated on the fly.
-		 *
-		 * When media files are requested through an AJAX call, an action will be present in $_POST.
-		 *
+		 **
 		 * @since 0.11.0
 		 */
 		if ( is_admin() ) {
+			// When media files are requested through an AJAX call, an action will be present in $_POST.
 			$action = isset( $_POST['action'] )
 				? filter_var( $_POST['action'], FILTER_SANITIZE_STRING )
 				: false;
@@ -363,9 +360,8 @@ class Timmy {
 		}
 
 		/**
-		 * For the return, we also send in a fourth parameter,
-		 * which stands for is_intermediate. It is true if $url is
-		 * a resized image, false if it is the original.
+		 * For the return, we also send in a fourth parameter, which stands for is_intermediate.
+		 * It is true if $src is a resized image, false if it is the original.
 		 */
 		return array( $src, $width, $height, true );
 	}
@@ -394,9 +390,8 @@ class Timmy {
 	/**
 	 * Convert an image into a TimberImage.
 	 *
-	 * @param mixed $timber_image   The ID of the image, an array containing an ID key or
-	 *                              an instance of Timber\Image.
-	 * @return mixed                Instance of Timber\Image.
+	 * @param mixed $timber_image The ID of the image, an array containing an ID key or an instance of Timber\Image.
+	 * @return mixed              Instance of Timber\Image.
 	 */
 	public static function get_timber_image( $timber_image ) {
 		if ( is_numeric( $timber_image ) ) {
@@ -425,9 +420,8 @@ class Timmy {
 	 *
 	 * @param Timber\Image|int $timber_image    Instance of TimberImage
 	 * @param array            $img_size        Image configuration array for image size to be used
-	 * @return array                            An non-associative array with $file_src, $width,
-	 *                                          $height, $crop, $force, $max_width, $undersized
-	 *                                          (in that order). Thought to be used with list().
+	 * @return array                            An non-associative array with $file_src, $width, $height, $crop, $force,
+	 *                                          $max_width, $undersized (in that order). Thought to be used with list().
 	 */
 	public static function get_image_params( $timber_image, $img_size ) {
 		list(
@@ -505,13 +499,13 @@ class Timmy {
 	 *
 	 * @since 0.9.2
 	 *
-	 * @param  array    $img_size 	Configuration values for an image size
-	 * @param  string   $file_src   The src of the original image
-	 * @param  int      $width    	The width the new image should be resized to
-	 * @param  int      $height   	The height the new image should be resized to
-	 * @param  string   $crop       Cropping option
-	 * @param  bool     $force    	Force cropping
-	 * @return string               The src of the image
+	 * @param  array    $img_size 	Configuration values for an image size.
+	 * @param  string   $file_src   The src of the original image.
+	 * @param  int      $width    	The width the new image should be resized to.
+	 * @param  int      $height   	The height the new image should be resized to.
+	 * @param  string   $crop       Optional. Cropping option. Default 'default'.
+	 * @param  bool     $force    	Optional. Force cropping. Default false.
+	 * @return string               The src of the image.
 	 */
 	public static function resize( $img_size, $file_src, $width, $height, $crop, $force ) {
 		// Check if image should be converted to jpg first
