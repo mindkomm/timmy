@@ -1,6 +1,7 @@
 <?php
 
 use Timmy\Timmy;
+use Timmy\Helper;
 
 /**
  * Frontend functions for Timmy.
@@ -117,13 +118,14 @@ if ( ! function_exists( 'get_timber_image_responsive' ) ) :
 	/**
 	 * Get the responsive srcset and sizes for a TimberImage.
 	 *
-	 * @param  Timber\Image|int $timber_image Instance of TimberImage or Attachment ID
-	 * @param  string           $size         Size key of the image to return
+	 * @param  Timber\Image|int $timber_image Instance of TimberImage or Attachment ID.
+	 * @param  string           $size         Size key of the image to return.
+	 * @param array             $args         Array of options.
 	 * @return string|bool                    Image srcset, sizes, alt and title attributes. False if image
 	 *                                        can’t be found.
 	 */
-	function get_timber_image_responsive( $timber_image, $size ) {
-		$src = get_timber_image_responsive_src( $timber_image, $size );
+	function get_timber_image_responsive( $timber_image, $size, $args = array() ) {
+		$src = get_timber_image_responsive_src( $timber_image, $size, $args );
 
 		if ( ! $src ) {
 			return false;
@@ -139,11 +141,12 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 	/**
 	 * Get srcset and sizes for a TimberImage.
 	 *
-	 * @param  Timber\Image|int $timber_image Instance of TimberImage or Attachment ID.
-	 * @param  string           $size         Size key of the image to return.
-	 * @return string|bool                    Image srcset and sizes attributes. False if image can’t be found.
+	 * @param Timber\Image|int $timber_image Instance of TimberImage or Attachment ID.
+	 * @param string           $size         Size key of the image to return.
+	 * @param array             $args        Array of options.
+	 * @return string|bool                   Image srcset and sizes attributes. False if image can’t be found.
 	 */
-	function get_timber_image_responsive_src( $timber_image, $size ) {
+	function get_timber_image_responsive_src( $timber_image, $size, $args = array() ) {
 		$timber_image = Timmy::get_timber_image( $timber_image );
 
 		if ( ! $timber_image ) {
@@ -161,7 +164,21 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 			return false;
 		}
 
+		/**
+		 * Default arguments for image markup
+		 *
+		 * @since 0.12.0
+		 */
+		$default_args = array(
+			'attr_src' => true,
+			'attr_width' => false,
+			'attr_height' => false,
+		);
+
+		$args = wp_parse_args( $args, $default_args );
+
 		$resize = $img_size['resize'];
+		$srcset = array();
 
 		list(
 			$file_src,
@@ -174,44 +191,50 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 			$oversize,
 		) = Timmy::get_image_params( $timber_image, $img_size );
 
-		$srcset = array();
-
 		// Get proper width_key to handle width values of 0
 		$width_key = Timmy::get_width_key( $width, $height, $timber_image );
 
+		// Get default size for image
+		$default_size = Timmy::resize( $img_size, $file_src, $width, $height, $crop, $force );
+
 		// Add the image source with the width as the key so they can be sorted later.
-		$srcset[ $width_key ] = Timmy::resize( $img_size, $file_src, $width, $height, $crop, $force ) . ' ' . $width_key . 'w';
+		$srcset[ $width_key ] = $default_size . " {$width_key}w";
 
 		// Add additional image sizes to srcset.
 		if ( isset( $img_size['srcset'] ) ) {
-			foreach ( $img_size['srcset'] as $src ) {
-
-				// Get width and height for the additional src
-				if ( is_array( $src ) ) {
-					$width  = $src[0];
-					$height = isset( $src[1] ) ? $src[1] : 0;
-				} else {
-					$width  = (int) round( $resize[0] * $src );
-					$height = isset( $resize[1] ) ? (int) round( $resize[1] * $src ) : 0;
-				}
+			foreach ( $img_size['srcset'] as $srcset_src ) {
+				list(
+					$width_intermediate,
+					$height_intermediate
+				) = Helper::get_dimensions_for_srcset_size( $resize, $srcset_src );
 
 				// Bail out if the current size’s width is bigger than available width
-				if ( ! $oversize['allow'] && ( $width > $max_width || ( 0 === $width && $height > $max_height ) ) ) {
+				if ( ! $oversize['allow']
+					 && ( $width_intermediate > $max_width
+					     || ( 0 === $width_intermediate && $height_intermediate > $max_height )
+				     )
+				) {
 					continue;
 				}
 
-				$width_key = Timmy::get_width_key( $width, $height, $timber_image );
+				$width_key = Timmy::get_width_key( $width_intermediate, $height_intermediate, $timber_image );
 
 				// For the new source, we use the same $crop and $force values as the default image
-				$srcset[ $width_key ] = Timmy::resize( $img_size, $file_src, $width, $height, $crop, $force ) . ' ' . $width_key . 'w';
+				$srcset[ $width_key ] = Timmy::resize(
+					$img_size,
+					$file_src,
+					$width_intermediate,
+					$height_intermediate,
+					$crop,
+					$force
+				) . " {$width_key}w";
 			}
 		}
 
-		// Sort entries from smallest to highest
-		ksort( $srcset );
-
-		// Build sizes attribute string
-		$attr_str = '';
+		// Attribute strings
+		$attr_sizes = '';
+		$attr_width = '';
+		$attr_height = '';
 
 		/**
 		 * Check for 'sizes' option in image configuration.
@@ -220,14 +243,14 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 		 * @since 0.10.0
 		 */
 		if ( isset( $img_size['sizes'] ) ) {
-			$attr_str = ' sizes="' . $img_size['sizes'] . '"';
+			$attr_sizes = ' sizes="' . $img_size['sizes'] . '"';
 
 		/**
 		 * For backwards compatibility
 		 * @deprecated since 0.10.0
 		 */
 		} elseif ( isset( $img_size['size'] ) ) {
-			$attr_str = ' sizes="' . $img_size['size'] . '"';
+			$attr_sizes = ' sizes="' . $img_size['size'] . '"';
 		}
 
 		/**
@@ -237,15 +260,41 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 		 * @since 0.10.0
 		 */
 		if ( $oversize['style_attr'] ) {
-			if ( 'width' === $oversize['style_attr'] ) {
-				$attr_str = ' style="width:' . $max_width . 'px;"';
-			} elseif ( 'height' === $oversize['style_attr'] ) {
-				$attr_str = ' style="height:' . $max_height . 'px;"';
+			if ( 'width' === $oversize['style_attr'] && ! $args['attr_width'] ) {
+				$attr_width = ' style="width:' . $max_width . 'px;"';
+			} elseif ( 'height' === $oversize['style_attr'] && ! $args['attr_height'] ) {
+				$attr_height = ' style="height:' . $max_height . 'px;"';
 			}
 		}
 
-		// Return the HTML attribute string
-		return ' srcset="' . implode( ', ', $srcset ) . '"' . $attr_str;
+		if ( $args['attr_width'] ) {
+			$attr_width = ' width="' . $width . '"';
+		}
+
+		if ( $args['attr_height'] ) {
+			$attr_height = ' height="' . $height . '"';
+		}
+
+		$html = '';
+
+		/**
+		 * Only add responsive srcset and sizes attributes if there are any present.
+		 * If there’s only one, it’s always the default size. In that case, we just add it as a src.
+		 */
+		if ( count( $srcset ) > 1 || ! $args['attr_src'] ) {
+			// Sort entries from smallest to highest
+			ksort( $srcset );
+
+			$html .= 'srcset="' . implode( ', ', $srcset ) . '"' . $attr_sizes;
+		}
+
+		if ( $args['attr_src'] || count( $srcset ) < 1 ) {
+			$html .= ' src="' . $default_size . '"';
+		}
+
+		$html .= $attr_width . $attr_height;
+
+		return $html;
 	}
 endif;
 
