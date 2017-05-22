@@ -118,7 +118,7 @@ class Responsive_Content_Images {
 		$image = preg_replace( '/ alt="([^"]+)"/', '', $image );
 
 		// Add 'srcset' and 'sizes' attributes to the image markup.
-		$image = preg_replace( '/<img ([^>]+?)[\/ ]*>/', '<img $1' . $attr_responsive . ' />', $image );
+		$image = preg_replace( '/<img ([^>]+?)[\/ ]*>/', '<img $1 ' . $attr_responsive . ' />', $image );
 
 		return $image;
 	}
