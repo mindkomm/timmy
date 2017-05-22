@@ -540,7 +540,7 @@ class Timmy {
 	}
 
 	/**
-	 * Generate image sizes defined for Timmy with TimberImageHelper.
+	 * Generate image sizes defined for Timmy with Timber\ImageHelper.
 	 *
 	 * @param  int	$attachment_id	The attachment ID for which all images should be resized.
 	 * @return void
@@ -551,7 +551,6 @@ class Timmy {
 
 		/**
 		 * Never automatically generate image sizes on upload for SVG and GIF images.
-		 *
 		 * SVG and GIF images will still be resized when requested on the fly.
 		 */
 		if ( in_array( $attachment->post_mime_type, array( 'image/svg+xml', 'image/gif' ), true ) ) {
@@ -574,6 +573,7 @@ class Timmy {
 				continue;
 			}
 
+			// Create downsized version of the image
 			image_downsize( $attachment_id, $key );
 
 			if ( isset( $img_size['generate_srcset_sizes'] ) && false === $img_size['generate_srcset_sizes'] ) {

@@ -177,9 +177,6 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 
 		$args = wp_parse_args( $args, $default_args );
 
-		$resize = $img_size['resize'];
-		$srcset = array();
-
 		list(
 			$file_src,
 			$width,
@@ -190,6 +187,8 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 			$max_height,
 			$oversize,
 		) = Timmy::get_image_params( $timber_image, $img_size );
+
+		$srcset = array();
 
 		// Get proper width_key to handle width values of 0
 		$width_key = Timmy::get_width_key( $width, $height, $timber_image );
@@ -206,7 +205,7 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 				list(
 					$width_intermediate,
 					$height_intermediate
-				) = Helper::get_dimensions_for_srcset_size( $resize, $srcset_src );
+				) = Helper::get_dimensions_for_srcset_size( $img_size['resize'], $srcset_src );
 
 				// Bail out if the current size’s width is bigger than available width
 				if ( ! $oversize['allow']
