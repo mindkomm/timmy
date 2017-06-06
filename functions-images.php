@@ -280,14 +280,14 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 		 * Only add responsive srcset and sizes attributes if there are any present.
 		 * If there’s only one, it’s always the default size. In that case, we just add it as a src.
 		 */
-		if ( count( $srcset ) > 1 || ! $args['attr_src'] ) {
+		if ( count( $srcset ) > 1 ) {
 			// Sort entries from smallest to highest
 			ksort( $srcset );
 
 			$html .= 'srcset="' . implode( ', ', $srcset ) . '"' . $attr_sizes;
 		}
 
-		if ( $args['attr_src'] || count( $srcset ) < 1 ) {
+		if ( $args['attr_src'] ) {
 			$html .= ' src="' . $default_size . '"';
 		}
 
