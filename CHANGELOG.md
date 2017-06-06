@@ -1,6 +1,19 @@
 # Changelog
 
-## 0.11.0 - 2017-04
+## 0.12.0 - 2017-06
+
+- Added support for [responsive content images](https://github.com/MINDKomm/timmy#responsive-content-images), which means that Timmy can now make images inserted in the post content via the WordPress Editor responsive.
+- Optimized image markup by using the `srcset` attribute only if multiple images are available. If an image has only one image in srcset, if falls back to using the `src` attribute instead.
+- Added `src` fallback attribute to all responsive images by default to fix invalid markup errors (as [recommended by Picturefill](http://scottjehl.github.io/picturefill/#support)). 
+- Optimized performance in the backend.
+	- Only thumbnails and full sizes of images are shown in the backend to prevent on-the-fly resizing of images (e.g. in the Media Grid).
+	- Uses full size instead of large size if 'large' is present as a size.
+- Fixed selectable images sizes that appear in various positions in the backend.
+- Added fallback for GIFs to return full size when image metadata can’t be read.
+- Internal: Introduced new helper class for static helper functions.
+- Internal: Replaced deprecated filter `get_twig` with `timber/twig`.
+
+## 0.11.0 - 2017-04-26
 
 - Made Timmy compatible with newest version 1.3.0 of Timber, which is now also the minimum required version.
 - Added warning when key "full" is used in image size config.
