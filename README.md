@@ -145,6 +145,10 @@ function get_image_sizes() {
 
 The array key (`custom-4` in the example above) will be used to reference the image when you want to load it in your template.
 
+### 5. Performance optimizations
+
+If you use Advanced Custom Fields, check the [Best Practices](#best-practices) section for how to load images faster.
+
 ## Functions
 
 You can use the following functions to get your images into your template:
@@ -556,7 +560,7 @@ Timmy adds inline style attributes to the image to set the width or height in px
 If you want to disable inline style attributes, set `style_attr` to `false`.
 
 ```php
-/*
+/**
  * Only output srcset sizes smaller or equal the original size of the image,
  * but do not add style attributes.
  */ 
@@ -635,6 +639,21 @@ function get_image_sizes() {
 }
 ```
 
+## Responsive Content Images
+
+Timmy can make images added to the WYSIWYG editor responsive.
+
+- Image sizes are selectable in the backend by default. If you don’t want an image size to show up in the backend, use `show_in_ui => false`.
+- Selects the size defined in your image configuration to build up the responsive markup through [`get_timber_image_responsive()`](#get_timber_image_responsive).
+
+**functions.php**
+
+Enable the functionality in your theme:
+
+```
+new Timmy\Responsive_Content_Images(); 
+```
+
 ## Best Practices
 
 ### Working with Advanced Custom Fields
@@ -642,6 +661,16 @@ function get_image_sizes() {
 The functions provided by Timmy accept ACF image arrays, but they only take the value of `ID` to convert it to a TimberImage. To save performance and to prevent ACF from looping through all your defined image sizes, it’s better to **only return the image ID** in the ACF field group settings instead of the whole image array.
 
 ![](https://cloud.githubusercontent.com/assets/2084481/26151756/6fd5bf78-3b04-11e7-86ac-d7523f47684b.png)
+
+You can also do this programmatically for all fields with type `image`:
+
+```php
+add_filter( 'acf/load_field/type=image', function( $field ) {
+    $field['return_format'] = 'id';
+
+    return $field;
+} );
+```
 
 ## FAQ
 
@@ -693,6 +722,16 @@ The `sizes` and `srcset` attribute tells the browser which images sizes are avai
 This image by [Harry Roberts](https://twitter.com/csswizardry/status/836960832789565440) shows a simple way to explain/remember what it means:
 
 ![](https://cloud.githubusercontent.com/assets/2084481/24998864/d938d100-203b-11e7-8233-3b0a48b81c13.jpg)
+
+## Why is my backend unresponsive?
+
+With Timmy’s logic, when an image size is changed in the configuration, it can trigger an on-the-fly regeneration of an image. This can lead to performance problems, because resizing an image takes quite some time. Timmy is optimized to be very performant in the backend and tries to keep resizes to the minimum.
+
+In the following case it will always trigger a resize:
+
+- Changing the image size of the `thumbnail` size.
+
+When you do this, or if you see your Media takes a very long time loading images, or doesn’t load them at all, it might be a good idea to run Regenerate Thumbnails.
 
 ## Future Plans
 
