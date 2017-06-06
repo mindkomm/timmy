@@ -12,12 +12,11 @@ use Timmy\Helper;
 
 if ( ! function_exists( 'get_timber_image' ) ) :
 	/**
-	 * Outputs the src attr together with optional alt and title attributes
-	 * for a TimberImage.
+	 * Outputs the src attr together with optional alt and title attributes for a TimberImage.
 	 *
 	 * @param  int|Timber\Image $timber_image Instance of TimberImage or Attachment ID.
 	 * @param  string           $size         The size which you want to access.
-	 * @return string|bool                    Src, alt and title attributes. False if image can’t be found.
+	 * @return string|bool Src, alt and title attributes. False if image can’t be found.
 	 */
 	function get_timber_image( $timber_image, $size ) {
 		$src  = get_timber_image_src( $timber_image, $size );
@@ -38,7 +37,7 @@ if ( ! function_exists( 'get_timber_image_src' ) ) :
 	 *
 	 * @param  int|Timber\Image $timber_image Instance of TimberImage or Attachment ID.
 	 * @param  string           $size         Size key of the image to return.
-	 * @return string|bool                    Image src. False if image can’t be found.
+	 * @return string|bool Image src. False if image can’t be found.
 	 */
 	function get_timber_image_src( $timber_image, $size ) {
 		$timber_image = Timmy::get_timber_image( $timber_image );
@@ -80,7 +79,7 @@ if ( ! function_exists( 'get_image_attr_html' ) ) :
 	 *
 	 * @param  string $alt   Alt text.
 	 * @param  string $title Title text.
-	 * @return string        HTML string for alt and title attributes.
+	 * @return string HTML string for alt and title attributes.
 	 */
 	function get_image_attr_html( $alt, $title ) {
 		$html = ' alt="' . $alt . '"';
@@ -98,7 +97,7 @@ if ( ! function_exists( 'get_timber_image_attr' ) ) :
 	 * Get the image attributes (alt and title) for a TimberImage.
 	 *
 	 * @param  Timber\Image $timber_image Instance of TimberImage.
-	 * @return string                     HTML string for alt and title attributes. False if image can’t be found.
+	 * @return string HTML string for alt and title attributes. False if image can’t be found.
 	 */
 	function get_timber_image_attr( $timber_image ) {
 		$timber_image = Timmy::get_timber_image( $timber_image );
@@ -219,8 +218,8 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 				// Bail out if the current size’s width is bigger than available width
 				if ( ! $oversize['allow']
 					 && ( $width_intermediate > $max_width
-					     || ( 0 === $width_intermediate && $height_intermediate > $max_height )
-				     )
+						 || ( 0 === $width_intermediate && $height_intermediate > $max_height )
+					 )
 				) {
 					continue;
 				}
@@ -318,7 +317,7 @@ if ( ! function_exists( 'get_timber_image_responsive_acf' ) ) :
 	 *
 	 * @param  string $name ACF Field Name.
 	 * @param  string $size Size key of the image to return.
-	 * @return string|bool  Image srcset, sizes, alt and title attributes. False if image can’t be found.
+	 * @return string|bool Image srcset, sizes, alt and title attributes. False if image can’t be found.
 	 */
 	function get_timber_image_responsive_acf( $name, $size ) {
 		$image = get_field( $name );
@@ -340,7 +339,7 @@ if ( ! function_exists( 'get_acf_image_attr' ) ) :
 	 * Get image attributes for an image accessed via ACF.
 	 *
 	 * @param  array $image ACF Image.
-	 * @return string       Alt and title attribute.
+	 * @return string Alt and title attribute.
 	 */
 	function get_acf_image_attr( $image ) {
 		$alt = ! empty( $image['alt'] ) ? $image['alt'] : '';
@@ -361,7 +360,7 @@ if ( ! function_exists( 'get_post_thumbnail' ) ) :
 	 *
 	 * @param  int    $post_id The post id to get the thumbnail from.
 	 * @param  string $size    Size key of the image to return.
-	 * @return string|bool     Image src together with alt and title attributes. False if no image can’t be found.
+	 * @return string|bool Image src together with alt and title attributes. False if no image can’t be found.
 	 */
 	function get_post_thumbnail( $post_id, $size = 'post-thumbnail' ) {
 		$thumbnail_src = get_post_thumbnail_src( $post_id, $size );
@@ -391,9 +390,9 @@ if ( ! function_exists( 'get_post_thumbnail_src' ) ) :
 	/**
 	 * Get Post Thumbnail image source at given size.
 	 *
-	 * @param   int    $post_id The post id to get the thumbnail from.
-	 * @param   string $size    Size key of the image to return.
-	 * @return  string|bool     Image src. False if not an image.
+	 * @param  int    $post_id The post id to get the thumbnail from.
+	 * @param  string $size    Size key of the image to return.
+	 * @return string|bool Image src. False if not an image.
 	 */
 	function get_post_thumbnail_src( $post_id, $size = 'post-thumbnail' ) {
 		$post_thumbnail_id = get_post_thumbnail_id( $post_id );
