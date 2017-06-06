@@ -118,9 +118,14 @@ if ( ! function_exists( 'get_timber_image_responsive' ) ) :
 	/**
 	 * Get the responsive srcset and sizes for a TimberImage.
 	 *
-	 * @param  Timber\Image|int $timber_image Instance of TimberImage or Attachment ID.
-	 * @param  string           $size         Size key of the image to return.
-	 * @param array             $args         Array of options.
+	 * @param Timber\Image|int $timber_image Instance of TimberImage or Attachment ID.
+	 * @param string           $size         Size key of the image to return.
+	 * @param array            $args {
+	 *      Optional. Array of options.
+	 *
+	 *      @type bool $attr_width  Whether to add a width attribute to an image, if needed. Default false.
+	 *      @type bool $attr_height Whether to add a height attribute to an image, if need. Default false.
+	 * }
 	 * @return string|bool                    Image srcset, sizes, alt and title attributes. False if image
 	 *                                        can’t be found.
 	 */
@@ -143,8 +148,13 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 	 *
 	 * @param Timber\Image|int $timber_image Instance of TimberImage or Attachment ID.
 	 * @param string           $size         Size key of the image to return.
-	 * @param array             $args        Array of options.
-	 * @return string|bool                   Image srcset and sizes attributes. False if image can’t be found.
+	 * @param array            $args {
+	 *      Optional. Array of options.
+	 *
+	 *      @type bool $attr_width  Whether to add a width attribute to an image, if needed. Default false.
+	 *      @type bool $attr_height Whether to add a height attribute to an image, if need. Default false.
+	 * }
+	 * @return string|bool Image srcset and sizes attributes. False if image can’t be found.
 	 */
 	function get_timber_image_responsive_src( $timber_image, $size, $args = array() ) {
 		$timber_image = Timmy::get_timber_image( $timber_image );
@@ -170,7 +180,6 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 		 * @since 0.12.0
 		 */
 		$default_args = array(
-			'attr_src' => true,
 			'attr_width' => false,
 			'attr_height' => false,
 		);
@@ -278,17 +287,23 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 
 		/**
 		 * Only add responsive srcset and sizes attributes if there are any present.
-		 * If there’s only one, it’s always the default size. In that case, we just add it as a src.
+		 * If there’s only one srcset src, it’s always the default size. In that case, we just add it as a src.
 		 */
 		if ( count( $srcset ) > 1 ) {
 			// Sort entries from smallest to highest
 			ksort( $srcset );
 
 			$html .= 'srcset="' . implode( ', ', $srcset ) . '"' . $attr_sizes;
-		}
 
-		if ( $args['attr_src'] ) {
-			$html .= ' src="' . $default_size . '"';
+			/**
+			 * Add fallback for src attribute to provide valid image markup
+			 * and prevent double downloads in older browsers.
+			 *
+			 * @link http://scottjehl.github.io/picturefill/#support
+			 */
+			$html .= ' src="data:image/gif;base64,R0lGODlhAQABAAAAADs="';
+		} else {
+			$html .= 'src="' . $default_size . '"';
 		}
 
 		$html .= $attr_width . $attr_height;
