@@ -29,6 +29,7 @@ You can use Timmy with non-Timber WordPress themes.
 - [Functions](#functions)
 - [Image Configuration](#image-configuration)
 - [Image Configuration Example](#image-configuration-example)
+- [Responsive Content Images](#responsive-content-images)
 - [Best Practices](#best-practices)
 - [FAQ](#faq)
 
@@ -45,6 +46,8 @@ Timber already comes with a set of really nice features for handling images. Esp
 * **You can have as many defined image sizes as you want**. It’s easier to work with named image sizes like `thumbnail`, `medium`, `portrait` etc. Timmy lets you define each image size with a lot of [handy configuration options](#image-configuration).
 
 * **Users can select different image sizes in WYSYWIG editor**. Normally, a user can only select the default WordPress sizes *Thumbnail*, *Medium*, *Large* and *Full*. With images defined through Timmy, a user [can select all image sizes that you define](https://cloud.githubusercontent.com/assets/2084481/13374936/bfb58ec2-dd92-11e5-9e05-cc22fe4f0f88.png), without the default sizes.
+
+* **Makes images inserted into a post’s content via WordPress Editor responsive**.
 
 * **Integration for popular plugins** like [Advanced Custom Fields](https://www.advancedcustomfields.com/), [Admin Colums](https://www.admincolumns.com/) and [Yoast SEO](https://yoast.com/wordpress/plugins/seo/). Because Timmy tells WordPress that there are image sizes present, other plugins will allow you to select images defined through Timmy, like the preview images for image fields defined with ACF or a preview image used in Admin Columns.
 
@@ -65,7 +68,7 @@ Timber already comes with a set of really nice features for handling images. Esp
 * **Restrict to post types to prevent bloat**. If you want to use an image size just for one post type, you can define that. This will prevent bloating up your uploads folder with image sizes that are never used on the site.
 
 ### Limitations
-* We don’t know if Timmy works with images hosted on Content Delivery Networks (CDN). We haven’t looked into that yet and we don’t know if we ever will. Pull request welcome ;).
+* We don’t know if Timmy works with images hosted on Content Delivery Networks (CDN). We haven’t looked into that yet and we don’t know if we ever will. Pull requests welcome ;).
 
 ## Getting Started/Preparations
 
@@ -246,7 +249,7 @@ Takes the field name of an ACF image as the input and returns the same output as
 
 ```php
 <img<?php echo get_timber_image_responsive_acf( 'image', 'custom-4-crop' ); ?>>
-// will use get_field( 'image' ) to get the image information
+<!-- Will use get_field( 'image' ) to get the image information -->
 ```
 
 ##### Usage in Twig
@@ -648,9 +651,9 @@ Timmy can make images added to the WYSIWYG editor responsive.
 
 **functions.php**
 
-Enable the functionality in your theme:
+Enable the functionality in your theme by instantiating the feature in your **functions.php**:
 
-```
+```php
 new Timmy\Responsive_Content_Images(); 
 ```
 
