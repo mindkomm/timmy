@@ -9,7 +9,3 @@
  */
 require_once( 'functions-images.php' );
 require_once( 'lib/Timmy.php' );
-
-add_action( 'plugins_loaded', function() {
-	new Timmy\Timmy();
-} );
