@@ -2,13 +2,25 @@
 
 ## 0.12.1 - 2017-08-17
 
-- Changed how Timmy is loaded. It now works the same as Timber. You need to call `new Timmy\Timmy();` manually in **functions.php** of your theme (You can add it right after you called `new Timber\Timber();`). This change was required to make the library more compatible with environments like Bedrock, where WordPress might not have been loaded when the Composer package is initialized.
+Changed how Timmy is initialized. It now works the same as initializing Timber. You need to initialize it manually in **functions.php** of your theme:
+
+```php
+new Timmy\Timmy();
+```  
+
+You can add this right after you called `new Timber\Timber();`.
+
+This change was required to make the library more compatible with environments like Bedrock, where WordPress might not have been loaded when the Composer package is initialized.
+
+**Other changes**
+
 - Fixed missing files when Timmy is installed as a plugin.
+- Fixed leading whitespace for `srcset` attributes.
 
 ## 0.12.0 - 2017-08-03
 
 - Added support for [responsive content images](https://github.com/MINDKomm/timmy#responsive-content-images), which means that Timmy can now make images inserted in the post content via the WordPress Editor responsive.
-- Optimized image markup by using the `srcset` attribute only if multiple images are available. If an image has only one image in srcset, if falls back to using the `src` attribute instead.
+- Optimized image markup by using the `srcset` attribute only if multiple images are available. If an image has only one image in srcset, it falls back to using the `src` attribute instead.
 - Added `src` fallback attribute to all responsive images by default to fix invalid markup errors (as [recommended by Picturefill](http://scottjehl.github.io/picturefill/#support)). 
 - Optimized performance in the backend.
 	- Only thumbnails and full sizes of images are shown in the backend to prevent on-the-fly resizing of images (e.g. in the Media Grid).
