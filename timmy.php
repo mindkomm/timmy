@@ -9,3 +9,5 @@
  */
 require_once( 'functions-images.php' );
 require_once( 'lib/Timmy.php' );
+require_once( 'lib/Helper.php' );
+require_once( 'lib/Responsive_Content_Images.php' );
