@@ -292,7 +292,7 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 			// Sort entries from smallest to highest
 			ksort( $srcset );
 
-			$html .= 'srcset="' . implode( ', ', $srcset ) . '"' . $attr_sizes;
+			$html .= ' srcset="' . implode( ', ', $srcset ) . '"' . $attr_sizes;
 
 			/**
 			 * Add fallback for src attribute to provide valid image markup
