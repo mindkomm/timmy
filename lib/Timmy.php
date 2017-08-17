@@ -6,6 +6,11 @@ use Timber;
 use Twig_Environment;
 use Twig_SimpleFilter;
 
+/**
+ * Class Timmy
+ *
+ * @package Timmy
+ */
 class Timmy {
 	/**
 	 * Image sizes that can be selected in the backend.

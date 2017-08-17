@@ -2,6 +2,11 @@
 
 namespace Timmy;
 
+/**
+ * Class Helper
+ *
+ * @package Timmy
+ */
 class Helper {
 	/**
 	 * Get an image size from image config.
