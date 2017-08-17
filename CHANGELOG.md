@@ -1,6 +1,11 @@
 # Changelog
 
-## 0.12.0 - 2017-06
+## 0.12.1 - 2017-08-17
+
+- Changed how Timmy is loaded. It now works the same as Timber. You need to call `new Timmy\Timmy();` manually in **functions.php** of your theme (You can add it right after you called `new Timber\Timber();`). This change was required to make the library more compatible with environments like Bedrock, where WordPress might not have been loaded when the Composer package is initialized.
+- Fixed missing files when Timmy is installed as a plugin.
+
+## 0.12.0 - 2017-08-03
 
 - Added support for [responsive content images](https://github.com/MINDKomm/timmy#responsive-content-images), which means that Timmy can now make images inserted in the post content via the WordPress Editor responsive.
 - Optimized image markup by using the `srcset` attribute only if multiple images are available. If an image has only one image in srcset, if falls back to using the `src` attribute instead.

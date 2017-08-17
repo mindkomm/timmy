@@ -93,10 +93,17 @@ composer require mindkomm/timmy
 * The benefit of installing Timmy through Composer is that you add it as a dependency of your theme, which puts you in full control of the version you want to work with.
 * Timmy requires Timber, so you won’t have to necessarily install Timber separately.
 
-Require the autoload file at the top of your **functions.php** and you’re good to go:
+Require the autoload file at the top of your **functions.php**:
 
 ```php
 require_once( __DIR__ . '/vendor/autoload.php' );
+```
+
+Now initialize Timmy right after Timber:
+
+```php
+new Timber\Timber();
+new Timmy\Timmy();
 ```
 
 ### 2. Prepare Media Settings
