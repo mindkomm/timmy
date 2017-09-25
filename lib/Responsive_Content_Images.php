@@ -8,6 +8,9 @@ namespace Timmy;
  * @package Timmy
  */
 class Responsive_Content_Images {
+	/**
+	 * Responsive_Content_Images constructor.
+	 */
 	public function __construct() {
 		remove_filter( 'the_content', 'wp_make_content_images_responsive' );
 		add_filter( 'the_content', array( $this, 'make_content_images_responsive' ) );
@@ -18,7 +21,8 @@ class Responsive_Content_Images {
 	 *
 	 * @see wp_make_content_images_responsive()
 	 *
-	 * @param string $content Post content
+	 * @param string $content Post content.
+	 *
 	 * @return string Filtered content
 	 */
 	public function make_content_images_responsive( $content ) {
@@ -72,8 +76,9 @@ class Responsive_Content_Images {
 	/**
 	 * Updates image tag with responsive srcset and sizes attributes.
 	 *
-	 * @param string $image         HTML image tag
-	 * @param int    $attachment_id Attachment ID
+	 * @param string $image         HTML image tag.
+	 * @param int    $attachment_id Attachment ID.
+	 *
 	 * @return string Reponsive image markup
 	 */
 	public function generate_srcset_and_sizes( $image, $attachment_id  ) {
@@ -87,7 +92,7 @@ class Responsive_Content_Images {
 			return $image;
 		}
 
-		// Select image size from classname starting with 'size-'
+		// Select image size from classname starting with 'size-'.
 		$img_size = preg_match( '/ size-([^\s"]+)/', $image, $match_size ) ? $match_size[1] : false;
 
 		// Bailout if image size couldn’t be read.
@@ -109,7 +114,8 @@ class Responsive_Content_Images {
 		$image = preg_replace( '/ src="([^"]+)"/', '', $image );
 
 		/**
-		 * Remove width, height and alt attributes, because they are handled by get_timber_image_responsive_src()
+		 * Remove width, height and alt attributes, because they are handled by
+		 * get_timber_image_responsive_src().
 		 *
 		 * @see get_timber_image_responsive_src()
 		 */

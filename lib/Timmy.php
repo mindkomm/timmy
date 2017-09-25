@@ -19,12 +19,18 @@ class Timmy {
 	 */
 	public $image_sizes_for_ui = array();
 
+	/**
+	 * Timmy constructor.
+	 */
 	public function __construct() {
 		if ( class_exists( 'Timber\ImageHelper' ) ) {
 			$this->init();
 		}
 	}
 
+	/**
+	 * Hook into WordPress
+	 */
 	public function init() {
 		// Wait for theme to initialize to make sure that we can access all image sizes
 		add_action( 'after_setup_theme', array( $this, 'after_setup_theme' ) );
@@ -33,6 +39,9 @@ class Timmy {
 		add_filter( 'timber/twig', array( $this, 'filter_twig' ) );
 	}
 
+	/**
+	 * Setup Timmy
+	 */
 	public function after_setup_theme() {
 		if ( ! function_exists( 'get_image_sizes' ) ) {
 			return;
@@ -66,8 +75,9 @@ class Timmy {
 	/**
 	 * Set filters to use Timmy filters and functions in Twig.
 	 *
-	 * @param   Twig_Environment $twig
-	 * @return  Twig_Environment $twig
+	 * @param Twig_Environment $twig The Twig Environment instance.
+	 *
+	 * @return Twig_Environment $twig
 	 */
 	public function filter_twig( $twig ) {
 		$twig->addFilter( new Twig_SimpleFilter( 'get_timber_image', 'get_timber_image' ) );
@@ -105,6 +115,13 @@ class Timmy {
 		}
 	}
 
+	/**
+	 * Tell WordPress to use our custom image configuration.
+	 *
+	 * @param array $sizes Image sizes.
+	 *
+	 * @return array Image sizes from image configuration.
+	 */
 	public function filter_intermediate_image_sizes( $sizes ) {
 		return array_keys( get_image_sizes() );
 	}
@@ -116,23 +133,24 @@ class Timmy {
 	 * we have our own image thingy we want to work with.
 	 *
 	 * @since 0.10.0
+	 * @param array $sizes Image sizes.
+	 * @return array
 	 */
 	public function filter_intermediate_image_sizes_advanced( $sizes ) {
 		return array();
 	}
 
 	/**
-	 * Hook into the filter that generates additional image sizes
-	 * to generate all additional image size with TimberImageHelper
+	 * Hook into the filter that generates additional image sizes to generate all additional image
+	 * size with TimberImageHelper.
 	 *
-	 * This function will also run if you run Regenerate Thumbnails,
-	 * so all additional images sizes registered with Timber will be
-	 * first deleted and then regenerated through Timber.
+	 * This function will also run if you run Regenerate Thumbnails, so all additional images sizes
+	 * registered with Timber will be first deleted and then regenerated through Timber.
 	 *
-	 * @param array $metadata
-	 * @param int   $attachment_id
+	 * @param array $metadata Meta data for an attachment.
+	 * @param int   $attachment_id Attachmend ID.
 	 *
-	 * @return  array    $metadata
+	 * @return array $metadata
 	 */
 	public function filter_wp_generate_attachment_metadata( $metadata, $attachment_id ) {
 		if ( wp_attachment_is_image( $attachment_id ) ) {
@@ -152,13 +170,14 @@ class Timmy {
 	}
 
 	/**
-	 * Add the same sizes to ACF image field options as when we choose an image
-	 * size in the content editor.
+	 * Add the same sizes to ACF image field options as when we choose an image size in the content
+	 * editor.
 	 *
 	 * @since 0.10.0
 	 *
-	 * @param  array $sizes Sizes prepared by ACF
-	 * @return array        Our own image sizes
+	 * @param  array $sizes Sizes prepared by ACF.
+	 *
+	 * @return array Our own image sizes
 	 */
 	public function filter_acf_get_image_sizes( $sizes ) {
 		return $this->image_sizes_for_ui;
@@ -194,7 +213,8 @@ class Timmy {
 		/**
 		 * Re-add full size so it can still be selected.
 		 *
-		 * The full size is needed, if a e.g. a logo has to be displayed in the page content and no predefined size fits.
+		 * The full size is needed, if a e.g. a logo has to be displayed in the page content and no
+		 * predefined size fits.
 		 */
 		$sizes['full'] = __( 'Full Size' );
 
@@ -204,16 +224,16 @@ class Timmy {
 	/**
 	 * Creates an image size based on the parameters given in the image configuration.
 	 *
-	 * @param bool          $return         Whether to short-circuit the image downsize.
-	 * @param int           $attachment_id  Attachment ID for image.
-	 * @param array|string  $size           Size of image. Image size or array of width
-	 *                                      and height values (in that order).
+	 * @param bool         $return        Whether to short-circuit the image downsize.
+	 * @param int          $attachment_id Attachment ID for image.
+	 * @param array|string $size          Size of image. Image size or array of width and height
+	 *                                    values (in that order).
 	 *
-	 * @return false|array  Array containing the image URL, width, height, and boolean for
-	 *                      whether the image is an intermediate size. False on failure.
+	 * @return false|array Array containing the image URL, width, height, and boolean for whether
+	 *                     the image is an intermediate size. False on failure.
 	 */
 	public function filter_image_downsize( $return = false, $attachment_id, $size ) {
-		// Timber needs the file src as an url. Checks if ID belongs to an attachment.
+		// Timber needs the file src as an URL. Checks if ID belongs to an attachment.
 		$file_src = wp_get_attachment_url( $attachment_id );
 
 		if ( ! $file_src ) {
@@ -223,12 +243,13 @@ class Timmy {
 		/**
 		 * Return thumbnail size when media files are requested through an AJAX call.
 		 *
-		 * When image data is prepared for the Media view, WordPress calls 'image_size_names_choose' to get all
-		 * selectable sizes for the backend and then 'image_downsize' to get all the image data. All image sizes that
-		 * don’t exist yet would be generated, which probably causes a max execution timeout error.
+		 * When image data is prepared for the Media view, WordPress calls 'image_size_names_choose'
+		 * to get all selectable sizes for the backend and then 'image_downsize' to get all the
+		 * image data. All image sizes that don’t exist yet would be generated, which probably
+		 * causes a max execution timeout error.
 		 *
-		 * We make sure that for the Media view, we only return the thumbnail size for an image. If the thumbnail size
-		 * doesn’t exist yet, it is generated.
+		 * We make sure that for the Media view, we only return the thumbnail size for an image. If
+		 * the thumbnail size doesn’t exist yet, it is generated.
 		 *
 		 * @see wp_prepare_attachment_for_js()
 		 *
@@ -252,8 +273,8 @@ class Timmy {
 			$src = self::resize( $thumbnail_size, $file_src, $width, $height, $crop, $force );
 
 			/**
-			 * Get original dimensions for a file that are used for the image data and the select input when an image
-			 * size can be chosen in the backend.
+			 * Get original dimensions for a file that are used for the image data and the select
+			 * input when an image size can be chosen in the backend.
 			 *
 			 * The src is still the thumbnail size, so that it doesn’t trigger a resize.
 			 */
@@ -296,13 +317,14 @@ class Timmy {
 		$img_sizes = get_image_sizes();
 
 		/**
-		 * Bailout if a GIF is uploaded in the backend and a size other than the thumbnail size is requested.
+		 * Bailout if a GIF is uploaded in the backend and a size other than the thumbnail size is
+		 * requested.
 		 *
-		 * Generating sizes for a GIF takes a lot of performance. When uploading a GIF, this could quickly lead to an
-		 * error if the maximum execution time is reached. That’s why Timmy only generates the thumbnail size. This
-		 * leads to better performance in the Media Library, when only small GIFs have to be loaded. Other GIF sizes
-		 * will still be generated on the fly.
-		 **
+		 * Generating sizes for a GIF takes a lot of performance. When uploading a GIF, this could
+		 * quickly lead to an error if the maximum execution time is reached. That’s why Timmy only
+		 * generates the thumbnail size. This leads to better performance in the Media Library, when
+		 * only small GIFs have to be loaded. Other GIF sizes will still be generated on the fly.
+		 *
 		 * @since 0.11.0
 		 */
 		if ( is_admin() ) {
@@ -360,16 +382,18 @@ class Timmy {
 	/**
 	 * Filters image data before it is returned to the Media view.
 	 *
-	 * When the details for an image are requested in the Media view, WordPress displays the large size of an image if
-	 * it exists, otherwise it displays the full size. If the large size exists, this filter replaces the large size
-	 * with the full size of an image, because if the large size is changed, it would cause regeneration of all the
-	 * images, which results in the Media view to become unresponsive and finally run into a max excecution time error.
+	 * When the details for an image are requested in the Media view, WordPress displays the large
+	 * size of an image if it exists, otherwise it displays the full size. If the large size
+	 * exists, this filter replaces the large size with the full size of an image, because if the
+	 * large size is changed, it would cause regeneration of all the images, which results in the
+	 * Media view to become unresponsive and finally run into a max excecution time error.
 	 *
 	 * @see wp-includes/media-template.php
 	 *
 	 * @param array $response   Response data.
 	 * @param array $attachment Attachment data.
 	 * @param array $meta       Meta data for an image.
+	 *
 	 * @return array
 	 */
 	public function filter_wp_prepare_attachment_for_js( $response, $attachment, $meta ) {
@@ -383,7 +407,9 @@ class Timmy {
 	/**
 	 * Convert an image into a TimberImage.
 	 *
-	 * @param mixed $timber_image The ID of the image, an array containing an ID key or an instance of Timber\Image.
+	 * @param mixed $timber_image The ID of the image, an array containing an ID key or an instance
+	 *                            of Timber\Image.
+	 *
 	 * @return mixed              Instance of Timber\Image.
 	 */
 	public static function get_timber_image( $timber_image ) {
@@ -411,10 +437,11 @@ class Timmy {
 	 *
 	 * @since 0.10.0
 	 *
-	 * @param Timber\Image|int $timber_image    Instance of TimberImage
-	 * @param array            $img_size        Image configuration array for image size to be used
-	 * @return array                            An non-associative array with $file_src, $width, $height, $crop, $force,
-	 *                                          $max_width, $undersized (in that order). Thought to be used with list().
+	 * @param Timber\Image|int $timber_image Instance of TimberImage.
+	 * @param array            $img_size     Image configuration array for image size to be used.
+	 *
+	 * @return array An non-associative array with $file_src, $width, $height, $crop, $force,
+	 *               $max_width, $undersized (in that order). Thought to be used with list().
 	 */
 	public static function get_image_params( $timber_image, $img_size ) {
 		list(
@@ -491,13 +518,14 @@ class Timmy {
 	 *
 	 * @since 0.9.2
 	 *
-	 * @param  array    $img_size 	Configuration values for an image size.
-	 * @param  string   $file_src   The src of the original image.
-	 * @param  int      $width    	The width the new image should be resized to.
-	 * @param  int      $height   	The height the new image should be resized to.
-	 * @param  string   $crop       Optional. Cropping option. Default 'default'.
-	 * @param  bool     $force    	Optional. Force cropping. Default false.
-	 * @return string               The src of the image.
+	 * @param  array  $img_size Configuration values for an image size.
+	 * @param  string $file_src The src of the original image.
+	 * @param  int    $width    The width the new image should be resized to.
+	 * @param  int    $height   The height the new image should be resized to.
+	 * @param  string $crop     Optional. Cropping option. Default 'default'.
+	 * @param  bool   $force    Optional. Force cropping. Default false.
+	 *
+	 * @return string The src of the image.
 	 */
 	public static function resize( $img_size, $file_src, $width, $height, $crop, $force ) {
 		// Check if image should be converted to jpg first
@@ -521,22 +549,25 @@ class Timmy {
 	/**
 	 * Get the actual width at which the image will be displayed.
 	 *
-	 * When 0 is passed to Timber as a width, it calculates the image ratio based on the height of the image.
-	 * We have to account for that, when we use the responsive image, because in the srcset, there cant be a value
-	 * like "image.jpg 0w". So we have to calculate the width based on the values we have.
+	 * When 0 is passed to Timber as a width, it calculates the image ratio based on the height of
+	 * the image. We have to account for that, when we use the responsive image, because in the
+	 * srcset, there cant be a value like "image.jpg 0w". So we have to calculate the width based
+	 * on the values we have.
 	 *
 	 * @since 0.9.3
 	 *
-	 * @param  int          $width          The value of the resize parameter for width.
-	 * @param  int          $height         The value of the resize parameter for height.
-	 * @param  Timber\Image $timber_image   Instance of TimberImage.
-	 * @return int                          The width at which the image will be displayed.
+	 * @param  int          $width        The value of the resize parameter for width.
+	 * @param  int          $height       The value of the resize parameter for height.
+	 * @param  Timber\Image $timber_image Instance of TimberImage.
+	 *
+	 * @return int The width at which the image will be displayed.
 	 */
 	public static function get_width_key( $width, $height, $timber_image ) {
 		if ( 0 === (int) $width ) {
 			/**
-			 * Calculate image width based on image ratio and height. We need a rounded value because we will use this
-			 * number as an array key and for defining the srcset size in pixel values.
+			 * Calculate image width based on image ratio and height. We need a rounded value
+			 * because we will use this number as an array key and for defining the srcset size in
+			 * pixel values.
 			 */
 			return (int) round( $timber_image->aspect() * $height );
 		}
@@ -547,7 +578,8 @@ class Timmy {
 	/**
 	 * Generate image sizes defined for Timmy with Timber\ImageHelper.
 	 *
-	 * @param  int	$attachment_id	The attachment ID for which all images should be resized.
+	 * @param  int $attachment_id The attachment ID for which all images should be resized.
+	 *
 	 * @return void
 	 */
 	private function timber_generate_sizes( $attachment_id ) {
@@ -568,8 +600,9 @@ class Timmy {
 		/**
 		 * Delete all existing image sizes for that file.
 		 *
-		 * This way, when Regenerate Thumbnails will be used, all non-registered image sizes will be deleted as well.
-		 * Because Timber creates image sizes when they’re needed, we can safely do this.
+		 * This way, when Regenerate Thumbnails will be used, all non-registered image sizes will be
+		 * deleted as well. Because Timber creates image sizes when they’re needed, we can safely do
+		 * this.
 		 */
 		Timber\ImageHelper::delete_generated_files( $file_src );
 
@@ -604,8 +637,9 @@ class Timmy {
 	/**
 	 * Check if we should pregenerate an image size based on the image configuration.
 	 *
-	 * @param  int   $attachment_parent_id
-	 * @param  array $img_size The image configuration array.
+	 * @param  int   $attachment_parent_id Parent ID of the attachment.
+	 * @param  array $img_size             The image configuration array.
+	 *
 	 * @return bool Whether the image should or can be resized.
 	 */
 	private function timber_should_resize( $attachment_parent_id, $img_size ) {
@@ -631,6 +665,7 @@ class Timmy {
 	 *
 	 * @param array        $img_size             Image configuration array.
 	 * @param string|array $attachment_post_type Post type for attachment.
+	 *
 	 * @return bool
 	 */
 	public static function is_size_for_post_type( $img_size, $attachment_post_type ) {
