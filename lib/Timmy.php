@@ -240,6 +240,11 @@ class Timmy {
 			return false;
 		}
 
+		// When media files are requested through an AJAX call, an action will be present in $_POST.
+		$action = is_admin() && isset( $_POST['action'] )
+			? filter_var( $_POST['action'], FILTER_SANITIZE_STRING )
+			: false;
+
 		/**
 		 * Return thumbnail size when media files are requested through an AJAX call.
 		 *
@@ -255,12 +260,6 @@ class Timmy {
 		 *
 		 * @since 0.12.0
 		 */
-
-		// When media files are requested through an AJAX call, an action will be present in $_POST.
-		$action = is_admin() && isset( $_POST['action'] )
-			? filter_var( $_POST['action'], FILTER_SANITIZE_STRING )
-			: false;
-
 		if ( 'query-attachments' === $action ) {
 			$thumbnail_size = Helper::get_thumbnail_size();
 
@@ -327,21 +326,14 @@ class Timmy {
 		 *
 		 * @since 0.11.0
 		 */
-		if ( is_admin() ) {
-			// When media files are requested through an AJAX call, an action will be present in $_POST.
-			$action = isset( $_POST['action'] )
-				? filter_var( $_POST['action'], FILTER_SANITIZE_STRING )
-				: false;
+		if ( 'upload-attachment' === $action
+			 && 'image/gif' === $attachment->post_mime_type
+		) {
+			$image_size_keys = array_keys( $img_sizes );
+			$thumbnail_key = reset( $image_size_keys );
 
-			if ( 'upload-attachment' === $action
-			     && 'image/gif' === $attachment->post_mime_type
-			) {
-				$image_size_keys = array_keys( $img_sizes );
-				$thumbnail_key = reset( $image_size_keys );
-
-				if ( $thumbnail_key !== $size ) {
-					return $return;
-				}
+			if ( $thumbnail_key !== $size ) {
+				return $return;
 			}
 		}
 
