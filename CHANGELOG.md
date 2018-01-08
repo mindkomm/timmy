@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.12.2 - 2018-01-09
+
+- Added type `wordpress-plugin` to `composer.json`. This allows you to install Timmy in a folder other than `vendor/mindkomm/timmy` (#11, Thanks, @salaros). [Read more about installing a package to a custom path](https://getcomposer.org/doc/faqs/how-do-i-install-a-package-to-a-custom-path-for-my-framework.md).
+- Added possibility to [use an image size array directly for frontend functions](https://github.com/mindkomm/timmy#using-an-image-size-array-instead-of-a-key), instead of adding it to the global image configuration array.
+
 ## 0.12.1 - 2017-08-17
 
 Changed how Timmy is initialized. It now works the same as initializing Timber. You need to initialize it manually in **functions.php** of your theme:
