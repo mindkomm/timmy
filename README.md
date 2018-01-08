@@ -180,7 +180,7 @@ You can use the following functions to get your images into your template:
 
 ### get_timber_image
 
-`get_timber_image( int $post_id|TimberImage $timberImage, string $size )`
+`get_timber_image( int $post_id|TimberImage $timberImage, string|array $size )`
 
 Returns the src attribute together with optional alt and title attributes for a TimberImage.
 
@@ -202,7 +202,7 @@ For twig, this function is used as a filter on the TimberImage appended with a `
 
 ### get_timber_image_src
 
-`get_timber_image_src( int $post_id|TimberImage $timber_image, string $size )`
+`get_timber_image_src( int $post_id|TimberImage $timber_image, string|array $size )`
 
 Returns the src for a TimberImage.
 
@@ -222,7 +222,7 @@ Returns the src for a TimberImage.
 
 ### get_timber_image_responsive
 
-`get_timber_image_responsive( int $post_id|TimberImage $timber_image, string $size )`
+`get_timber_image_responsive( int $post_id|TimberImage $timber_image, string|array $size )`
 
 Returns the srcset, size, alt and title attributes for a TimberImage. If this function is used with a SVG image, the single src will be returned instead of srcset.
 
@@ -248,7 +248,7 @@ Returns the srcset and sizes for a TimberImage. This is practically the same as 
 
 ### get_timber_image_responsive_acf
 
-`get_timber_image_responsive_acf( string $field_name, string $size )`
+`get_timber_image_responsive_acf( string $field_name, string|array $size )`
 
 Takes the field name of an ACF image as the input and returns the same output as `get_timber_image_responsive()`.
 
@@ -271,7 +271,7 @@ You won’t use this function as a filter like the ones above.
 
 ### get_post_thumbnail
 
-`get_post_thumbnail( int $postId, string $size = 'post-thumbnail' )`
+`get_post_thumbnail( int $post_id, string|array $size = 'post-thumbnail' )`
 
 Returns the src, alt and title attributes for a post thumbnail at a given size.
 
@@ -289,7 +289,7 @@ In Twig combined with Timber you will already have the post thumbnail through `p
 
 ### get_post_thumbnail_src
 
-`get_post_thumbnail_src( $postId, $size = 'post-thumbnail' )`
+`get_post_thumbnail_src( int $post_id, string|array $size = 'post-thumbnail' )`
 
 Returns the src for a post thumbnail. This is practically the same as `get_post_thumbnail`, just without alt and title tags.
 
@@ -299,7 +299,7 @@ Returns the src for a post thumbnail. This is practically the same as `get_post_
 
 Your image configuration is an array with all the image sizes, wrapped in a function named `get_image_sizes`
 
-You name each image size via array key.
+You name each image size via array key that you will reference in the functions above.
 
 ```php
 function get_image_sizes() {
@@ -320,7 +320,31 @@ function get_image_sizes() {
 }
 ```
 
-### Options
+### Using an image size array instead of a key
+
+Instead of having to define each size you want to use in the image configuration, you can also pass in an array with your configuration to a function directly. This is helpful if an image size appears only in one place or if you want to use something other than the image configuration array. Here’s an example for [`get_timber_image_responsive`](#get_timber_image_responsive):
+
+```php
+<img<?php echo get_timber_image_responsive( get_post_thumbnail_id(), array(
+    'resize' => array( 570 ),
+    'srcset' => array( 0.5, 2 ),
+    'sizes'  => '(min-width: 62rem) 50vw, 100vw',
+    'name'   => 'Width 1/2',
+) ); ?>>
+```
+
+In Twig, you’ll have to use the hash notation:
+
+```twig
+<img{{ post.thumbnail|get_timber_image_responsive({
+    resize: [570],
+    srcset: [0.5, 2],
+    sizes: '(min-width: 62rem) 50vw, 100vw',
+    name: 'Width 1/2'
+}) }}>
+```
+
+## Image configuration options
 
 * [resize](#resize)
 * [srcset](#srcset)
@@ -332,8 +356,6 @@ function get_image_sizes() {
 * [show_in_ui](#show_in_ui)
 * [generate_srcset_sizes](#generate_srcset_sizes)
 * [oversize](#oversize)
-
----
 
 ### Image Keys (the image size identifier)
 

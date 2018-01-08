@@ -13,10 +13,16 @@ class Helper {
 	 *
 	 * @since 0.11.0
 	 *
-	 * @param string $size Image size key.
+	 * @param array|string $size Image size configuration array or image size key.
+	 *
 	 * @return array|bool Image size configuration array.
 	 */
 	public static function get_image_size( $size ) {
+		// Check for a directly passed image configuration array.
+		if ( is_array( $size ) ) {
+			return $size;
+		}
+
 		$sizes = get_image_sizes();
 
 		if ( isset( $sizes[ $size ] ) ) {
