@@ -1,5 +1,6 @@
 {
     "name": "mindkomm/timmy",
+    "type": "wordpress-plugin",
     "description": "Advanced image manipulation for Timber.",
     "license": "MIT",
     "require": {
