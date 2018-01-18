@@ -352,15 +352,15 @@ class Timmy {
 
 		list( $width, $height ) = Helper::get_dimensions_for_size( $img_size );
 
-		$crop   = Helper::get_crop_for_size( $img_size );
-		$force  = Helper::get_force_for_size( $img_size );
+		$crop  = Helper::get_crop_for_size( $img_size );
+		$force = Helper::get_force_for_size( $img_size );
 
 		// Resize the image for that size
 		$src = self::resize( $img_size, $file_src, $width, $height, $crop, $force );
 
 		// When the input size is an array of width and height
 		if ( is_array( $size ) ) {
-			$width = $size[0];
+			$width  = $size[0];
 			$height = $size[1];
 		}
 
@@ -415,8 +415,8 @@ class Timmy {
 
 		// Check if non-empty TimberImage was found before returning it
 		if ( ! $timber_image instanceof Timber\Image
-			 || ! isset( $timber_image->post_type )
-			 || 'attachment' !== $timber_image->post_type
+			|| ! isset( $timber_image->post_type )
+			|| 'attachment' !== $timber_image->post_type
 		) {
 			return false;
 		}
@@ -450,7 +450,7 @@ class Timmy {
 		}
 
 		$oversize_defaults = array(
-			'allow' => false,
+			'allow'      => false,
 			'style_attr' => true,
 		);
 
@@ -483,7 +483,7 @@ class Timmy {
 
 			} elseif ( $height > 0 && $height > $max_height ) {
 				$height = $max_height;
-				$width = (int) round( $max_width / $max_height * $height );
+				$width  = (int) round( $max_width / $max_height * $height );
 
 				// Restrict to height
 				$oversize['style_attr'] = 'height';
@@ -523,7 +523,7 @@ class Timmy {
 		// Check if image should be converted to jpg first
 		if ( isset( $img_size['tojpg'] ) && $img_size['tojpg'] ) {
 			// Sort out background color which will show instead of transparency
-			$bgcolor = is_string( $img_size['tojpg'] ) ? $img_size['tojpg'] : '#FFFFFF';
+			$bgcolor  = is_string( $img_size['tojpg'] ) ? $img_size['tojpg'] : '#FFFFFF';
 			$file_src = Timber\ImageHelper::img_to_jpg( $file_src, $bgcolor, $force );
 		}
 
@@ -575,7 +575,7 @@ class Timmy {
 	 * @return void
 	 */
 	private function timber_generate_sizes( $attachment_id ) {
-		$img_sizes = get_image_sizes();
+		$img_sizes  = get_image_sizes();
 		$attachment = get_post( $attachment_id );
 
 		/**
@@ -645,7 +645,7 @@ class Timmy {
 
 		// Check if image is attached to a post and sort out post type
 		if ( 0 !== $attachment_parent_id ) {
-			$parent = get_post( $attachment_parent_id );
+			$parent               = get_post( $attachment_parent_id );
 			$attachment_post_type = array( $parent->post_type );
 		}
 
