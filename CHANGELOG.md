@@ -1,5 +1,60 @@
 # Changelog
 
+## 0.13.0 - 2018-01-18
+
+### Composer type
+
+Changed Composer package type from `wordpress-plugin` to `library`.
+
+With type `wordpress-plugin`, the package was installed into a `wp-content/plugins` folder, even if you used it in your theme. With type `library`, we follow that Timber does, and it’s still possible to [define where the package should be installed](https://getcomposer.org/doc/faqs/how-do-i-install-a-package-to-a-custom-path-for-my-framework.md). And it will not break backwards compatibility, because the default folder will still be the `vendors` folder.
+
+### Introducing filters
+
+In the upcoming versions of Timmy you’ll see filters that allow you to change certain settings more easily. In this version, we introduce 3 new filters. To read more about the filters, there’s a new [Filters section in the README](https://github.com/mindkomm/timmy#filters). Here’s an overview over what these changes mean for you.
+
+#### timmy/sizes
+
+Introduced a new `timmy/sizes` filter to define the image sizes used in Timmy. The way to get image sizes through `get_image_sizes()` will be deprecated in a future version of Timmy. The reason for is that `get_image_sizes()` is quite a generic function name that could lead to conflicts with other plugins.
+
+This means that instead of returning your image configuration from `get_image_sizes()`, you’ll use `timmy/sizes`:
+
+**DON’T USE**
+
+```php
+function get_image_sizes() {
+    return array(
+        // Image configuration
+    );
+}
+```
+
+**USE**
+
+```php
+add_filter( 'timmy/sizes', function() {
+    return array(
+        // Image configuration
+    );
+} );
+```
+
+#### timmy/resize/ignore
+
+- Introduced a `timmy/resize/ignore` filter to make it possible to ignore resizing of images. This filter allows you to disable the resizing based on various conditions, that you can define yourself based on the values passed to this filter.
+- Added a default filter to ignore resizing of GIF images by default. If you still want to enable resizing of GIF images, you can disable the filter by adding the following line to `functions.php` of your theme (after you initialized Timmy with `new Timmy\Timmy()`):
+
+```php
+remove_filter( 'timmy/resize/ignore', array( 'Timmy\Timmy', 'ignore_gif' ) );
+```
+
+#### timmy/generate_srcset_sizes
+
+Introduced a new filter `timmy/generate_srcset_sizes` that filters whether srcset sizes should be generated when an image is uploaded. By default, Timmy generated sizes defined in `srcset` in your image configuration when you uploaded an image in the backend by default. You could disable this by using a `generate_srcset_sizes` in your image configuration. This behavior is now changed:
+
+- `generate_srcset_sizes` will be `false` by default. If you want a size to generate srcset sizes when an image is uploaded, you need to set `generate_srcset_sizes` for an image size to `true`.
+- If you want to enable generating srcset sizes for all images sizes, you can use the `timmy/generate_srcset_sizes` filter.
+- A value for `generate_srcset_sizes` set on an image size in your configuration will always overwrite values set by the filter.
+
 ## 0.12.2 - 2018-01-09
 
 - Added type `wordpress-plugin` to `composer.json`. This allows you to install Timmy in a folder other than `vendor/mindkomm/timmy` (#11, Thanks, @salaros). [Read more about installing a package to a custom path](https://getcomposer.org/doc/faqs/how-do-i-install-a-package-to-a-custom-path-for-my-framework.md).
