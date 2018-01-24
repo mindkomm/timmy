@@ -37,6 +37,8 @@ class Timmy {
 
 		// Add filters and functions to integrate Timmy into Timber and Twig
 		add_filter( 'timber/twig', array( $this, 'filter_twig' ) );
+
+		add_filter( 'timmy/resize/ignore', array( $this, 'ignore_gif' ), 10, 2 );
 	}
 
 	/**
@@ -308,6 +310,27 @@ class Timmy {
 
 		// Bail out if we try to downsize an SVG file
 		if ( 'image/svg+xml' === $attachment->post_mime_type ) {
+			return $return;
+		}
+
+		$ignore = false;
+
+		/**
+		 * Filters whether we should resize an image size.
+		 *
+		 * When true is returned in this filter, the function will bailout early and the
+		 * image will not be processed further.
+		 *
+		 * @since 0.13.0
+		 *
+		 * @param bool     $ignore     Whether to ignore an image size. Default false.
+		 * @param \WP_Post $attachment The attachment post.
+		 * @param string   $size       The requested image size.
+		 * @param string   $file_src   The file src URL.
+		 */
+		$ignore = apply_filters( 'timmy/resize/ignore', $ignore, $attachment, $size, $file_src );
+
+		if ( true === $ignore ) {
 			return $return;
 		}
 
@@ -721,5 +744,24 @@ class Timmy {
 				Helper::notice( 'You can’t use "full" as a key for an image size in get_image_sizes(). The key "full" is reserved for the full size of an image in WordPress.' );
 			}
 		}
+	}
+
+	/**
+	 * Ignore resizing of GIF images.
+	 *
+	 * @since 0.13.0
+	 *
+	 * @param bool     $return     Whether to ignore an image size.
+	 * @param \WP_Post $attachment An attachment post passed to Timber.
+	 *
+	 * @return bool
+	 */
+	public function ignore_gif( $return, $attachment ) {
+		// Ignore GIF images
+		if ( 'image/gif' === $attachment->post_mime_type ) {
+			return true;
+		}
+
+		return $return;
 	}
 }

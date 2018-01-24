@@ -683,6 +683,40 @@ Filters the image sizes used in Timmy. Read more about this in [Image Configurat
 
 ---
 
+### timmy/resize/ignore
+
+Filters whether we should resize an image size.
+
+When true is returned in this filter, the function will bailout early and the image will not be processed further.
+
+**Parameters**
+
+- **$ignore**  
+	*(bool)* Whether to ignore an image size. Default `false`.
+- **$attachment**  
+	*(WP_Post)* The attachment post.
+- **$size**  
+	*(string)* The requested image size.
+- **$file_src**  
+	*(string)* The file src URL.
+
+**Example**
+
+The following filter is already included in Timmy by default. 
+
+```php
+add_filter( 'timmy/resize/ignore', function() {
+    // Ignore GIF images
+    if ( 'image/gif' === $attachment->post_mime_type ) {
+    	return true;
+    }
+    
+    return $return;
+} );
+```
+
+---
+
 ### timmy/generate_srcset_sizes
 
 Filters whether srcset sizes should be generated when an image is uploaded.
