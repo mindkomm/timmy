@@ -38,7 +38,7 @@ class Timmy {
 		// Add filters and functions to integrate Timmy into Timber and Twig
 		add_filter( 'timber/twig', array( $this, 'filter_twig' ) );
 
-		add_filter( 'timmy/resize/ignore', array( $this, 'ignore_gif' ), 10, 2 );
+		add_filter( 'timmy/resize/ignore', array( __CLASS__, 'ignore_gif' ), 10, 2 );
 	}
 
 	/**
@@ -756,7 +756,7 @@ class Timmy {
 	 *
 	 * @return bool
 	 */
-	public function ignore_gif( $return, $attachment ) {
+	public static function ignore_gif( $return, $attachment ) {
 		// Ignore GIF images
 		if ( 'image/gif' === $attachment->post_mime_type ) {
 			return true;
