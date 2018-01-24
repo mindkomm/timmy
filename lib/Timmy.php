@@ -264,8 +264,8 @@ class Timmy {
 
 			list( $width, $height ) = Helper::get_dimensions_for_size( $thumbnail_size );
 
-			$crop   = Helper::get_crop_for_size( $thumbnail_size );
-			$force  = Helper::get_force_for_size( $thumbnail_size );
+			$crop  = Helper::get_crop_for_size( $thumbnail_size );
+			$force = Helper::get_force_for_size( $thumbnail_size );
 
 			// Resize to thumbnail size
 			$src = self::resize( $thumbnail_size, $file_src, $width, $height, $crop, $force );
@@ -348,10 +348,10 @@ class Timmy {
 		 * @since 0.11.0
 		 */
 		if ( 'upload-attachment' === $action
-			 && 'image/gif' === $attachment->post_mime_type
+			&& 'image/gif' === $attachment->post_mime_type
 		) {
 			$image_size_keys = array_keys( $img_sizes );
-			$thumbnail_key = reset( $image_size_keys );
+			$thumbnail_key   = reset( $image_size_keys );
 
 			if ( $thumbnail_key !== $size ) {
 				return $return;
@@ -607,7 +607,7 @@ class Timmy {
 			return;
 		}
 
-		// Timber needs the file src as an url
+		// Timber needs the file src as an URL
 		$file_src = wp_get_attachment_url( $attachment_id );
 
 		/**

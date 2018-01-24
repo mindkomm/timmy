@@ -12,10 +12,12 @@ To get this:
 
 ```html
 <img srcset="https://www.mind.ch/wp-content/uploads/2016/02/header_example-480x206-c-default.jpg 480w,
-https://www.mind.ch/wp-content/uploads/2016/02/header_example-768x329-c-default.jpg 768w,
-https://www.mind.ch/wp-content/uploads/2016/02/header_example-1400x600-c-default.jpg 1400w,
-https://www.mind.ch/wp-content/uploads/2016/02/header_example-2800x1200-c-default.jpg 2800w"
-sizes="100vw" alt="Your alt text" title="Your image title">
+    https://www.mind.ch/wp-content/uploads/2016/02/header_example-768x329-c-default.jpg 768w,
+    https://www.mind.ch/wp-content/uploads/2016/02/header_example-1400x600-c-default.jpg 1400w,
+    https://www.mind.ch/wp-content/uploads/2016/02/header_example-2800x1200-c-default.jpg 2800w"
+sizes="100vw"
+alt="Your alt text"
+title="Your image title">
 ```
 
 You can use Timmy with non-Timber WordPress themes.
@@ -555,9 +557,11 @@ If the post type a user is editing is not in the `post_types` array (and if `pos
 
 ### generate_srcset_sizes
 
-(`bool`), optional, Default: `true`
+(`bool`), optional, Default: `false`
 
-Per default, all the sizes defined under `srcset` will also be generated when an image is uploaded. Otherwise, only the size defined in `resize` will be generated.
+Per default, all the sizes defined under `srcset` will only be generated when the image is requested in the frontend. Only the size defined in `resize` will be generated. By setting this to true, srcset sizes will also be generated when an image is uploaded.
+
+You can use the [`timmy/generate_srcset_sizes` filter](#timmy-generate-srcset-sizes) to enable or disable this globally. Setting this option on an image size always takes precedence over the filter.
 
 ---
 
@@ -730,7 +734,7 @@ Filters whether srcset sizes should be generated when an image is uploaded.
 - **$img_size**  
     *(array)* The image size configuration array.
 - **$attachment**  
-    *(\WP_Post)* The attachment post.
+    *(WP_Post)* The attachment post.
 
 **Example**
 
