@@ -604,7 +604,25 @@ class Timmy {
 			// Create downsized version of the image
 			image_downsize( $attachment_id, $key );
 
-			if ( isset( $img_size['generate_srcset_sizes'] ) && false === $img_size['generate_srcset_sizes'] ) {
+			/**
+			 * Filters whether srcset sizes should be generated when an image is uploaded.
+			 *
+			 * @since 0.13.0
+			 *
+			 * @param bool     $generate_srcset_sizes Whether to generate srcset sizes. Passing false will prevent
+			 *                                        srcset sizes to generated when an image is uploaded. Default false.
+			 * @param string   $key                   The image size key.
+			 * @param array    $img_size              The image size configuration array.
+			 * @param \WP_Post $attachment            The attachment post.
+			 */
+			$generate_srcset_sizes = apply_filters( 'timmy/generate_srcset_sizes', false, $key, $img_size, $attachment );
+
+			// Get setting from image configuration.
+			$generate_srcset_sizes = isset( $img_size['generate_srcset_sizes'] )
+				? $img_size['generate_srcset_sizes']
+				: $generate_srcset_sizes;
+
+			if ( false === $generate_srcset_sizes ) {
 				continue;
 			}
 

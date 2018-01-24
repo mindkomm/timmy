@@ -682,6 +682,29 @@ Filters the image sizes used in Timmy. Read more about this in [Image Configurat
 	*(array)* Image configuration array. Default `array()`.
 
 ---
+
+### timmy/generate_srcset_sizes
+
+Filters whether srcset sizes should be generated when an image is uploaded.
+
+**Parameters**
+
+- **$generate_srcset_sizes**  
+    *(bool)* Whether to generate srcset sizes. Passing false will prevent srcset sizes to generated when an image is uploaded. Default `false`.
+- **$key**  
+	*(string)* The image size key.
+- **$img_size**  
+    *(array)* The image size configuration array.
+- **$attachment**  
+    *(\WP_Post)* The attachment post.
+
+**Example**
+
+```php
+// Generate srcset sizes for all image sizes
+add_filter( 'timmy/generate_srcset_sizes', '__return_true' );
+```
+
 ## Responsive Content Images
 
 Timmy can make images added to the WYSIWYG editor responsive.
