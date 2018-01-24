@@ -43,10 +43,6 @@ class Timmy {
 	 * Setup Timmy
 	 */
 	public function after_setup_theme() {
-		if ( ! function_exists( 'get_image_sizes' ) ) {
-			return;
-		}
-
 		$this->validate_get_image_sizes();
 
 		// Add filters to make TimberImages work with normal WordPress image functionality
@@ -101,10 +97,11 @@ class Timmy {
 	public function set_wp_additional_image_sizes() {
 		global $_wp_additional_image_sizes;
 
-		foreach ( get_image_sizes() as $key => $size ) {
+		foreach ( Helper::get_image_sizes() as $key => $size ) {
 			$sizes[] = $key;
 
 			list( $width, $height ) = Helper::get_dimensions_for_size( $size );
+
 			$crop = isset( $size['resize'][1] ) ? true : false;
 
 			$_wp_additional_image_sizes[ $key ] = array(
@@ -123,7 +120,7 @@ class Timmy {
 	 * @return array Image sizes from image configuration.
 	 */
 	public function filter_intermediate_image_sizes( $sizes ) {
-		return array_keys( get_image_sizes() );
+		return array_keys( Helper::get_image_sizes() );
 	}
 
 	/**
@@ -195,7 +192,7 @@ class Timmy {
 		$sizes = array();
 
 		// Build up new array of image sizes
-		foreach ( get_image_sizes() as $key => $size ) {
+		foreach ( Helper::get_image_sizes() as $key => $size ) {
 			// Do not add our own size if it is set to false in the image config
 			if ( isset( $size['show_in_ui'] ) && false === $size['show_in_ui'] ) {
 				continue;
@@ -278,6 +275,7 @@ class Timmy {
 			 * The src is still the thumbnail size, so that it doesn’t trigger a resize.
 			 */
 			$original_size = Helper::get_image_size( $size );
+
 			list( $width, $height ) = Helper::get_dimensions_for_size( $original_size );
 
 			return array( $src, $width, $height, true );
@@ -313,7 +311,7 @@ class Timmy {
 			return $return;
 		}
 
-		$img_sizes = get_image_sizes();
+		$img_sizes = Helper::get_image_sizes();
 
 		/**
 		 * Bailout if a GIF is uploaded in the backend and a size other than the thumbnail size is
@@ -575,7 +573,7 @@ class Timmy {
 	 * @return void
 	 */
 	private function timber_generate_sizes( $attachment_id ) {
-		$img_sizes  = get_image_sizes();
+		$img_sizes  = Helper::get_image_sizes();
 		$attachment = get_post( $attachment_id );
 
 		/**
@@ -699,7 +697,7 @@ class Timmy {
 	 */
 	public function validate_get_image_sizes() {
 		if ( WP_DEBUG ) {
-			$sizes = get_image_sizes();
+			$sizes = Helper::get_image_sizes();
 
 			if ( isset( $sizes['full'] ) ) {
 				Helper::notice( 'You can’t use "full" as a key for an image size in get_image_sizes(). The key "full" is reserved for the full size of an image in WordPress.' );

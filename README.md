@@ -29,6 +29,7 @@ You can use Timmy with non-Timber WordPress themes.
 - [Functions](#functions)
 - [Image Configuration](#image-configuration)
 - [Image Configuration Example](#image-configuration-example)
+- [Filters](#filters)
 - [Responsive Content Images](#responsive-content-images)
 - [Best Practices](#best-practices)
 - [FAQ](#faq)
@@ -135,12 +136,12 @@ set_post_thumbnail_size( 0, 0 );
 
 ### 4. Register your image sizes with Timmy
 
-Define a function `get_image_sizes()` in `functions.php` of your theme or in a file that is required or included from `functions.php`. This function will return an array with your [Image Configuration](#image-configuration).
+Add a filter for `timmy/sizes` in `functions.php` of your theme or in a file that is required or included from `functions.php`. This filter should return an array with your [Image Configuration](#image-configuration).
 
 #### Example
 
 ```php
-function get_image_sizes() {
+add_filter( 'timmy/sizes', function( $sizes ) {
     return array(
         'custom-4' => array(
             'resize' => array( 370 ),
@@ -150,7 +151,7 @@ function get_image_sizes() {
             'post_types' => array( 'post', 'page' ),
         ),
     );
-}
+} );
 ```
 
 The array key (`custom-4` in the example above) will be used to reference the image when you want to load it in your template.
@@ -192,7 +193,7 @@ Returns the src attribute together with optional alt and title attributes for a 
 
 ##### Usage in Twig
 
-For twig, this function is used as a filter on the TimberImage appended with a `|`.
+For Twig, this function is used as a filter on the TimberImage appended with a `|`.
 
 ```twig
 <img{{ post.thumbnail|get_timber_image('custom-4-crop') }}>
@@ -297,12 +298,10 @@ Returns the src for a post thumbnail. This is practically the same as `get_post_
 
 ## Image Configuration
 
-Your image configuration is an array with all the image sizes, wrapped in a function named `get_image_sizes`
-
-You name each image size via array key that you will reference in the functions above.
+Your image configuration is an array with all the image sizes. You name each image size via array key that you will reference in the functions above.
 
 ```php
-function get_image_sizes() {
+add_filter( 'timmy/sizes', function( $sizes ) {
     return array(
         'thumbnail' => array(
             'resize' => array( 150, 150 ),
@@ -317,7 +316,7 @@ function get_image_sizes() {
             'post_types' => array( 'post', 'page' ),
         ),
     );
-}
+} );
 ```
 
 ### Using an image size array instead of a key
@@ -611,7 +610,7 @@ If `allow` is set to `true`, inline styles will never be applied.
 You will add this to `functions.php` of your theme:
 
 ```php
-function get_image_sizes() {
+add_filter( 'timmy/sizes', function( $sizes ) {
     return array(
         /**
          * The thumbnail size is used to show thumbnails in the backend.
@@ -668,9 +667,21 @@ function get_image_sizes() {
             'resize_srcset' => true,
         ),
     );
-}
+} );
 ```
 
+## Filters
+
+### timmy/sizes
+
+Filters the image sizes used in Timmy. Read more about this in [Image Configuration](#image-configuration).
+
+**Parameters**
+
+- **$sizes**  
+	*(array)* Image configuration array. Default `array()`.
+
+---
 ## Responsive Content Images
 
 Timmy can make images added to the WYSIWYG editor responsive.

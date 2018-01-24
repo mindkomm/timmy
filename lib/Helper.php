@@ -9,6 +9,51 @@ namespace Timmy;
  */
 class Helper {
 	/**
+	 * Image configuration cache.
+	 *
+	 * @var array|null Image configuration array.
+	 */
+	public static $sizes = null;
+
+	/**
+	 * Get image size configuration.
+	 *
+	 * Try first to get image sizes from cache. If the cache is not set, try to get image sizes from the timmy/sizes
+	 * filter. And as a last resort, try to get images from the discouraged get_image_sizes() function.
+	 *
+	 * @since 0.13.0
+	 */
+	public static function get_image_sizes() {
+		// Bailout early if cached image configuration is available.
+		if ( self::$sizes ) {
+			return self::$sizes;
+		}
+
+		/**
+		 * Filters image sizes used in Timmy.
+		 *
+		 * @since 0.13.0
+		 *
+		 * @param array $sizes Image configuration array. Default array().
+		 */
+		$sizes = apply_filters( 'timmy/sizes', array() );
+
+		/**
+		 * Fallback for get_image_sizes() function
+		 *
+		 * TODO: deprecate in 1.0.0
+		 */
+		if ( empty( $sizes ) && function_exists( 'get_image_sizes' ) ) {
+			$sizes = get_image_sizes();
+		}
+
+		// Cache sizes for next requests.
+		self::$sizes = $sizes;
+
+		return $sizes;
+	}
+
+	/**
 	 * Get an image size from image config.
 	 *
 	 * @since 0.11.0
@@ -23,8 +68,9 @@ class Helper {
 			return $size;
 		}
 
-		$sizes = get_image_sizes();
+		$sizes = self::get_image_sizes();
 
+		// Return found image size.
 		if ( isset( $sizes[ $size ] ) ) {
 			return $sizes[ $size ];
 		}
@@ -43,7 +89,7 @@ class Helper {
 	 * @return array Image size configuration array.
 	 */
 	public static function get_thumbnail_size() {
-		$sizes = get_image_sizes();
+		$sizes = self::get_image_sizes();
 
 		if ( isset( $sizes['thumbnail'] ) ) {
 			return $sizes['thumbnail'];
