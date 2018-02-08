@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.13.1 - 2018-02-08
+
+- Fixed behavior of `oversize` parameter. Prior to this version, images would grow bigger than their original size even if `oversize['allow']` was set to `false`.
+- Extended the `oversize` shortcut to also set the `style_attr` parameter. This means that you can use `oversize => true` or `oversize => false` to set all parameters directly. This change only has implications for you if you’ve used `oversize => false` in the past. 
+- Added new filter `timmy\oversize` to set the default values for the oversize parameter. Read more about it in the [Filters section of the README](https://github.com/mindkomm/timmy#filters).
+
 ## 0.13.0 - 2018-01-18
 
 ### Composer type
@@ -10,7 +16,7 @@ With type `wordpress-plugin`, the package was installed into a `wp-content/plugi
 
 ### Introducing filters
 
-In the upcoming versions of Timmy you’ll see filters that allow you to change certain settings more easily. In this version, we introduce 3 new filters. To read more about the filters, there’s a new [Filters section in the README](https://github.com/mindkomm/timmy#filters). Here’s an overview over what these changes mean for you.
+In the upcoming versions of Timmy you’ll see filters that allow you to change certain settings more easily. In this version, we introduce 3 new filters. To read more about the filters, there’s a new [Filters section of the README](https://github.com/mindkomm/timmy#filters). Here’s an overview over what these changes mean for you.
 
 #### timmy/sizes
 

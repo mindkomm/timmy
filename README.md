@@ -569,24 +569,20 @@ You can use the [`timmy/generate_srcset_sizes` filter](#timmy-generate-srcset-si
 
 (`bool|array`), optional, Default: `array( 'allow' => false, 'style_attr' => true )`
 
-Allows the image to be resized to a bigger size than its original size.
+Controls whether the image should be resized to a bigger size than its original size.
 
-Timmy checks the size of the original image to see if it’s big enough to be resized with the given parameters. If not, Timmy returns the image at the original size, but still considers additional image sizes smaller than the original size to be added to srcset.
+When `allow` is `true`, Timmy will check the size of the original image to see if it’s big enough to be resized with the given parameters. If not, Timmy returns the image at the original size, but still considers additional image sizes smaller than the original size to be added to srcset.
 
-If you want to disable this and allow images grow bigger than the original size, set the value to `true`:
-
-```php
-'oversize' => true,
-```
-
-This is a shortcut for: 
+If you want to disable this and allow images to grow bigger than the original size, set the value of `allow` to `true`:
 
 ```php
 // Allow srcset sizes bigger than the original size of the image
-'oversize' => array(
+'oversize' => [
     'allow' => true,
-),
+],
 ```
+
+You can also use the [`timmy/oversize` filter](#timmyoversize) to control this behavior for all image sizes.
 
 #### Inline style attributes
 
@@ -606,6 +602,24 @@ If you want to disable inline style attributes, set `style_attr` to `false`.
 ```
 
 If `allow` is set to `true`, inline styles will never be applied.
+
+#### Shortcuts
+
+You can use a boolean for `oversize` to set both `allow` and `style_attr` values at the same time:
+
+```php
+'oversize' => false,
+```
+
+This is a shortcut for: 
+
+```php
+// Allow srcset sizes bigger than the original size of the image
+'oversize' => array(
+    'allow'      => false,
+    'style_attr' => false,
+),
+```
 
 ---
 
@@ -741,6 +755,33 @@ Filters whether srcset sizes should be generated when an image is uploaded.
 ```php
 // Generate srcset sizes for all image sizes
 add_filter( 'timmy/generate_srcset_sizes', '__return_true' );
+```
+
+---
+
+### timmy/oversize
+
+Filters the default oversize parameters used for an image.
+
+An oversize parameter set for an individual image size will always overwrite values set through this filter.
+
+**Parameters**
+
+- **$oversize_defaults**  
+	*(array|bool)* Default oversize parameters. Can be a boolean to set all values in the array or an array with keys `allow` and `style_attr`. Default `array( 'allow' => false, 'style_attr' => true )`.
+
+**Example**
+
+```php
+add_filter( 'timmy/oversize', function( $oversize ) {
+    // Never set the style_attr for an image
+    $oversize['style_attr'] = false;
+
+    return $oversize;
+} );
+
+// Shortcut to set all oversize parameters to false
+add_filter( 'timmy/oversize', '__return_false' );
 ```
 
 ## Responsive Content Images
