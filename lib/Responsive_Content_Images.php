@@ -40,8 +40,8 @@ class Responsive_Content_Images {
 		 */
 		foreach ( $matches[0] as $image ) {
 			if ( false === strpos( $image, ' srcset=' )
-			     && preg_match( '/wp-image-([0-9]+)/i', $image, $class_id )
-			     && ( $attachment_id = absint( $class_id[1] ) )
+				&& preg_match( '/wp-image-([0-9]+)/i', $image, $class_id )
+				&& ( $attachment_id = absint( $class_id[1] ) )
 			) {
 				/**
 				 * If exactly the same image tag is used more than once, overwrite it.
@@ -67,7 +67,7 @@ class Responsive_Content_Images {
 		// Loop through images and apply responsive markup
 		foreach ( $selected_images as $image => $attachment_id ) {
 			$image_updated = $this->generate_srcset_and_sizes( $image, $attachment_id );
-			$content = str_replace( $image, $image_updated, $content );
+			$content       = str_replace( $image, $image_updated, $content );
 		}
 
 		return $content;

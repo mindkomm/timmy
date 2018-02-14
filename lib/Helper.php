@@ -105,7 +105,7 @@ class Helper {
 	 * @return array Width and height.
 	 */
 	public static function get_dimensions_for_size( $img_size ) {
-		$width = absint( $img_size['resize'][0] );
+		$width  = absint( $img_size['resize'][0] );
 		$height = isset( $img_size['resize'][1] ) ? absint( $img_size['resize'][1] ) : 0;
 
 		return array( $width, $height );
