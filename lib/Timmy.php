@@ -566,8 +566,8 @@ class Timmy {
 	 * @return string The src of the image.
 	 */
 	public static function resize( $img_size, $file_src, $width, $height, $crop, $force ) {
-		// Check if image should be converted to jpg first
-		if ( isset( $img_size['tojpg'] ) && $img_size['tojpg'] ) {
+		// Check if image should be converted to JPG first
+		if ( self::should_convert_to_jpg( $img_size, $file_src ) ) {
 			// Sort out background color which will show instead of transparency
 			$bgcolor  = is_string( $img_size['tojpg'] ) ? $img_size['tojpg'] : '#FFFFFF';
 			$file_src = Timber\ImageHelper::img_to_jpg( $file_src, $bgcolor, $force );
@@ -582,6 +582,30 @@ class Timmy {
 		} else {
 			return Timber\ImageHelper::resize( $file_src, $width, $height, $crop, $force );
 		}
+	}
+
+	/**
+	 * Check if an image should be converted to JPG.
+	 *
+	 * Checks for the existence of the `tojpg` parameter and whether the image is a PDF. Trying to
+	 * convert PDF images will lead to an error, which we need to catch here.
+	 *
+	 * @since 0.13.2
+	 *
+	 * @param array  $img_size Configuration values for an image size.
+	 * @param string $file_src The src of the original image.
+	 *
+	 * @return bool Whether the image should be converted.
+	 */
+	public static function should_convert_to_jpg( $img_size, $file_src ) {
+		if ( isset( $img_size['tojpg'] )
+			&& $img_size['tojpg']
+			&& 'application/pdf' !== wp_check_filetype( $file_src )['type']
+		) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
