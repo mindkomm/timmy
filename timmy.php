@@ -3,7 +3,7 @@
  * Plugin Name: Timmy
  * Plugin URI: https://github.com/MINDKomm/timmy/
  * Description: Advanced image manipulation for Timber.
- * Version: 0.13.1
+ * Version: 0.13.2
  * Author: Lukas Gächter
  * Author URI: https://www.mind.ch
  */

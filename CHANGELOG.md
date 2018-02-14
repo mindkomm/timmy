@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.13.2 - 2018-02-14
+
+- Fixed a bug when Timmy tried to convert a PDF to JPEG. Timmy now checks that a file is not a PDF before converting it to JPG.
+
 ## 0.13.1 - 2018-02-08
 
 - Fixed behavior of `oversize` parameter. Prior to this version, images would grow bigger than their original size even if `oversize['allow']` was set to `false`.
