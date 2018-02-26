@@ -354,6 +354,24 @@ if ( ! function_exists( 'get_acf_image_attr' ) ) :
 	}
 endif;
 
+if ( ! function_exists( 'make_timber_image_lazy' ) ) :
+	/**
+	 * Prepares the markup for lazy-loading.
+	 *
+	 * Replaces `srcset` with `data-srcset`.
+	 *
+	 * @since 0.13.3
+	 *
+	 * @param string $markup Existing image HTML markup.
+	 * @return string HTML markup.
+	 */
+	function make_timber_image_lazy( $markup ) {
+		$markup = str_replace( ' srcset=', ' data-srcset=', $markup );
+
+		return $markup;
+	}
+endif;
+
 if ( ! function_exists( 'get_post_thumbnail' ) ) :
 	/**
 	 * Get Post Thumbnail source together with alt and title attributes.

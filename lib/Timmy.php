@@ -83,6 +83,8 @@ class Timmy {
 		$twig->addFilter( new Twig_SimpleFilter( 'get_timber_image_responsive', 'get_timber_image_responsive' ) );
 		$twig->addFilter( new Twig_SimpleFilter( 'get_timber_image_responsive_src', 'get_timber_image_responsive_src' ) );
 
+		$twig->addFilter( new Twig_SimpleFilter( 'lazy', 'make_timber_image_lazy' ) );
+
 		$twig->addFunction( new \Twig_SimpleFunction( 'get_timber_image_responsive_acf', 'get_timber_image_responsive_acf' ) );
 
 		return $twig;
