@@ -182,7 +182,7 @@ You can use the following functions to get your images into your template:
 
 * [get_post_thumbnail()](#get_post_thumbnail) – Returns the src, alt and title attributes for a post thumbnail at a given size.
 * [get_post_thumbnail_src()](#get_post_thumbnail_src) – Returns the src for a post thumbnail. This is practically the same as *get_post_thumbnail*, just without alt and title tags.
-* [make_timber_image_lazy()][#make_timber_image_lazy] - Prepares the srcset markup for lazy-loading. Replaces `srcset=""` with `data-srcset=""`.
+* [make_timber_image_lazy()](#make_timber_image_lazy) - Prepares the srcset markup for lazy-loading. Replaces `srcset=""` with `data-srcset=""`.
 ---
 
 ### get_timber_image
