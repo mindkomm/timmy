@@ -6,8 +6,8 @@ use Timmy\Helper;
 /**
  * Frontend functions for Timmy.
  *
- * These functions are all pluggable, which means you can overwrite them if you add them to the functions.php file
- * of your theme.
+ * These functions are all pluggable, which means you can overwrite them if you add them to the
+ * functions.php file of your theme.
  */
 
 if ( ! function_exists( 'get_timber_image' ) ) :
@@ -19,7 +19,7 @@ if ( ! function_exists( 'get_timber_image' ) ) :
 	 * @return string|bool Src, alt and title attributes. False if image can’t be found.
 	 */
 	function get_timber_image( $timber_image, $size ) {
-		$src  = get_timber_image_src( $timber_image, $size );
+		$src = get_timber_image_src( $timber_image, $size );
 
 		if ( ! $src ) {
 			return false;
@@ -122,11 +122,13 @@ if ( ! function_exists( 'get_timber_image_responsive' ) ) :
 	 * @param array            $args {
 	 *      Optional. Array of options.
 	 *
-	 *      @type bool $attr_width  Whether to add a width attribute to an image, if needed. Default false.
-	 *      @type bool $attr_height Whether to add a height attribute to an image, if need. Default false.
+	 *      @type bool $attr_width  Whether to add a width attribute to an image, if needed.
+	 *                              Default false.
+	 *      @type bool $attr_height Whether to add a height attribute to an image, if needed.
+	 *                              Default false.
 	 * }
-	 * @return string|bool                    Image srcset, sizes, alt and title attributes. False if image
-	 *                                        can’t be found.
+	 * @return string|bool Image srcset, sizes, alt and title attributes. False if image can’t be
+	 *                     found.
 	 */
 	function get_timber_image_responsive( $timber_image, $size, $args = array() ) {
 		$src = get_timber_image_responsive_src( $timber_image, $size, $args );
@@ -179,7 +181,7 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 		 * @since 0.12.0
 		 */
 		$default_args = array(
-			'attr_width' => false,
+			'attr_width'  => false,
 			'attr_height' => false,
 		);
 
@@ -217,14 +219,18 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 
 				// Bail out if the current size’s width is bigger than available width
 				if ( ! $oversize['allow']
-					 && ( $width_intermediate > $max_width
-						 || ( 0 === $width_intermediate && $height_intermediate > $max_height )
-					 )
+					&& ( $width_intermediate > $max_width
+						|| ( 0 === $width_intermediate && $height_intermediate > $max_height )
+					)
 				) {
 					continue;
 				}
 
-				$width_key = Timmy::get_width_key( $width_intermediate, $height_intermediate, $timber_image );
+				$width_key = Timmy::get_width_key(
+					$width_intermediate,
+					$height_intermediate,
+					$timber_image
+				);
 
 				// For the new source, we use the same $crop and $force values as the default image
 				$srcset[ $width_key ] = Timmy::resize(
@@ -239,8 +245,8 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 		}
 
 		// Attribute strings
-		$attr_sizes = '';
-		$attr_width = '';
+		$attr_sizes  = '';
+		$attr_width  = '';
 		$attr_height = '';
 
 		/**
@@ -252,11 +258,13 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 		if ( isset( $img_size['sizes'] ) ) {
 			$attr_sizes = ' sizes="' . $img_size['sizes'] . '"';
 
-		/**
-		 * For backwards compatibility
-		 * @deprecated since 0.10.0
-		 */
 		} elseif ( isset( $img_size['size'] ) ) {
+			/**
+			 * For backwards compatibility.
+			 *
+			 * @deprecated since 0.10.0
+			 * @todo Remove in 1.x
+			 */
 			$attr_sizes = ' sizes="' . $img_size['size'] . '"';
 		}
 
@@ -286,7 +294,9 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 
 		/**
 		 * Only add responsive srcset and sizes attributes if there are any present.
-		 * If there’s only one srcset src, it’s always the default size. In that case, we just add it as a src.
+		 *
+		 * If there’s only one srcset src, it’s always the default size. In that case, we just add
+		 * it as a src.
 		 */
 		if ( count( $srcset ) > 1 ) {
 			// Sort entries from smallest to highest
@@ -317,10 +327,12 @@ if ( ! function_exists( 'get_timber_image_responsive_acf' ) ) :
 	 *
 	 * @param  string $name ACF Field Name.
 	 * @param  string $size Size key of the image to return.
-	 * @return string|bool Image srcset, sizes, alt and title attributes. False if image can’t be found.
+	 *
+	 * @return string|bool Image srcset, sizes, alt and title attributes. False if image can’t be
+	 *                     found.
 	 */
 	function get_timber_image_responsive_acf( $name, $size ) {
-		$image = get_field( $name );
+		$image        = get_field( $name );
 		$timber_image = Timmy::get_timber_image( $image );
 
 		if ( ! $timber_image ) {
@@ -378,7 +390,9 @@ if ( ! function_exists( 'get_post_thumbnail' ) ) :
 	 *
 	 * @param  int    $post_id The post id to get the thumbnail from.
 	 * @param  string $size    Size key of the image to return.
-	 * @return string|bool Image src together with alt and title attributes. False if no image can’t be found.
+	 *
+	 * @return string|bool Image src together with alt and title attributes. False if no image can’t
+	 *                     be found.
 	 */
 	function get_post_thumbnail( $post_id, $size = 'post-thumbnail' ) {
 		$thumbnail_src = get_post_thumbnail_src( $post_id, $size );
@@ -410,6 +424,7 @@ if ( ! function_exists( 'get_post_thumbnail_src' ) ) :
 	 *
 	 * @param  int    $post_id The post id to get the thumbnail from.
 	 * @param  string $size    Size key of the image to return.
+	 *
 	 * @return string|bool Image src. False if not an image.
 	 */
 	function get_post_thumbnail_src( $post_id, $size = 'post-thumbnail' ) {
