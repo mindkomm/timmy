@@ -33,6 +33,7 @@ You can use Timmy with non-Timber WordPress themes.
 - [Image Configuration Example](#image-configuration-example)
 - [Filters](#filters)
 - [Responsive Content Images](#responsive-content-images)
+- [Lazy Loading](#lazy-loading)
 - [Best Practices](#best-practices)
 - [FAQ](#faq)
 
@@ -167,18 +168,21 @@ If you use Advanced Custom Fields, check the [Best Practices](#best-practices) s
 You can use the following functions to get your images into your template:
 
 ### Basic stuff
+
 * [get_timber_image()](#get_timber_image) – Returns the src attribute together with optional alt and title attributes for an image.
 * [get_timber_image_src()](#get_timber_image_src) – Returns the src for an image.
 
 ### Responsive Images
+
 * [get_timber_image_responsive()](#get_timber_image_responsive) – Returns the srcset, size, alt and title attributes for an image.
 * [get_timber_image_responsive_src()](#get_timber_image_responsive_src) – Returns the srcset and sizes for an image. This is practically the same as *get_timber_image_responsive*, just without alt and title tags.
 * [get_timber_image_responsive_acf()](#get_timber_image_responsive_acf) – Takes the field name of an ACF image as the input and returns the same output as *get_timber_image_responsive()*.
 
 ### Additional Helpers
+
 * [get_post_thumbnail()](#get_post_thumbnail) – Returns the src, alt and title attributes for a post thumbnail at a given size.
 * [get_post_thumbnail_src()](#get_post_thumbnail_src) – Returns the src for a post thumbnail. This is practically the same as *get_post_thumbnail*, just without alt and title tags.
-
+* [make_timber_image_lazy()][#make_timber_image_lazy] - Prepares the srcset markup for lazy-loading. Replaces `srcset=""` with `data-srcset=""`.
 ---
 
 ### get_timber_image
@@ -295,6 +299,30 @@ In Twig combined with Timber you will already have the post thumbnail through `p
 `get_post_thumbnail_src( int $post_id, string|array $size = 'post-thumbnail' )`
 
 Returns the src for a post thumbnail. This is practically the same as `get_post_thumbnail`, just without alt and title tags.
+
+---
+
+### make_timber_image_lazy
+
+`make_timber_image_lazy( string $image_markup )`
+
+Prepares the srcset markup for lazy-loading. Replaces `srcset` with `data-srcset`.
+
+##### Usage in WordPress templates
+
+```php
+<img<?php echo make_timber_image_lazy(
+	get_timber_image_responsive( get_post_thumbnail_id(), 'custom-6' )
+); ?>>
+```
+
+##### Usage in Twig
+
+In Twig, you can use the `lazy` filter.
+
+```twig
+<img{{ post.thumbnail|get_timber_image_responsive('custom-6')|lazy }}>
+```
 
 ---
 
@@ -798,6 +826,25 @@ Enable the functionality in your theme by instantiating the feature in your **fu
 ```php
 new Timmy\Responsive_Content_Images(); 
 ```
+
+## Lazy loading
+
+Timmy leaves it to you if you want to apply lazy loading to images and if you want to, which JavaScript library you want to use for it (for example: [lazysizes](https://github.com/aFarkas/lazysizes)). Because most of the lazy-loading libraries make use of `data` attributes to save the src and srcset attributes, Timmy provides a filter that converts your `srcset=""` into `data-srcset=""`.
+
+```twig
+<img{{ post.thumbnail|get_timber_image_responsive('custom-6')|lazy }}>
+```
+
+The `lazy` filter won’t convert `src` attributes. If you still need that, you can instead pass an option to the `get_timber_image_responsive()` function with your desired settings:
+
+```twig
+<img{{ post.thumbnail|get_timber_image_responsive('custom-6', {
+    lazy_srcset: true,
+    lazy_src: true
+}) }}>
+```
+
+If you need other markup, wrap the markup that is returned from Timmy with your own filter.
 
 ## Best Practices
 

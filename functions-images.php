@@ -152,8 +152,14 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 	 * @param array            $args {
 	 *      Optional. Array of options.
 	 *
-	 *      @type bool $attr_width  Whether to add a width attribute to an image, if needed. Default false.
-	 *      @type bool $attr_height Whether to add a height attribute to an image, if need. Default false.
+	 *      @type bool $attr_width  Whether to add a width attribute to an image, if needed.
+	 *                              Default false.
+	 *      @type bool $attr_height Whether to add a height attribute to an image, if need.
+	 *                              Default false.
+	 *      @type bool $lazy_srcset Whether the srcset attribute should be prepended with "data-".
+	 *                              Default false.
+	 *      @type bool $lazy_src    Whether the src attribute should be prepended with "data-".
+	 *                              Default false.
 	 * }
 	 * @return string|bool Image srcset and sizes attributes. False if image can’t be found.
 	 */
@@ -183,6 +189,8 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 		$default_args = array(
 			'attr_width'  => false,
 			'attr_height' => false,
+			'lazy_srcset' => false,
+			'lazy_src'    => false,
 		);
 
 		$args = wp_parse_args( $args, $default_args );
@@ -290,7 +298,9 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 			$attr_height = ' height="' . $height . '"';
 		}
 
-		$html = '';
+		$html        = '';
+		$srcset_name = $args['lazy_srcset'] ? 'data-srcset' : 'srcset';
+		$src_name    = $args['lazy_src'] ? 'data-src' : 'src';
 
 		/**
 		 * Only add responsive srcset and sizes attributes if there are any present.
@@ -302,7 +312,7 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 			// Sort entries from smallest to highest
 			ksort( $srcset );
 
-			$html .= ' srcset="' . implode( ', ', $srcset ) . '"' . $attr_sizes;
+			$html .= ' ' . $srcset_name . '="' . implode( ', ', $srcset ) . '"' . $attr_sizes;
 
 			/**
 			 * Add fallback for src attribute to provide valid image markup
@@ -310,9 +320,9 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 			 *
 			 * @link http://scottjehl.github.io/picturefill/#support
 			 */
-			$html .= ' src="data:image/gif;base64,R0lGODlhAQABAAAAADs="';
+			$html .= ' ' . $src_name . '="data:image/gif;base64,R0lGODlhAQABAAAAADs="';
 		} else {
-			$html .= 'src="' . $default_size . '"';
+			$html .= $src_name . '="' . $default_size . '"';
 		}
 
 		$html .= $attr_width . $attr_height;
@@ -363,24 +373,6 @@ if ( ! function_exists( 'get_acf_image_attr' ) ) :
 		}
 
 		return $html;
-	}
-endif;
-
-if ( ! function_exists( 'make_timber_image_lazy' ) ) :
-	/**
-	 * Prepares the markup for lazy-loading.
-	 *
-	 * Replaces `srcset` with `data-srcset`.
-	 *
-	 * @since 0.13.3
-	 *
-	 * @param string $markup Existing image HTML markup.
-	 * @return string HTML markup.
-	 */
-	function make_timber_image_lazy( $markup ) {
-		$markup = str_replace( ' srcset=', ' data-srcset=', $markup );
-
-		return $markup;
 	}
 endif;
 
@@ -438,5 +430,23 @@ if ( ! function_exists( 'get_post_thumbnail_src' ) ) :
 
 		// Return the image src url
 		return $post_thumbnail[0];
+	}
+endif;
+
+if ( ! function_exists( 'make_timber_image_lazy' ) ) :
+	/**
+	 * Prepares the srcset markup for lazy-loading.
+	 *
+	 * Replaces `srcset` with `data-srcset`.
+	 *
+	 * @since 0.13.3
+	 *
+	 * @param string $markup Existing image HTML markup.
+	 * @return string HTML markup.
+	 */
+	function make_timber_image_lazy( $markup ) {
+		$markup = str_replace( ' srcset=', ' data-srcset=', $markup );
+
+		return $markup;
 	}
 endif;
