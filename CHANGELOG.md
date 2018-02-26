@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.13.3 - 2018-02-26
+
+- Added lazy loading helper [filter](https://github.com/mindkomm/timmy#lazy-loading) and [function](https://github.com/mindkomm/timmy#make_timber_image_lazy).
+
 ## 0.13.2 - 2018-02-14
 
 - Fixed a bug when Timmy tried to convert a PDF to JPEG. Timmy now checks that a file is not a PDF before converting it to JPG.
