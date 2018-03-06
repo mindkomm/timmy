@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.13.4 - 2017-03-06
+
+- Fixed a bug when `timmy/resize/ignore` filter was ignored in the backend when attachments were queried.
+- **Beware!** Changed parameters passed to `timmy/resize/ignore` filter. Instead of the `$attachment_id` parameter, there’s now a `$mime_type` parameter. The order for the following parameters changed as well. Check the [filter section in the README](https://github.com/mindkomm/timmy#filters).
+
 ## 0.13.3 - 2018-02-26
 
 - Added lazy loading helper [filter](https://github.com/mindkomm/timmy#lazy-loading) and [function](https://github.com/mindkomm/timmy#make_timber_image_lazy).
