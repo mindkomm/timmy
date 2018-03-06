@@ -246,6 +246,46 @@ class Timmy {
 			? filter_var( $_POST['action'], FILTER_SANITIZE_STRING )
 			: false;
 
+		$mime_type = wp_get_image_mime( $file_src );
+
+		// Bail out if mime type can’t be determined.
+		if ( ! $mime_type ) {
+			return $return;
+		}
+
+		// Bail out if we try to downsize an SVG file.
+		if ( 'image/svg+xml' === $mime_type ) {
+			return $return;
+		}
+
+		$ignore = false;
+
+		/**
+		 * Filters whether we should resize an image size.
+		 *
+		 * When true is returned in this filter, the function will bailout early and the
+		 * image will not be processed further.
+		 *
+		 * @since 0.13.0
+		 *
+		 * @param bool   $ignore        Whether to ignore an image size. Default false.
+		 * @param string $mime_type     The mime type of the image.
+		 * @param string $size          The requested image size.
+		 * @param int    $attachment_id The attachment post ID.
+		 * @param string $file_src      The file src URL.
+		 */
+		$ignore = apply_filters( 'timmy/resize/ignore',
+			$ignore,
+			$mime_type,
+			$size,
+			$attachment_id,
+			$file_src
+		);
+
+		if ( true === $ignore ) {
+			return $return;
+		}
+
 		/**
 		 * Return thumbnail size when media files are requested through an AJAX call.
 		 *
@@ -285,6 +325,28 @@ class Timmy {
 			return array( $src, $width, $height, true );
 		}
 
+		$img_sizes = Helper::get_image_sizes();
+
+		/**
+		 * Bailout if a GIF is uploaded in the backend and a size other than the thumbnail size is
+		 * requested.
+		 *
+		 * Generating sizes for a GIF takes a lot of performance. When uploading a GIF, this could
+		 * quickly lead to an error if the maximum execution time is reached. That’s why Timmy only
+		 * generates the thumbnail size. This leads to better performance in the Media Library, when
+		 * only small GIFs have to be loaded. Other GIF sizes will still be generated on the fly.
+		 *
+		 * @since 0.11.0
+		 */
+		if ( 'upload-attachment' === $action && 'image/gif' === $mime_type ) {
+			$image_size_keys = array_keys( $img_sizes );
+			$thumbnail_key   = reset( $image_size_keys );
+
+			if ( $thumbnail_key !== $size ) {
+				return $return;
+			}
+		}
+
 		/**
 		 * Return full size when full size of image is requested.
 		 *
@@ -309,56 +371,6 @@ class Timmy {
 		}
 
 		$attachment = get_post( $attachment_id );
-
-		// Bail out if we try to downsize an SVG file
-		if ( 'image/svg+xml' === $attachment->post_mime_type ) {
-			return $return;
-		}
-
-		$ignore = false;
-
-		/**
-		 * Filters whether we should resize an image size.
-		 *
-		 * When true is returned in this filter, the function will bailout early and the
-		 * image will not be processed further.
-		 *
-		 * @since 0.13.0
-		 *
-		 * @param bool     $ignore     Whether to ignore an image size. Default false.
-		 * @param \WP_Post $attachment The attachment post.
-		 * @param string   $size       The requested image size.
-		 * @param string   $file_src   The file src URL.
-		 */
-		$ignore = apply_filters( 'timmy/resize/ignore', $ignore, $attachment, $size, $file_src );
-
-		if ( true === $ignore ) {
-			return $return;
-		}
-
-		$img_sizes = Helper::get_image_sizes();
-
-		/**
-		 * Bailout if a GIF is uploaded in the backend and a size other than the thumbnail size is
-		 * requested.
-		 *
-		 * Generating sizes for a GIF takes a lot of performance. When uploading a GIF, this could
-		 * quickly lead to an error if the maximum execution time is reached. That’s why Timmy only
-		 * generates the thumbnail size. This leads to better performance in the Media Library, when
-		 * only small GIFs have to be loaded. Other GIF sizes will still be generated on the fly.
-		 *
-		 * @since 0.11.0
-		 */
-		if ( 'upload-attachment' === $action
-			&& 'image/gif' === $attachment->post_mime_type
-		) {
-			$image_size_keys = array_keys( $img_sizes );
-			$thumbnail_key   = reset( $image_size_keys );
-
-			if ( $thumbnail_key !== $size ) {
-				return $return;
-			}
-		}
 
 		// Sort out which image size we need to take from our own image configuration
 		if ( ! is_array( $size ) && isset( $img_sizes[ $size ] ) ) {
@@ -802,14 +814,14 @@ class Timmy {
 	 *
 	 * @since 0.13.0
 	 *
-	 * @param bool     $return     Whether to ignore an image size.
-	 * @param \WP_Post $attachment An attachment post passed to Timber.
+	 * @param bool   $return    Whether to ignore an image size.
+	 * @param string $mime_type The attachment mime type.
 	 *
 	 * @return bool
 	 */
-	public static function ignore_gif( $return, $attachment ) {
+	public static function ignore_gif( $return, $mime_type ) {
 		// Ignore GIF images
-		if ( 'image/gif' === $attachment->post_mime_type ) {
+		if ( 'image/gif' === $mime_type ) {
 			return true;
 		}
 
