@@ -322,7 +322,7 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 			 */
 			$html .= ' ' . $src_name . '="data:image/gif;base64,R0lGODlhAQABAAAAADs="';
 		} else {
-			$html .= $src_name . '="' . $default_size . '"';
+			$html .= ' ' . $src_name . '="' . $default_size . '"';
 		}
 
 		$html .= $attr_width . $attr_height;
