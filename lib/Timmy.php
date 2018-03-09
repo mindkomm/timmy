@@ -234,7 +234,7 @@ class Timmy {
 	 *                     the image is an intermediate size. False on failure.
 	 */
 	public function filter_image_downsize( $return = false, $attachment_id, $size ) {
-		// Timber needs the file src as an URL. Checks if ID belongs to an attachment.
+		// Timber needs the file src as an URL. Also checks if ID belongs to an attachment.
 		$file_src = wp_get_attachment_url( $attachment_id );
 
 		if ( ! $file_src ) {
@@ -246,7 +246,8 @@ class Timmy {
 			? filter_var( $_POST['action'], FILTER_SANITIZE_STRING )
 			: false;
 
-		$mime_type = wp_get_image_mime( $file_src );
+		$attachment = get_post( $attachment_id );
+		$mime_type  = $attachment->post_mime_type;
 
 		// Bail out if mime type can’t be determined.
 		if ( ! $mime_type ) {
@@ -268,17 +269,17 @@ class Timmy {
 		 *
 		 * @since 0.13.0
 		 *
-		 * @param bool   $ignore        Whether to ignore an image size. Default false.
-		 * @param string $mime_type     The mime type of the image.
-		 * @param string $size          The requested image size.
-		 * @param int    $attachment_id The attachment post ID.
-		 * @param string $file_src      The file src URL.
+		 * @param bool   $ignore     Whether to ignore an image size. Default false.
+		 * @param string $mime_type  The mime type of the image.
+		 * @param string $size       The requested image size.
+		 * @param int    $attachment The attachment post.
+		 * @param string $file_src   The file src URL.
 		 */
 		$ignore = apply_filters( 'timmy/resize/ignore',
 			$ignore,
 			$mime_type,
 			$size,
-			$attachment_id,
+			$attachment,
 			$file_src
 		);
 
@@ -369,8 +370,6 @@ class Timmy {
 
 			return array( $file_src, 0, 0, false );
 		}
-
-		$attachment = get_post( $attachment_id );
 
 		// Sort out which image size we need to take from our own image configuration
 		if ( ! is_array( $size ) && isset( $img_sizes[ $size ] ) ) {
