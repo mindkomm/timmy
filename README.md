@@ -739,12 +739,10 @@ When true is returned in this filter, the function will bailout early and the im
 
 - **$ignore**  
 	*(bool)* Whether to ignore an image size. Default `false`.
-- **$mime_type**  
-	*string* The mime type of the image.
+- **$attachment**  
+	*(string)* The attachment post.
 - **$size**  
 	*(string)* The requested image size.
-- **$attachment_id**  
-	*(string)* The attachment post ID.
 - **$file_src**  
 	*(string)* The file src URL.
 
@@ -753,9 +751,9 @@ When true is returned in this filter, the function will bailout early and the im
 The following filter is already included in Timmy by default. 
 
 ```php
-add_filter( 'timmy/resize/ignore', function( $return, $mime_type ) {
+add_filter( 'timmy/resize/ignore', function( $return, $attachment ) {
     // Ignore GIF images
-    if ( 'image/gif' === $mime_type ) {
+    if ( 'image/gif' === $attachment->post_mime_type ) {
     	return true;
     }
     

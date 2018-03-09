@@ -270,16 +270,14 @@ class Timmy {
 		 * @since 0.13.0
 		 *
 		 * @param bool   $ignore     Whether to ignore an image size. Default false.
-		 * @param string $mime_type  The mime type of the image.
-		 * @param string $size       The requested image size.
 		 * @param int    $attachment The attachment post.
+		 * @param string $size       The requested image size.
 		 * @param string $file_src   The file src URL.
 		 */
 		$ignore = apply_filters( 'timmy/resize/ignore',
 			$ignore,
-			$mime_type,
-			$size,
 			$attachment,
+			$size,
 			$file_src
 		);
 
@@ -813,14 +811,14 @@ class Timmy {
 	 *
 	 * @since 0.13.0
 	 *
-	 * @param bool   $return    Whether to ignore an image size.
-	 * @param string $mime_type The attachment mime type.
+	 * @param bool     $return     Whether to ignore an image size.
+	 * @param \WP_Post $attachment The attachment mime type.
 	 *
 	 * @return bool
 	 */
-	public static function ignore_gif( $return, $mime_type ) {
+	public static function ignore_gif( $return, $attachment ) {
 		// Ignore GIF images
-		if ( 'image/gif' === $mime_type ) {
+		if ( 'image/gif' === $attachment->post_mime_type ) {
 			return true;
 		}
 
