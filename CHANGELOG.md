@@ -1,9 +1,14 @@
 # Changelog
 
+## 0.13.5 - 2017-03-09
+
+- Changed how the bug that was fixed in 0.13.4 is handled. Solve it differently, so that the changes made for the `timmy/resize/ignore` filter in 0.13.4 could be reversed. Check the [filter section in the README](https://github.com/mindkomm/timmy#filters) for how the `timmy/resize/ignore` filter works. Sorry!
+- Fixed a whitespace bug in `get_timber_image_responsive_src()` that was introduced in 0.13.3 (a17aa2e825c0b0b20e613f70d7aa735711170367).
+
 ## 0.13.4 - 2017-03-06
 
 - Fixed a bug when `timmy/resize/ignore` filter was ignored in the backend when attachments were queried.
-- **Beware!** Changed parameters passed to `timmy/resize/ignore` filter. Instead of the `$attachment_id` parameter, there’s now a `$mime_type` parameter. The order for the following parameters changed as well. Check the [filter section in the README](https://github.com/mindkomm/timmy#filters).
+- <del>Changed parameters passed to `timmy/resize/ignore` filter. Instead of the `$attachment_id` parameter, there’s now a `$mime_type` parameter. The order for the following parameters changed as well. Check the [filter section in the README](https://github.com/mindkomm/timmy#filters).</del>
 
 ## 0.13.3 - 2018-02-26
 
