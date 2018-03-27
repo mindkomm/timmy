@@ -15,7 +15,7 @@ if ( ! function_exists( 'get_timber_image' ) ) :
 	 * Outputs the src attr together with optional alt and title attributes for a TimberImage.
 	 *
 	 * @param  int|Timber\Image $timber_image Instance of TimberImage or Attachment ID.
-	 * @param  string           $size         The size which you want to access.
+	 * @param  string|array     $size         The size which you want to access.
 	 * @return string|bool Src, alt and title attributes. False if image can’t be found.
 	 */
 	function get_timber_image( $timber_image, $size ) {
@@ -36,7 +36,7 @@ if ( ! function_exists( 'get_timber_image_src' ) ) :
 	 * Returns the src (url) for a TimberImage.
 	 *
 	 * @param  int|Timber\Image $timber_image Instance of TimberImage or Attachment ID.
-	 * @param  string           $size         Size key of the image to return.
+	 * @param  string|array     $size         Size key or array of the image to return.
 	 * @return string|bool Image src. False if image can’t be found.
 	 */
 	function get_timber_image_src( $timber_image, $size ) {
@@ -148,7 +148,7 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 	 * Get srcset and sizes for a TimberImage.
 	 *
 	 * @param Timber\Image|int $timber_image Instance of TimberImage or Attachment ID.
-	 * @param string           $size         Size key of the image to return.
+	 * @param string|array     $size         Size key or array of the image to return.
 	 * @param array            $args {
 	 *      Optional. Array of options.
 	 *
