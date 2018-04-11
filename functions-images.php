@@ -82,10 +82,10 @@ if ( ! function_exists( 'get_image_attr_html' ) ) :
 	 * @return string HTML string for alt and title attributes.
 	 */
 	function get_image_attr_html( $alt, $title ) {
-		$html = ' alt="' . $alt . '"';
+		$html = ' alt="' . esc_attr( $alt ) . '"';
 
 		if ( ! empty( $title ) ) {
-			$html .= ' title="' . $title . '"';
+			$html .= ' title="' . esc_attr( $title ) . '"';
 		}
 
 		return $html;
@@ -264,7 +264,7 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 		 * @since 0.10.0
 		 */
 		if ( isset( $img_size['sizes'] ) ) {
-			$attr_sizes = ' sizes="' . $img_size['sizes'] . '"';
+			$attr_sizes = ' sizes="' . esc_attr( $img_size['sizes'] ) . '"';
 
 		} elseif ( isset( $img_size['size'] ) ) {
 			/**
@@ -273,7 +273,7 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 			 * @deprecated since 0.10.0
 			 * @todo Remove in 1.x
 			 */
-			$attr_sizes = ' sizes="' . $img_size['size'] . '"';
+			$attr_sizes = ' sizes="' . esc_attr( $img_size['size'] ) . '"';
 		}
 
 		/**
@@ -284,18 +284,18 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 		 */
 		if ( $oversize['style_attr'] ) {
 			if ( 'width' === $oversize['style_attr'] && ! $args['attr_width'] ) {
-				$attr_width = ' style="width:' . $max_width . 'px;"';
+				$attr_width = ' style="width:' . esc_attr( $max_width ) . 'px;"';
 			} elseif ( 'height' === $oversize['style_attr'] && ! $args['attr_height'] ) {
-				$attr_height = ' style="height:' . $max_height . 'px;"';
+				$attr_height = ' style="height:' . esc_attr( $max_height ) . 'px;"';
 			}
 		}
 
 		if ( $args['attr_width'] ) {
-			$attr_width = ' width="' . $width . '"';
+			$attr_width = ' width="' . esc_attr( $width ) . '"';
 		}
 
 		if ( $args['attr_height'] ) {
-			$attr_height = ' height="' . $height . '"';
+			$attr_height = ' height="' . esc_attr( $height ) . '"';
 		}
 
 		$html        = '';
@@ -366,10 +366,10 @@ if ( ! function_exists( 'get_acf_image_attr' ) ) :
 	function get_acf_image_attr( $image ) {
 		$alt = ! empty( $image['alt'] ) ? $image['alt'] : '';
 
-		$html = ' alt="' . $alt . '"';
+		$html = ' alt="' . esc_attr( $alt ) . '"';
 
 		if ( ! empty( $image['description'] ) ) {
-			$html .= ' title="' . $image['description'] . '"';
+			$html .= ' title="' . esc_attr( $image['description'] ) . '"';
 		}
 
 		return $html;
