@@ -4,15 +4,27 @@ namespace Timmy;
 
 /**
  * Class Responsive_Content_Images
- *
- * @package Timmy
  */
 class Responsive_Content_Images {
 	/**
 	 * Responsive_Content_Images constructor.
+	 *
+	 * @param array $args {
+	 *     Optional. An array of arguments for the Responsive Content Image handler.
+	 *
+	 *     @type string $full_size_replacement The key of the image size that should be used when
+	 *                                         full size images were inserted into the post content.
+	 * }
 	 */
-	public function __construct() {
+	public function __construct( $args = array() ) {
+		$this->args = wp_parse_args( $args, array(
+			'full_size_replacement' => '',
+		) );
+
+		// Remove the default filter used by WordPress.
 		remove_filter( 'the_content', 'wp_make_content_images_responsive' );
+
+		// Add our own custom filter.
 		add_filter( 'the_content', array( $this, 'make_content_images_responsive' ) );
 	}
 
@@ -31,7 +43,8 @@ class Responsive_Content_Images {
 			return $content;
 		}
 
-		$selected_images = $attachment_ids = array();
+		$selected_images = array();
+		$attachment_ids  = array();
 
 		/**
 		 * Loop through possible images and get attachment ids.
@@ -100,13 +113,22 @@ class Responsive_Content_Images {
 			return $image;
 		}
 
+		// Maybe select replacement size.
+		if ( 'full' === $img_size && ! empty( $this->args['full_size_replacement'] ) ) {
+			$img_size = $this->args['full_size_replacement'];
+		}
+
 		// Get responsive image markup for srcset and sizes.
-		$attr_responsive = get_timber_image_responsive( $attachment_id, $img_size, array(
-			'attr_width' => true,
-		) );
+		$attributes = get_timber_image_attributes_responsive(
+			$attachment_id,
+			$img_size,
+			array(
+				'attr_width' => true,
+			)
+		);
 
 		// Bailout if markup couldn’t be generated.
-		if ( ! $attr_responsive ) {
+		if ( ! $attributes ) {
 			return $image;
 		}
 
@@ -122,9 +144,36 @@ class Responsive_Content_Images {
 		$image = preg_replace( '/ height="([^"]+)"/', '', $image );
 		$image = preg_replace( '/ width="([^"]+)"/', '', $image );
 		$image = preg_replace( '/ alt="([^"]+)"/', '', $image );
+		$image = preg_replace( '/ title="([^"]+)"/', '', $image );
 
-		// Add 'srcset' and 'sizes' attributes to the image markup.
-		$image = preg_replace( '/<img ([^>]+?)[\/ ]*>/', '<img $1 ' . $attr_responsive . ' />', $image );
+		// Remove class attribute and save class attribute content in attributes array.
+		if ( preg_match( '/ class="([^"]+)"/', $image, $class_matches ) ) {
+			$attributes['class'] = $class_matches[1];
+			$image               = preg_replace( '/ class="([^"]+)"/', '', $image );
+		}
+
+		/**
+		 * Filters image attributes used for a responsive content image.
+		 *
+		 * @param array  $attributes    A key-value array of HTML attributes.
+		 * @param int    $attachment_id The attachment ID of the image.
+		 * @param string $img_size      The image size key.
+		 */
+		$attributes = apply_filters( 'timmy/responsive_content_image/attributes', $attributes, $attachment_id, $img_size );
+
+		// Replace image markup
+		$image = preg_replace( '/<img ([^>]+?)[\/ ]*>/', '<img $1 ' . get_timber_image_attr_html( $attributes ) . ' />', $image );
+
+		/**
+		 * Filters the image HTML markup.
+		 *
+		 * This filter can also be used to append content to an image.
+		 *
+		 * @param string $image         The image HTML markup.
+		 * @param int    $attachment_id The attachment ID of the image.
+		 * @param string $img_size      The image size key.
+		 */
+		$image = apply_filters( 'timmy/responsive_content_image', $image, $attachment_id, $img_size );
 
 		return $image;
 	}
