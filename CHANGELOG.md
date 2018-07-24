@@ -1,8 +1,21 @@
 # Changelog
 
+## 0.14.0 - 2018-07-24
+
+- Introduced new function `get_timber_image_attr_html()` that is used to turn an associative array of HTML attributes to a string.
+- Introduced new function `get_timber_image_attributes_responsive()` that can be used to get an associative array of HTML attributes for a responsive Timber image.
+- Introduced new function `get_timber_image_texts()` that is used to retrieve alt and title attributes for an image.
+- Deprecated the `get_image_attr_html()` function.
+
+### Improved Responsive Content Images feature.
+
+- Introduced arguments array for `Responsive_Content_Images` class with new option `full_size_replacement`, that allows to use a custom image size when the full size of an image is used in the content.
+- Introduced new filter `timmy/responsive_content_image/attributes` to filter image attributes used for a responsive content image..
+- Introduced new filter `timmy/responsive_content_image` to filter the image HTML markup.
+
 ## 0.13.6 - 2018-04-11
 
-- Escape HTML attributes with `esc_attr()` for better security and to prevent errors when certain characters are used in image alt texts and titles.
+- Escaped HTML attributes with `esc_attr()` for better security and to prevent errors when certain characters are used in image alt texts and titles.
 
 ## 0.13.5 - 2018-03-09
 
