@@ -12,7 +12,7 @@ use Timmy\Helper;
 
 if ( ! function_exists( 'get_timber_image' ) ) :
 	/**
-	 * Outputs the src attr together with optional alt and title attributes for a TimberImage.
+	 * Returns the src attr together with optional alt and title attributes for a TimberImage.
 	 *
 	 * @param  int|Timber\Image $timber_image Instance of TimberImage or Attachment ID.
 	 * @param  string|array     $size         The size which you want to access.
@@ -25,9 +25,10 @@ if ( ! function_exists( 'get_timber_image' ) ) :
 			return false;
 		}
 
-		$attr = get_timber_image_attr( $timber_image );
-
-		return ' src="' . $src . '" ' . $attr;
+		return get_timber_image_attr_html( array_merge(
+			[ 'src' => $src ],
+			get_timber_image_texts( $timber_image )
+		) );
 	}
 endif;
 
@@ -74,21 +75,70 @@ if ( ! function_exists( 'get_image_attr_html' ) ) :
 	/**
 	 * Returns the HTML for given alt and title attribute strings.
 	 *
-	 * This will always include the alt tag. For accessibility, the
-	 * alt tag needs to be included even if it is empty.
+	 * @deprecated 0.14.0
 	 *
 	 * @param  string $alt   Alt text.
 	 * @param  string $title Title text.
 	 * @return string HTML string for alt and title attributes.
 	 */
 	function get_image_attr_html( $alt, $title ) {
-		$html = ' alt="' . esc_attr( $alt ) . '"';
+		return get_timber_image_attr_html( [
+			'alt'   => $alt,
+			'title' => $title,
+		] );
+	}
+endif;
 
-		if ( ! empty( $title ) ) {
-			$html .= ' title="' . esc_attr( $title ) . '"';
+if ( ! function_exists( 'get_timber_image_attr_html' ) ) :
+	/**
+	 * Returns the HTML for an array of HTML tag attributes.
+	 *
+	 * @since 0.14.0
+	 *
+	 * @param array $attributes An associative array of HTML attributes.
+	 *
+	 * @return string HTML attribute string to be used in an HTML tag.
+	 */
+	function get_timber_image_attr_html( $attributes = [] ) {
+		$html = '';
+
+		foreach ( $attributes as $key => $attribute ) {
+			$html .= ' ' . esc_attr( $key ) . '="' . esc_attr( $attribute ) . '"';
 		}
 
 		return $html;
+	}
+endif;
+
+if ( ! function_exists( 'get_timber_image_texts' ) ) :
+	/**
+	 * Get the image attributes (alt and title) for a TimberImage.
+	 *
+	 * This will always include the alt tag. For accessibility, the alt tag needs to be included
+	 * even if it is empty.
+	 *
+	 * @since 0.14.0
+	 *
+	 * @param Timber\Image $timber_image Instance of TimberImage.
+	 *
+	 * @return array|false An array with alt and title attributes. False if image can’t be found.
+	 */
+	function get_timber_image_texts( $timber_image ) {
+		$timber_image = Timmy::get_timber_image( $timber_image );
+
+		if ( ! $timber_image ) {
+			return false;
+		}
+
+		$texts = [
+			'alt' => $timber_image->alt(),
+		];
+
+		if ( ! empty( $timber_image->post_content ) ) {
+			$texts['title'] = $timber_image->post_content;
+		}
+
+		return $texts;
 	}
 endif;
 
@@ -97,7 +147,7 @@ if ( ! function_exists( 'get_timber_image_attr' ) ) :
 	 * Get the image attributes (alt and title) for a TimberImage.
 	 *
 	 * @param  Timber\Image $timber_image Instance of TimberImage.
-	 * @return string HTML string for alt and title attributes. False if image can’t be found.
+	 * @return string|false HTML string for alt and title attributes. False if image can’t be found.
 	 */
 	function get_timber_image_attr( $timber_image ) {
 		$timber_image = Timmy::get_timber_image( $timber_image );
@@ -106,40 +156,59 @@ if ( ! function_exists( 'get_timber_image_attr' ) ) :
 			return false;
 		}
 
-		$alt   = $timber_image->_wp_attachment_image_alt;
-		$title = $timber_image->post_content;
+		return get_timber_image_attr_html( get_timber_image_texts( $timber_image ) );
+	}
+endif;
 
-		return get_image_attr_html( $alt, $title );
+if ( ! function_exists( 'get_timber_image_attributes_responsive' ) ) :
+	/**
+	 * Gets all image attributes for a responsive TimberImage.
+	 *
+	 * This function is useful if you want to change some of the attributes before outputting them.
+	 *
+	 * @since 0.14.0
+	 *
+	 * @param int|Timber\Image $timber_image Instance of TimberImage.
+	 * @param string           $size         Size key of the image to return the attributes for.
+	 * @param array            $args         Optional. Array of options. See
+	 *                                       get_timber_image_responsive() for possible options.
+	 *
+	 * @return bool|array An associative array of HTML attributes. False if image can’t be found.
+	 */
+	function get_timber_image_attributes_responsive( $timber_image, $size, $args = array() ) {
+		$timber_image = Timmy::get_timber_image( $timber_image );
+
+		if ( ! $timber_image ) {
+			return false;
+		}
+
+		// Return attributes as array
+		$args = wp_parse_args( $args, [
+			'return_format' => 'array',
+		] );
+
+		return array_merge(
+			get_timber_image_texts( $timber_image ),
+			get_timber_image_responsive_src( $timber_image, $size, $args )
+		);
 	}
 endif;
 
 if ( ! function_exists( 'get_timber_image_responsive' ) ) :
 	/**
-	 * Get the responsive srcset and sizes for a TimberImage.
+	 * Get the responsive markup for a TimberImage.
 	 *
 	 * @param Timber\Image|int $timber_image Instance of TimberImage or Attachment ID.
 	 * @param string           $size         Size key of the image to return.
-	 * @param array            $args {
-	 *      Optional. Array of options.
+	 * @param array            $args         Optional. Array of options. See
+	 *                                       get_timber_image_responsive_src() for a list of args
+	 *                                       that can be used.
 	 *
-	 *      @type bool $attr_width  Whether to add a width attribute to an image, if needed.
-	 *                              Default false.
-	 *      @type bool $attr_height Whether to add a height attribute to an image, if needed.
-	 *                              Default false.
-	 * }
 	 * @return string|bool Image srcset, sizes, alt and title attributes. False if image can’t be
 	 *                     found.
 	 */
 	function get_timber_image_responsive( $timber_image, $size, $args = array() ) {
-		$src = get_timber_image_responsive_src( $timber_image, $size, $args );
-
-		if ( ! $src ) {
-			return false;
-		}
-
-		$attr = get_timber_image_attr( $timber_image );
-
-		return $src . ' ' . $attr;
+		return get_timber_image_attr_html( get_timber_image_attributes_responsive( $timber_image, $size, $args ) );
 	}
 endif;
 
@@ -161,23 +230,12 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 	 *      @type bool $lazy_src    Whether the src attribute should be prepended with "data-".
 	 *                              Default false.
 	 * }
-	 * @return string|bool Image srcset and sizes attributes. False if image can’t be found.
+	 * @return string|bool|array Image srcset and sizes attributes. False if image can’t be found.
 	 */
 	function get_timber_image_responsive_src( $timber_image, $size, $args = array() ) {
 		$timber_image = Timmy::get_timber_image( $timber_image );
 
 		if ( ! $timber_image ) {
-			return false;
-		}
-
-		// Directly return full source when full source or an SVG image is requested.
-		if ( 'full' === $size || 'image/svg+xml' === $timber_image->post_mime_type ) {
-			return ' src="' . wp_get_attachment_url( $timber_image->ID ) . '"';
-		}
-
-		$img_size = Helper::get_image_size( $size );
-
-		if ( ! $img_size ) {
 			return false;
 		}
 
@@ -187,13 +245,31 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 		 * @since 0.12.0
 		 */
 		$default_args = array(
-			'attr_width'  => false,
-			'attr_height' => false,
-			'lazy_srcset' => false,
-			'lazy_src'    => false,
+			'attr_width'    => false,
+			'attr_height'   => false,
+			'lazy_srcset'   => false,
+			'lazy_src'      => false,
+			'return_format' => 'string',
 		);
 
 		$args = wp_parse_args( $args, $default_args );
+
+		// Directly return full source when full source or an SVG image is requested.
+		if ( 'full' === $size || 'image/svg+xml' === $timber_image->post_mime_type ) {
+			$attributes = [ 'src' => wp_get_attachment_url( $timber_image->ID ) ];
+
+			if ( 'string' === $args['return_format'] ) {
+				return get_timber_image_attr_html( $attributes );
+			}
+
+			return $attributes;
+		}
+
+		$img_size = Helper::get_image_size( $size );
+
+		if ( ! $img_size ) {
+			return false;
+		}
 
 		list(
 			$file_src,
@@ -252,10 +328,7 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 			}
 		}
 
-		// Attribute strings
-		$attr_sizes  = '';
-		$attr_width  = '';
-		$attr_height = '';
+		$attributes = array();
 
 		/**
 		 * Check for 'sizes' option in image configuration.
@@ -264,8 +337,7 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 		 * @since 0.10.0
 		 */
 		if ( isset( $img_size['sizes'] ) ) {
-			$attr_sizes = ' sizes="' . esc_attr( $img_size['sizes'] ) . '"';
-
+			$attributes['sizes'] = $img_size['sizes'];
 		} elseif ( isset( $img_size['size'] ) ) {
 			/**
 			 * For backwards compatibility.
@@ -273,7 +345,7 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 			 * @deprecated since 0.10.0
 			 * @todo Remove in 1.x
 			 */
-			$attr_sizes = ' sizes="' . esc_attr( $img_size['size'] ) . '"';
+			$attributes['sizes'] = $img_size['size'];
 		}
 
 		/**
@@ -284,21 +356,20 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 		 */
 		if ( $oversize['style_attr'] ) {
 			if ( 'width' === $oversize['style_attr'] && ! $args['attr_width'] ) {
-				$attr_width = ' style="width:' . esc_attr( $max_width ) . 'px;"';
+				$attributes['style'] = 'width:' . $max_width . 'px;';
 			} elseif ( 'height' === $oversize['style_attr'] && ! $args['attr_height'] ) {
-				$attr_height = ' style="height:' . esc_attr( $max_height ) . 'px;"';
+				$attributes['style'] = 'height:' . $max_height . 'px;';
 			}
 		}
 
 		if ( $args['attr_width'] ) {
-			$attr_width = ' width="' . esc_attr( $width ) . '"';
+			$attributes['width'] = $width;
 		}
 
 		if ( $args['attr_height'] ) {
-			$attr_height = ' height="' . esc_attr( $height ) . '"';
+			$attributes['height'] = $height;
 		}
 
-		$html        = '';
 		$srcset_name = $args['lazy_srcset'] ? 'data-srcset' : 'srcset';
 		$src_name    = $args['lazy_src'] ? 'data-src' : 'src';
 
@@ -312,22 +383,24 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 			// Sort entries from smallest to highest
 			ksort( $srcset );
 
-			$html .= ' ' . $srcset_name . '="' . implode( ', ', $srcset ) . '"' . $attr_sizes;
+			$attributes[ $srcset_name ] = implode( ', ', $srcset );
 
 			/**
-			 * Add fallback for src attribute to provide valid image markup
-			 * and prevent double downloads in older browsers.
+			 * Add fallback for src attribute to provide valid image markup and prevent double
+			 * downloads in older browsers.
 			 *
 			 * @link http://scottjehl.github.io/picturefill/#support
 			 */
-			$html .= ' ' . $src_name . '="data:image/gif;base64,R0lGODlhAQABAAAAADs="';
+			$attributes[ $src_name ] = 'data:image/gif;base64,R0lGODlhAQABAAAAADs=';
 		} else {
-			$html .= ' ' . $src_name . '="' . $default_size . '"';
+			$attributes[ $src_name ] = $default_size;
 		}
 
-		$html .= $attr_width . $attr_height;
+		if ( 'array' === $args['return_format'] ) {
+			return $attributes;
+		}
 
-		return $html;
+		return get_timber_image_attr_html( $attributes );
 	}
 endif;
 
@@ -349,10 +422,9 @@ if ( ! function_exists( 'get_timber_image_responsive_acf' ) ) :
 			return false;
 		}
 
-		$src  = get_timber_image_responsive_src( $timber_image, $size );
-		$attr = get_acf_image_attr( $image );
-
-		return $src . ' ' . $attr;
+		return get_timber_image_attr_html( [
+			'src' => get_timber_image_responsive_src( $timber_image, $size ),
+		] ) . get_acf_image_attr( $image );
 	}
 endif;
 
@@ -364,15 +436,10 @@ if ( ! function_exists( 'get_acf_image_attr' ) ) :
 	 * @return string Alt and title attribute.
 	 */
 	function get_acf_image_attr( $image ) {
-		$alt = ! empty( $image['alt'] ) ? $image['alt'] : '';
-
-		$html = ' alt="' . esc_attr( $alt ) . '"';
-
-		if ( ! empty( $image['description'] ) ) {
-			$html .= ' title="' . esc_attr( $image['description'] ) . '"';
-		}
-
-		return $html;
+		return get_timber_image_attr_html( [
+			'alt'   => ! empty( $image['alt'] ) ? $image['alt'] : '',
+			'title' => $image['description'],
+		] );
 	}
 endif;
 
@@ -393,8 +460,6 @@ if ( ! function_exists( 'get_post_thumbnail' ) ) :
 			return false;
 		}
 
-		$html = ' src="' . $thumbnail_src . '"';
-
 		$thumb_id   = get_post_thumbnail_id( $post_id );
 		$attachment = get_post( $thumb_id );
 
@@ -404,9 +469,11 @@ if ( ! function_exists( 'get_post_thumbnail' ) ) :
 		// We take the image description for the title
 		$title = $attachment->post_content;
 
-		$html .= get_image_attr_html( $alt, $title );
-
-		return $html;
+		return get_timber_image_attr_html( [
+			'src'   => $thumbnail_src,
+			'alt'   => $alt,
+			'title' => $title,
+		] );
 	}
 endif;
 
