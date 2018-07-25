@@ -155,7 +155,7 @@ class Timmy {
 	 */
 	public function filter_wp_generate_attachment_metadata( $metadata, $attachment_id ) {
 		if ( wp_attachment_is_image( $attachment_id ) ) {
-			$this->timber_generate_sizes( $attachment_id );
+			$metadata['sizes'] = $this->timber_generate_sizes( $attachment_id );
 		}
 
 		return $metadata;
@@ -653,9 +653,10 @@ class Timmy {
 	 *
 	 * @param  int $attachment_id The attachment ID for which all images should be resized.
 	 *
-	 * @return void
+	 * @return array An array of generated image sizes that will be saved in attachment metdata.
 	 */
 	private function timber_generate_sizes( $attachment_id ) {
+		$sizes      = [];
 		$img_sizes  = Helper::get_image_sizes();
 		$attachment = get_post( $attachment_id );
 
@@ -663,12 +664,16 @@ class Timmy {
 		 * Never automatically generate image sizes on upload for SVG and GIF images.
 		 * SVG and GIF images will still be resized when requested on the fly.
 		 */
-		if ( in_array( $attachment->post_mime_type, array( 'image/svg+xml', 'image/gif' ), true ) ) {
-			return;
+		if ( in_array( $attachment->post_mime_type, array(
+			'image/svg+xml',
+			'image/gif',
+		), true ) ) {
+			return $sizes;
 		}
 
 		// Timber needs the file src as an URL
-		$file_src = wp_get_attachment_url( $attachment_id );
+		$file_src  = wp_get_attachment_url( $attachment_id );
+		$meta_data = wp_get_attachment_metadata( $attachment_id );
 
 		/**
 		 * Delete all existing image sizes for that file.
@@ -685,7 +690,31 @@ class Timmy {
 			}
 
 			// Create downsized version of the image
-			image_downsize( $attachment_id, $key );
+			list( $file_src, $file_width, $file_height ) = image_downsize( $attachment_id, $key );
+
+			/**
+			 * Create an image definition array that will be used for attachment metadata.
+			 *
+			 * WordPress saves an array with the file src, the width, the height and the mime type
+			 * of an attachment in the postmeta database table. By generating this array and saving
+			 * it in the database, we can improve the compatibility with the core image
+			 * functionality.
+			 *
+			 * Correct width and height values of '0' by calculating them from the original image
+			 * ratio.
+			 */
+			if ( 0 === (int) $file_width ) {
+				$file_width = round( $file_height / $meta_data['height'] * $meta_data['width'] );
+			} elseif ( 0 === (int) $file_height ) {
+				$file_height = round( $file_width / $meta_data['width'] * $meta_data['height'] );
+			}
+
+			$sizes[ $key ] = [
+				'file'      => $file_src,
+				'width'     => $file_width,
+				'height'    => $file_height,
+				'mime-type' => wp_check_filetype( $file_src )['type'],
+			];
 
 			/**
 			 * Filters whether srcset sizes should be generated when an image is uploaded.
@@ -723,6 +752,8 @@ class Timmy {
 				}
 			}
 		}
+
+		return $sizes;
 	}
 
 	/**
