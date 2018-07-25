@@ -148,8 +148,8 @@ class Timmy {
 	 * This function will also run if you run Regenerate Thumbnails, so all additional images sizes
 	 * registered with Timber will be first deleted and then regenerated through Timber.
 	 *
-	 * @param array $metadata Meta data for an attachment.
-	 * @param int   $attachment_id Attachmend ID.
+	 * @param array $metadata      Meta data for an attachment.
+	 * @param int   $attachment_id Attachment ID.
 	 *
 	 * @return array $metadata
 	 */
@@ -296,7 +296,7 @@ class Timmy {
 		 * We make sure that for the Media view, we only return the thumbnail size for an image. If
 		 * the thumbnail size doesn’t exist yet, it is generated.
 		 *
-		 * @see wp_prepare_attachment_for_js()
+		 * @see   wp_prepare_attachment_for_js()
 		 *
 		 * @since 0.12.0
 		 */
