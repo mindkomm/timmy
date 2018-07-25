@@ -710,7 +710,7 @@ class Timmy {
 			}
 
 			$sizes[ $key ] = [
-				'file'      => $file_src,
+				'file'      => wp_basename( $file_src ),
 				'width'     => $file_width,
 				'height'    => $file_height,
 				'mime-type' => wp_check_filetype( $file_src )['type'],
