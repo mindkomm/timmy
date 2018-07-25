@@ -12,13 +12,17 @@ class Responsive_Content_Images {
 	 * @param array $args {
 	 *     Optional. An array of arguments for the Responsive Content Image handler.
 	 *
-	 *     @type string $full_size_replacement The key of the image size that should be used when
-	 *                                         full size images were inserted into the post content.
+	 *     @type array|string $map_sizes An associative array of size keys used in the content and
+	 *                                   Timmy sizes to replace them with. E.g., when a large image
+	 *                                   is used in the content, you could use `'large' => 'content`
+	 *                                   to use the 'content' size from your image configuration
+	 *                                   instead of the largesize. If you use a string, all sizes
+	 *                                   will be mapped to the size you pass in the string.
 	 * }
 	 */
 	public function __construct( $args = array() ) {
 		$this->args = wp_parse_args( $args, array(
-			'full_size_replacement' => '',
+			'map_sizes' => array(),
 		) );
 
 		// Remove the default filter used by WordPress.
@@ -94,7 +98,7 @@ class Responsive_Content_Images {
 	 *
 	 * @return string Reponsive image markup
 	 */
-	public function generate_srcset_and_sizes( $image, $attachment_id  ) {
+	public function generate_srcset_and_sizes( $image, $attachment_id ) {
 		// Ensure the image meta exists.
 		$image_src = preg_match( '/src="([^"]+)"/', $image, $match_src ) ? $match_src[1] : '';
 
@@ -114,8 +118,14 @@ class Responsive_Content_Images {
 		}
 
 		// Maybe select replacement size.
-		if ( 'full' === $img_size && ! empty( $this->args['full_size_replacement'] ) ) {
-			$img_size = $this->args['full_size_replacement'];
+		if ( ! empty( $this->args['map_sizes'] ) ) {
+			if ( is_array( $this->args['map_sizes'] )
+				&& in_array( $img_size, array_keys( $this->args['map_sizes'] ), true )
+			) {
+				$img_size = $this->args['map_sizes'][ $img_size ];
+			} else {
+				$img_size = $this->args['map_sizes'];
+			}
 		}
 
 		// Get responsive image markup for srcset and sizes.

@@ -9,7 +9,7 @@
 
 ### Improved Responsive Content Images feature.
 
-- Introduced arguments array for `Responsive_Content_Images` class with new option `full_size_replacement`, that allows to use a custom image size when the full size of an image is used in the content.
+- Introduced arguments array for `Responsive_Content_Images` class with new option `map_sizes`, that allows to use a custom image sizes for image sizes used in the content.
 - Introduced new filter `timmy/responsive_content_image/attributes` to filter image attributes used for a responsive content image..
 - Introduced new filter `timmy/responsive_content_image` to filter the image HTML markup.
 
