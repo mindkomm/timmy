@@ -76,6 +76,7 @@ if ( ! function_exists( 'get_image_attr_html' ) ) :
 	 * Returns the HTML for given alt and title attribute strings.
 	 *
 	 * @deprecated 0.14.0
+	 * @todo Delete in v1.x
 	 *
 	 * @param  string $alt   Alt text.
 	 * @param  string $title Title text.

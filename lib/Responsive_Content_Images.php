@@ -74,8 +74,8 @@ class Responsive_Content_Images {
 		/**
 		 * Warm object cache for use with 'get_post_meta()'.
 		 *
-		 * To avoid making a database call for each image, a single query warms the object cache with
-		 * the meta information for all images.
+		 * To avoid making a database call for each image, a single query warms the object cache
+		 * with the meta information for all images.
 		 */
 		if ( count( $attachment_ids ) > 1 ) {
 			update_meta_cache( 'post', array_keys( $attachment_ids ) );
@@ -169,21 +169,35 @@ class Responsive_Content_Images {
 		 * @param int    $attachment_id The attachment ID of the image.
 		 * @param string $img_size      The image size key.
 		 */
-		$attributes = apply_filters( 'timmy/responsive_content_image/attributes', $attributes, $attachment_id, $img_size );
+		$attributes = apply_filters(
+			'timmy/responsive_content_image/attributes',
+			$attributes,
+			$attachment_id,
+			$img_size
+		);
 
 		// Replace image markup
-		$image = preg_replace( '/<img ([^>]+?)[\/ ]*>/', '<img $1 ' . get_timber_image_attr_html( $attributes ) . ' />', $image );
+		$image = preg_replace(
+			'/<img ([^>]+?)[\/ ]*>/',
+			'<img $1 ' . get_timber_image_attr_html( $attributes ) . ' />',
+			$image
+		);
 
 		/**
 		 * Filters the image HTML markup.
 		 *
-		 * This filter can also be used to append content to an image.
+		 * This filter can be used to append content to an image.
 		 *
 		 * @param string $image         The image HTML markup.
 		 * @param int    $attachment_id The attachment ID of the image.
 		 * @param string $img_size      The image size key.
 		 */
-		$image = apply_filters( 'timmy/responsive_content_image', $image, $attachment_id, $img_size );
+		$image = apply_filters(
+			'timmy/responsive_content_image',
+			$image,
+			$attachment_id,
+			$img_size
+		);
 
 		return $image;
 	}

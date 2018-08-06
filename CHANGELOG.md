@@ -2,16 +2,16 @@
 
 ## 0.14.0 - 2018-07-24
 
-- Introduced new function `get_timber_image_attr_html()` that is used to turn an associative array of HTML attributes to a string.
-- Introduced new function `get_timber_image_attributes_responsive()` that can be used to get an associative array of HTML attributes for a responsive Timber image.
+- Introduced new function `get_timber_image_attr_html()` that is used to turn an associative array of HTML attributes into a string.
+- Introduced new function `get_timber_image_attributes_responsive()` that can be used to get an associative array of default HTML attributes for a responsive Timber image.
 - Introduced new function `get_timber_image_texts()` that is used to retrieve alt and title attributes for an image.
 - Deprecated the `get_image_attr_html()` function.
 
-### Improved Responsive Content Images feature.
+### Improved Responsive Content Images feature
 
-- Introduced arguments array for `Responsive_Content_Images` class with new option `map_sizes`, that allows to use a custom image sizes for image sizes used in the content.
-- Introduced new filter `timmy/responsive_content_image/attributes` to filter image attributes used for a responsive content image..
-- Introduced new filter `timmy/responsive_content_image` to filter the image HTML markup.
+- Introduced arguments array for `Responsive_Content_Images` class with new option `map_sizes`, that allows the usage of custom image sizes for image sizes used in the content.
+- Introduced new filter `timmy/responsive_content_image/attributes` to filter image attributes used for a responsive content image.
+- Introduced new filter `timmy/responsive_content_image` to filter the image HTML markup for a responsive content image.
 
 ## 0.13.6 - 2018-04-11
 
