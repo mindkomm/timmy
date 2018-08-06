@@ -701,20 +701,24 @@ class Timmy {
 			 * functionality.
 			 *
 			 * Correct width and height values of '0' by calculating them from the original image
-			 * ratio.
+			 * ratio, if meta data is available.
 			 */
-			if ( 0 === (int) $file_width ) {
-				$file_width = round( $file_height / $meta_data['height'] * $meta_data['width'] );
-			} elseif ( 0 === (int) $file_height ) {
-				$file_height = round( $file_width / $meta_data['width'] * $meta_data['height'] );
+			if ( ! empty( $meta_data['height'] ) && ! empty( $meta_data['width'] ) ) {
+				if ( 0 === (int) $file_width && ! empty( $meta_data['height'] ) ) {
+					$file_width = round( $file_height / $meta_data['height'] * $meta_data['width'] );
+				} elseif ( 0 === (int) $file_height ) {
+					$file_height = round( $file_width / $meta_data['width'] * $meta_data['height'] );
+				}
 			}
 
-			$sizes[ $key ] = [
-				'file'      => wp_basename( $file_src ),
-				'width'     => $file_width,
-				'height'    => $file_height,
-				'mime-type' => wp_check_filetype( $file_src )['type'],
-			];
+			if ( is_numeric( $file_width ) && is_numeric( $file_height ) ) {
+				$sizes[ $key ] = [
+					'file'      => wp_basename( $file_src ),
+					'width'     => $file_width,
+					'height'    => $file_height,
+					'mime-type' => wp_check_filetype( $file_src )['type'],
+				];
+			}
 
 			/**
 			 * Filters whether srcset sizes should be generated when an image is uploaded.
