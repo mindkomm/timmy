@@ -71,25 +71,6 @@ if ( ! function_exists( 'get_timber_image_src' ) ) :
 	}
 endif;
 
-if ( ! function_exists( 'get_image_attr_html' ) ) :
-	/**
-	 * Returns the HTML for given alt and title attribute strings.
-	 *
-	 * @deprecated 0.14.0
-	 * @todo Delete in v1.x
-	 *
-	 * @param  string $alt   Alt text.
-	 * @param  string $title Title text.
-	 * @return string HTML string for alt and title attributes.
-	 */
-	function get_image_attr_html( $alt, $title ) {
-		return Helper::get_attribute_html( [
-			'alt'   => $alt,
-			'title' => $title,
-		] );
-	}
-endif;
-
 if ( ! function_exists( 'get_timber_image_texts' ) ) :
 	/**
 	 * Get the image attributes (alt and title) for a TimberImage.
@@ -119,24 +100,6 @@ if ( ! function_exists( 'get_timber_image_texts' ) ) :
 		}
 
 		return $texts;
-	}
-endif;
-
-if ( ! function_exists( 'get_timber_image_attr' ) ) :
-	/**
-	 * Get the image attributes (alt and title) for a TimberImage.
-	 *
-	 * @param  Timber\Image $timber_image Instance of TimberImage.
-	 * @return string|false HTML string for alt and title attributes. False if image can’t be found.
-	 */
-	function get_timber_image_attr( $timber_image ) {
-		$timber_image = Timmy::get_timber_image( $timber_image );
-
-		if ( ! $timber_image ) {
-			return false;
-		}
-
-		return Helper::get_attribute_html( get_timber_image_texts( $timber_image ) );
 	}
 endif;
 

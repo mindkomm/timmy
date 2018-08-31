@@ -13,7 +13,8 @@
         "Timmy\\": "lib/"
       },
       "files": [
-        "functions-images.php"
+        "functions-images.php",
+        "functions-deprecated.php"
       ]
     },
     "keywords": [
