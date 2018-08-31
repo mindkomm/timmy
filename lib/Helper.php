@@ -95,7 +95,9 @@ class Helper {
 			return $sizes['thumbnail'];
 		}
 
-		return $img_size = reset( $sizes );
+		$img_size = reset( $sizes );
+
+		return $img_size;
 	}
 
 	/**
@@ -114,8 +116,9 @@ class Helper {
 	/**
 	 * Get width and height for a srcset size.
 	 *
-	 * @param array $resize Resize configuration array.
+	 * @param array     $resize      Resize configuration array.
 	 * @param array|int $srcset_size Srcset definition.
+	 *
 	 * @return array Width and height.
 	 */
 	public static function get_dimensions_for_srcset_size( $resize, $srcset_size ) {
@@ -135,6 +138,7 @@ class Helper {
 	 * Get crop value from a resize parameter.
 	 *
 	 * @param array $img_size Image size configuration array.
+	 *
 	 * @return string Crop value.
 	 */
 	public static function get_crop_for_size( $img_size ) {
@@ -145,6 +149,7 @@ class Helper {
 	 * Get force value from a resize parameter.
 	 *
 	 * @param array $img_size Image size configuration array.
+	 *
 	 * @return bool Force value.
 	 */
 	public static function get_force_for_size( $img_size ) {
@@ -169,6 +174,7 @@ class Helper {
 
 		return $html;
 	}
+
 	/**
 	 * Output an error message.
 	 *
