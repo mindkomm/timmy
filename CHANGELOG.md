@@ -2,16 +2,28 @@
 
 ## 0.14.0 - 2018-07-24
 
-- Introduced new function `get_timber_image_attr_html()` that is used to turn an associative array of HTML attributes into a string.
+- Introduced new function `Helper::get_attribute_html()` that is used to turn an associative array of HTML attributes into a string. Internally, the handling of a list of HTML attributes was improved by introducing attribute arrays that get passed around and will be turned into HTML by this new function.
 - Introduced new function `get_timber_image_attributes_responsive()` that can be used to get an associative array of default HTML attributes for a responsive Timber image.
 - Introduced new function `get_timber_image_texts()` that is used to retrieve alt and title attributes for an image.
-- Deprecated the `get_image_attr_html()` function.
+- Deprecated the `get_image_attr_html()` function in favor of `Helper::get_attribute_html`.
+- Deprecated the `get_timber_image_attr()` function in favor of `get_timber_image_texts()`.
 
 ### Improved Responsive Content Images feature
 
 - Introduced arguments array for `Responsive_Content_Images` class with new option `map_sizes`, that allows the usage of custom image sizes for image sizes used in the content.
 - Introduced new filter `timmy/responsive_content_image/attributes` to filter image attributes used for a responsive content image.
 - Introduced new filter `timmy/responsive_content_image` to filter the image HTML markup for a responsive content image.
+- Added filter that automatically removes any width styles from WordPress-generated `<figure>` tags.
+
+### Meta data for images
+
+When an image is uploaded, Timmy now **generates image metadata that is saved in the database**. This improves compatibility with third party plugins that sometimes check this metadata for various reasons. For example, Yoast SEO needs this data to generate the markup for OG image tags.
+
+To generate this data for existing images, you’d have to run Regenerate Thumbnails.
+
+### Update documentation
+
+The README file was quite long, probably a little too long. The big part of the documentation can now be found in separate files in the `docs/` folder. Use the [Documentation Section](https://github.com/mindkomm/timmy#documentation) in the README for an entry point.
 
 ## 0.13.6 - 2018-04-11
 

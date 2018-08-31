@@ -1,6 +1,6 @@
 # Timmy
 
-Timmy is an opt-in library/plugin for [Timber](http://upstatement.com/timber/) to make it more convenient to work with responsive images.
+Timmy is an opt-in library/plugin to make it more convenient to work with responsive images. It was designed to be used with [Timber](http://upstatement.com/timber/), but should work with all your WordPress projects.
 
 In your Twig template, you can do this:
 
@@ -21,8 +21,6 @@ alt="Your alt text"
 title="Your image title">
 ```
 
-You can use Timmy with non-Timber WordPress themes.
-
 ## Documentation
 
 - [Installation – Getting Started](./docs/installation.md)
@@ -38,7 +36,7 @@ You can use Timmy with non-Timber WordPress themes.
 
 Timber already comes with a set of really nice features for handling images. Especially the [arbitrary resizing of images](https://timber.github.io/docs/guides/cookbook-images/#arbitrary-resizing-of-images) is very convenient. Whenever a page is accessed and the image size can’t be found, it will be created on the fly. You can use as many different image sizes as you like, without always having to use plugins like [Regenerate Thumbnails](https://wordpress.org/plugins/regenerate-thumbnails/) when you make a change to the default WordPress image sizes.
 
-**Timmy** uses Timber’s `TimberImageHelper` class to enhance this functionality even more:
+**Timmy** uses Timber’s [`ImageHelper`](https://timber.github.io/docs/reference/timber-imagehelper/) class to enhance this functionality even more.
 
 ### Mimicks default WordPress image functionalities
 
@@ -50,7 +48,7 @@ Timber already comes with a set of really nice features for handling images. Esp
 
 * **Integration for popular plugins** like [Advanced Custom Fields](https://www.advancedcustomfields.com/), [Admin Colums](https://www.admincolumns.com/) and [Yoast SEO](https://yoast.com/wordpress/plugins/seo/). Because Timmy tells WordPress that there are image sizes present, other plugins will allow you to select images defined through Timmy, like the preview images for image fields defined with ACF or a preview image used in Admin Columns.
 
-* **You can still use Regenerate Thumbnails**. Using [Regenerate Thumbnails](https://wordpress.org/plugins/regenerate-thumbnails/) with Timmy will clean your uploads folder from image sizes you don’t need anymore. If you have no image sizes defined with Timmy, Timmy will just delete all image sizes generated with TimberImageHelper. But no worries, remember that Timber automatically creates an image size if it doesn’t already exist. If you have existing image sizes from the default WordPress resize functionality that weren’t resized with Timber, you can use [Force Regenerate Thumbnails](https://wordpress.org/plugins/force-regenerate-thumbnails/) to also delete all of those.
+* **You can still use Regenerate Thumbnails**. Using [Regenerate Thumbnails](https://wordpress.org/plugins/regenerate-thumbnails/) with Timmy will clean your uploads folder from image sizes you don’t need anymore. If you have no image sizes defined with Timmy, Timmy will delete all image sizes generated with Timmy. But no worries, remember that Timber automatically creates an image size if it doesn’t already exist.
 
 * **You can still use Timber’s resize functions**. Timber has some [really neat image manipulation functions](https://timber.github.io/docs/guides/cookbook-images/). You can still use these or you can also use a mix of the two.
 

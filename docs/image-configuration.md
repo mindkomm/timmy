@@ -1,12 +1,13 @@
 # Image Configuration
 
+<!-- TOC depthTo:2 -->
+
 - [Using an image size array instead of a key](#using-an-image-size-array-instead-of-a-key)
 - [Image keys](#image-keys)
-	- [The `thumbnail` key](#the-thumbnail-key)
-	- [The `large` key](#the-large-key)
-	- [Reserved keys](#reserved-keys)
 - [Image configuration options](#image-configuration-options)
 - [Image configuration example](#image-configuration-example)
+
+<!-- /TOC -->
 
 Your image configuration is an array with all the image sizes. You name each image size via an array key that you will reference in [Timmy’s functions](./functions.md).
 

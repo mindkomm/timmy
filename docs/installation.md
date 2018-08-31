@@ -3,8 +3,8 @@
 In order to make Timmy work, you’ll have to
 
 - [1. Install Timber and Timmy](#1-install-timber-and-timmy)
-	- [Install as Plugin](#install-as-plugin)
-	- [Install with Composer](#install-with-composer)
+  - [Install as Plugin](#install-as-plugin)
+  - [Install with Composer](#install-with-composer)
 - [2. Prepare Media Settings](#2-prepare-media-settings)
 - [3. Reset post thumbnail size](#3-reset-post-thumbnail-size)
 - [4. Register your image sizes with Timmy](#4-register-your-image-sizes-with-timmy)

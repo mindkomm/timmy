@@ -18,7 +18,7 @@ new Timmy\Responsive_Content_Images();
 
 ## Map image sizes
 
-When you add an image in the editor, WordPress will save the size you add in the image markup. When you want to make changes to images on a large amount posts, it’s not practical to edit all of the posts. If you wanted to change the output size for the `small` image size, you could add a `small` image key to your image configuration. Or you could map the sizes used in the content to your image configuration.
+When you add an image in the editor, WordPress will save the size you add in the image markup. When you want to make changes to images on a large amount posts, it’s not practical to edit all the posts. If you wanted to change the output size for the `small` image size, you could add a `small` image key to your image configuration. Or you could map the sizes used in the content to your image configuration.
 
 Through the `map_sizes` option that you can pass to the `Timmy\Responsive_Content_Images()` constructor you tell Timmy which image size it should use to generate the HTML markup. In the following example, all images added in the editor would be displayed with the `content` size:
 
