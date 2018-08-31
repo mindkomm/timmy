@@ -148,17 +148,17 @@ class Timmy {
 	 * This function will also run if you run Regenerate Thumbnails, so all additional images sizes
 	 * registered with Timber will be first deleted and then regenerated through Timber.
 	 *
-	 * @param array $metadata      Meta data for an attachment.
+	 * @param array $meta_data     Meta data for an attachment.
 	 * @param int   $attachment_id Attachment ID.
 	 *
-	 * @return array $metadata
+	 * @return array $meta_data
 	 */
-	public function filter_wp_generate_attachment_metadata( $metadata, $attachment_id ) {
 		if ( wp_attachment_is_image( $attachment_id ) ) {
 			$metadata['sizes'] = $this->timber_generate_sizes( $attachment_id );
+	public function filter_wp_generate_attachment_metadata( $meta_data, $attachment_id ) {
 		}
 
-		return $metadata;
+		return $meta_data;
 	}
 
 	/**
@@ -355,13 +355,13 @@ class Timmy {
 		 * - WP SEO asks for the size 'original'
 		 */
 		if ( in_array( $size, array( 'original', 'full' ), true ) ) {
-			$file_meta = wp_get_attachment_metadata( $attachment_id );
+			$meta_data = wp_get_attachment_metadata( $attachment_id );
 
-			if ( isset( $file_meta['width'] ) && isset( $file_meta['height'] ) ) {
+			if ( isset( $meta_data['width'] ) && isset( $meta_data['height'] ) ) {
 				return array(
 					$file_src,
-					$file_meta['width'],
-					$file_meta['height'],
+					$meta_data['width'],
+					$meta_data['height'],
 					false,
 				);
 			}
