@@ -30,6 +30,9 @@ class Responsive_Content_Images {
 
 		// Add our own custom filter.
 		add_filter( 'the_content', array( $this, 'make_content_images_responsive' ) );
+
+		// Remove width attribute from <figure> tag.
+		add_filter( 'img_caption_shortcode_width', array( $this, 'fix_figure_width' ) );
 	}
 
 	/**
@@ -131,10 +134,7 @@ class Responsive_Content_Images {
 		// Get responsive image markup for srcset and sizes.
 		$attributes = get_timber_image_attributes_responsive(
 			$attachment_id,
-			$img_size,
-			array(
-				'attr_width' => true,
-			)
+			$img_size
 		);
 
 		// Bailout if markup couldn’t be generated.
@@ -200,5 +200,20 @@ class Responsive_Content_Images {
 		);
 
 		return $image;
+	}
+
+	/**
+	 * Removes width attribute from figure tags for images added in editor.
+	 *
+	 * WordPress automatically adds the width of the image to a surrounding figure tag. By returning
+	 * `0`, we can disable this feature.
+	 *
+	 * @since 0.14.0
+	 * @param int $width Width of the caption in pixels.
+	 *
+	 * @return int
+	 */
+	public function fix_figure_width( $width ) {
+		return 0;
 	}
 }
