@@ -16,7 +16,7 @@ class Responsive_Content_Images {
 	 *                                   Timmy sizes to replace them with. E.g., when a large image
 	 *                                   is used in the content, you could use `'large' => 'content`
 	 *                                   to use the 'content' size from your image configuration
-	 *                                   instead of the largesize. If you use a string, all sizes
+	 *                                   instead of the large size. If you use a string, all sizes
 	 *                                   will be mapped to the size you pass in the string.
 	 * }
 	 */
