@@ -1,20 +1,28 @@
-## FAQ
+# FAQ
 
-### Why is my image not displaying?
+- [Why is my image not displaying?](#why-is-my-image-not-displaying)
+- [How does Timmy handle SVG images?](#how-does-timmy-handle-svg-images)
+- [How does Timmy handle GIF images?](#how-does-timmy-handle-gif-images)
+- [How can I better control the markup for SVG and GIF images?](#how-can-i-better-control-the-markup-for-svg-and-gif-images)
+- [How can I make the full size unavailable when an image is inserted into the WordPress Editor?](#how-can-i-make-the-full-size-unavailable-when-an-image-is-inserted-into-the-wordpress-editor)
+- [How does it work again with the srcset and sizes parameters?](#how-does-it-work-again-with-the-srcset-and-sizes-parameters)
+- [Why is my backend unresponsive?](#why-is-my-backend-unresponsive)
+
+## Why is my image not displaying?
 
 Timmy silently fails (returns `false`) when an image can’t be found. You might want to check with `{{ dump(yourimage) }}` if you really try to use one of Timmy’s functions on your image.
 
-### How does Timmy handle SVG images?
+## How does Timmy handle SVG images?
 
 Timmy will always try to return the image src for an SVG image, without any responsive markup (even if you call it with a function that normally returns responsive markup, like `get_timber_image_responsive()`).
 
-### How does Timmy handle GIF images?
+## How does Timmy handle GIF images?
 
 Timber can resize GIF images when you have Imagick installed. So GIF images behave the same way than normal images. However, resizing GIF images takes quite some time. That’s why Timmy tries to reduce the amount of sizes that have to be generated.
 
 When a GIF is uploaded to the backend, it will only be resized to the `thumbnail` size defined in your image configuration. GIF images in the Media Library will be loaded in a smaller size, because this makes the Media Grid load faster. All other image size are ignored when uploading an image. GIF images are still resized on the fly.
 
-### How can I better control the markup for SVG and GIF images?
+## How can I better control the markup for SVG and GIF images?
 
 If you want more control over the markup for SVG or GIF images, you can catch them through the mime type:
 
@@ -30,7 +38,7 @@ If you want more control over the markup for SVG or GIF images, you can catch th
 {% endif %}
 ```
 
-### How can I make the full size unavailable when an image is inserted into the WordPress Editor?
+## How can I make the full size unavailable when an image is inserted into the WordPress Editor?
 
 Timmy uses the filter `image_size_names_choose` with a standard priority of 10 to return the image sizes configured with Timmy and additionally adds the full size of an image. Add the following filter to your theme functions to remove the full size again. 
 
@@ -41,7 +49,7 @@ add_filter( 'image_size_names_choose', function( $sizes ) {
 }, 11 );
 ```
 
-### How does it work again with the srcset and sizes parameters?
+## How does it work again with the srcset and sizes parameters?
 
 The `sizes` and `srcset` attribute tells the browser which images sizes are available and let’s **the browser choose which image size to display** based on the current viewport size, caching settings etc.
 

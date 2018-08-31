@@ -1,5 +1,10 @@
 # Responsive Content Images
 
+- [Map image sizes](#map-image-sizes)
+- [Filters](#filters)
+	- [timmy/responsive_content_image/attributes](#timmyresponsive_content_imageattributes)
+	- [timmy/responsive_content_image](#timmyresponsive_content_image)
+
 Timmy can make images added to the WYSIWYG editor responsive.
 
 - Image sizes are selectable in the editor by default. If you don’t want an image size to show up in the backend, use `show_in_ui => false`.

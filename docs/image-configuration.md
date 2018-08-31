@@ -1,5 +1,24 @@
 # Image Configuration
 
+- [Using an image size array instead of a key](#using-an-image-size-array-instead-of-a-key)
+- [Image keys](#image-keys)
+	- [The `thumbnail` key](#the-thumbnail-key)
+	- [The `large` key](#the-large-key)
+	- [Reserved keys](#reserved-keys)
+- [Image configuration options](#image-configuration-options)
+	- [resize](#resize)
+	- [srcset](#srcset)
+	- [sizes](#sizes)
+	- [Source order matters!](#source-order-matters)
+	- [letterbox](#letterbox)
+	- [tojpg](#tojpg)
+	- [post_types](#post_types)
+	- [name](#name)
+	- [show_in_ui](#show_in_ui)
+	- [generate_srcset_sizes](#generate_srcset_sizes)
+	- [oversize](#oversize)
+- [Image configuration example](#image-configuration-example)
+
 Your image configuration is an array with all the image sizes. You name each image size via an array key that you will reference in [Timmy’s functions](./functions.md).
 
 ```php
@@ -76,16 +95,17 @@ These sizes are reserved for the original size of the image. If you define these
 
 ## Image configuration options
 
-* [resize](#resize)
-* [srcset](#srcset)
-* [sizes](#sizes)
-* [letterbox](#letterbox)
-* [tojpg](#tojpg)
-* [post_types](#post_types)
-* [name](#name)
-* [show_in_ui](#show_in_ui)
-* [generate_srcset_sizes](#generate_srcset_sizes)
-* [oversize](#oversize)
+- [resize](#resize)
+- [srcset](#srcset)
+- [sizes](#sizes)
+- [Source order matters!](#source-order-matters)
+- [letterbox](#letterbox)
+- [tojpg](#tojpg)
+- [post_types](#post_types)
+- [name](#name)
+- [show_in_ui](#show_in_ui)
+- [generate_srcset_sizes](#generate_srcset_sizes)
+- [oversize](#oversize)
 
 ---
 

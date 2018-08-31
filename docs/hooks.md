@@ -1,5 +1,11 @@
 # Hooks
 
+- [Filters](#filters)
+	- [timmy/sizes](#timmysizes)
+	- [timmy/resize/ignore](#timmyresizeignore)
+	- [timmy/generate_srcset_sizes](#timmygenerate_srcset_sizes)
+	- [timmy/oversize](#timmyoversize)
+
 ## Filters
 
 ### timmy/sizes
