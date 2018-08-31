@@ -143,20 +143,23 @@ class Timmy {
 
 	/**
 	 * Hook into the filter that generates additional image sizes to generate all additional image
-	 * size with TimberImageHelper.
+	 * sizes with TimberImageHelper.
 	 *
-	 * This function will also run if you run Regenerate Thumbnails, so all additional images sizes
-	 * registered with Timber will be first deleted and then regenerated through Timber.
+	 * This function will when you upload an image. It will also run if you run Regenerate
+	 * Thumbnails, so all additional images sizes registered with Timber will be first deleted and
+	 * then regenerated through Timmy.
 	 *
 	 * @param array $meta_data     Meta data for an attachment.
 	 * @param int   $attachment_id Attachment ID.
 	 *
 	 * @return array $meta_data
 	 */
-		if ( wp_attachment_is_image( $attachment_id ) ) {
-			$metadata['sizes'] = $this->timber_generate_sizes( $attachment_id );
 	public function filter_wp_generate_attachment_metadata( $meta_data, $attachment_id ) {
+		if ( ! wp_attachment_is_image( $attachment_id ) ) {
+			return $meta_data;
 		}
+
+		$meta_data['sizes'] = $this->timber_generate_sizes( $attachment_id );
 
 		return $meta_data;
 	}
@@ -233,7 +236,7 @@ class Timmy {
 	 * @return false|array Array containing the image URL, width, height, and boolean for whether
 	 *                     the image is an intermediate size. False on failure.
 	 */
-	public function filter_image_downsize( $return = false, $attachment_id, $size ) {
+	public function filter_image_downsize( $return, $attachment_id, $size ) {
 		// Timber needs the file src as an URL. Also checks if ID belongs to an attachment.
 		$file_src = wp_get_attachment_url( $attachment_id );
 
@@ -296,8 +299,8 @@ class Timmy {
 		 * We make sure that for the Media view, we only return the thumbnail size for an image. If
 		 * the thumbnail size doesn’t exist yet, it is generated.
 		 *
-		 * @see   wp_prepare_attachment_for_js()
 		 *
+		 * @see   wp_prepare_attachment_for_js()
 		 * @since 0.12.0
 		 */
 		if ( 'query-attachments' === $action ) {
@@ -338,10 +341,7 @@ class Timmy {
 		 * @since 0.11.0
 		 */
 		if ( 'upload-attachment' === $action && 'image/gif' === $mime_type ) {
-			$image_size_keys = array_keys( $img_sizes );
-			$thumbnail_key   = reset( $image_size_keys );
-
-			if ( $thumbnail_key !== $size ) {
+			if ( Helper::get_thumbnail_size() !== $size ) {
 				return $return;
 			}
 		}
@@ -350,9 +350,7 @@ class Timmy {
 		 * Return full size when full size of image is requested.
 		 *
 		 * Fall back to a width and height of '0' if metadata can’t be read.
-		 *
 		 * Certain functions or plugins ask for the full size of an image.
-		 * - WP SEO asks for the size 'original'
 		 */
 		if ( in_array( $size, array( 'original', 'full' ), true ) ) {
 			$meta_data = wp_get_attachment_metadata( $attachment_id );
@@ -373,9 +371,7 @@ class Timmy {
 		if ( ! is_array( $size ) && isset( $img_sizes[ $size ] ) ) {
 			$img_size = $img_sizes[ $size ];
 
-			$should_resize = $this->timber_should_resize( $attachment->post_parent, $img_sizes[ $size ] );
-
-			if ( ! $should_resize ) {
+			if ( ! $this->timber_should_resize( $attachment->post_parent, $img_size ) ) {
 				return $return;
 			}
 		} else {
@@ -651,7 +647,7 @@ class Timmy {
 	/**
 	 * Generate image sizes defined for Timmy with Timber\ImageHelper.
 	 *
-	 * @param  int $attachment_id The attachment ID for which all images should be resized.
+	 * @param int $attachment_id The attachment ID for which all images should be resized.
 	 *
 	 * @return array An array of generated image sizes that will be saved in attachment metdata.
 	 */
@@ -690,7 +686,14 @@ class Timmy {
 			}
 
 			// Create downsized version of the image
-			list( $file_src, $file_width, $file_height ) = image_downsize( $attachment_id, $key );
+			$downsized = image_downsize( $attachment_id, $key );
+
+			// Bail out if there was an error while downsizing the image.
+			if ( ! is_array( $downsized ) ) {
+				continue;
+			}
+
+			list( $file_src, $file_width, $file_height ) = $downsized;
 
 			/**
 			 * Create an image definition array that will be used for attachment metadata.
