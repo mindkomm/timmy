@@ -179,7 +179,7 @@ class Responsive_Content_Images {
 		// Replace image markup
 		$image = preg_replace(
 			'/<img ([^>]+?)[\/ ]*>/',
-			'<img $1 ' . get_timber_image_attr_html( $attributes ) . ' />',
+			'<img $1 ' . Helper::get_attribute_html( $attributes ) . ' />',
 			$image
 		);
 

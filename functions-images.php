@@ -25,8 +25,8 @@ if ( ! function_exists( 'get_timber_image' ) ) :
 			return false;
 		}
 
-		return get_timber_image_attr_html( array_merge(
-			[ 'src' => $src ],
+		return Helper::get_attribute_html( array_merge(
+			array( 'src' => $src ),
 			get_timber_image_texts( $timber_image )
 		) );
 	}
@@ -83,31 +83,10 @@ if ( ! function_exists( 'get_image_attr_html' ) ) :
 	 * @return string HTML string for alt and title attributes.
 	 */
 	function get_image_attr_html( $alt, $title ) {
-		return get_timber_image_attr_html( [
+		return Helper::get_attribute_html( [
 			'alt'   => $alt,
 			'title' => $title,
 		] );
-	}
-endif;
-
-if ( ! function_exists( 'get_timber_image_attr_html' ) ) :
-	/**
-	 * Returns the HTML for an array of HTML tag attributes.
-	 *
-	 * @since 0.14.0
-	 *
-	 * @param array $attributes An associative array of HTML attributes.
-	 *
-	 * @return string HTML attribute string to be used in an HTML tag.
-	 */
-	function get_timber_image_attr_html( $attributes = [] ) {
-		$html = '';
-
-		foreach ( $attributes as $key => $attribute ) {
-			$html .= ' ' . esc_attr( $key ) . '="' . esc_attr( $attribute ) . '"';
-		}
-
-		return $html;
 	}
 endif;
 
@@ -157,7 +136,7 @@ if ( ! function_exists( 'get_timber_image_attr' ) ) :
 			return false;
 		}
 
-		return get_timber_image_attr_html( get_timber_image_texts( $timber_image ) );
+		return Helper::get_attribute_html( get_timber_image_texts( $timber_image ) );
 	}
 endif;
 
@@ -209,7 +188,7 @@ if ( ! function_exists( 'get_timber_image_responsive' ) ) :
 	 *                     found.
 	 */
 	function get_timber_image_responsive( $timber_image, $size, $args = array() ) {
-		return get_timber_image_attr_html( get_timber_image_attributes_responsive( $timber_image, $size, $args ) );
+		return Helper::get_attribute_html( get_timber_image_attributes_responsive( $timber_image, $size, $args ) );
 	}
 endif;
 
@@ -260,7 +239,7 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 			$attributes = [ 'src' => wp_get_attachment_url( $timber_image->ID ) ];
 
 			if ( 'string' === $args['return_format'] ) {
-				return get_timber_image_attr_html( $attributes );
+				return Helper::get_attribute_html( $attributes );
 			}
 
 			return $attributes;
@@ -401,7 +380,7 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 			return $attributes;
 		}
 
-		return get_timber_image_attr_html( $attributes );
+		return Helper::get_attribute_html( $attributes );
 	}
 endif;
 
@@ -423,7 +402,7 @@ if ( ! function_exists( 'get_timber_image_responsive_acf' ) ) :
 			return false;
 		}
 
-		return get_timber_image_attr_html( [
+		return Helper::get_attribute_html( [
 			'src' => get_timber_image_responsive_src( $timber_image, $size ),
 		] ) . get_acf_image_attr( $image );
 	}
@@ -437,7 +416,7 @@ if ( ! function_exists( 'get_acf_image_attr' ) ) :
 	 * @return string Alt and title attribute.
 	 */
 	function get_acf_image_attr( $image ) {
-		return get_timber_image_attr_html( [
+		return Helper::get_attribute_html( [
 			'alt'   => ! empty( $image['alt'] ) ? $image['alt'] : '',
 			'title' => $image['description'],
 		] );
@@ -470,7 +449,7 @@ if ( ! function_exists( 'get_post_thumbnail' ) ) :
 		// We take the image description for the title
 		$title = $attachment->post_content;
 
-		return get_timber_image_attr_html( [
+		return Helper::get_attribute_html( [
 			'src'   => $thumbnail_src,
 			'alt'   => $alt,
 			'title' => $title,

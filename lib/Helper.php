@@ -152,6 +152,24 @@ class Helper {
 	}
 
 	/**
+	 * Returns the HTML for an array of HTML tag attributes.
+	 *
+	 * @since 0.14.0
+	 *
+	 * @param array $attributes An associative array of HTML attributes.
+	 *
+	 * @return string HTML attribute string to be used in an HTML tag.
+	 */
+	public static function get_attribute_html( $attributes = array() ) {
+		$html = '';
+
+		foreach ( $attributes as $key => $attribute ) {
+			$html .= ' ' . esc_attr( $key ) . '="' . esc_attr( $attribute ) . '"';
+		}
+
+		return $html;
+	}
+	/**
 	 * Output an error message.
 	 *
 	 * Triggers a notice, but only in development environments, when WP_DEBUG is set to true.
