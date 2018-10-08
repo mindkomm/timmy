@@ -72,8 +72,7 @@ With Timmy’s logic, when an image size is changed in the configuration, it can
 
 ## Why doesn’t Yoast generate OG image markup?
 
-
-
+Yoast SEO made a change to load the `large` or `medium` size for the OG image markup. And the image size needs to be defined including metadata in the database. Since version 0.14.0 Timmy supports this as well. To better support Yoast, you should define a size with key `large` in your image configuration.
 
 ## Can I convert an existing project with WordPress images to Timmy?
 
