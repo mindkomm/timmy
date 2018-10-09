@@ -155,6 +155,73 @@ if ( ! function_exists( 'get_timber_image_responsive' ) ) :
 	}
 endif;
 
+if ( ! function_exists( 'get_timber_image_srcset_url' ) ) :
+  /**
+   * Get a single srcset url for a TimberImage
+   *
+	 * @param Timber\Image|int $timber_image Instance of TimberImage or Attachment ID.
+	 * @param string|array     $size         Size key or array of the image to return.
+   * @param int              $srcset_src   The srcset multiplicator.
+   * @return string|bool Image srcset url. False if image can't be found.
+   */
+  function get_timber_image_srcset_url( $timber_image, $size, $srcset_src ) {
+    $timber_image = Timmy::get_timber_image( $timber_image );
+
+		if ( ! $timber_image ) {
+			return false;
+    }
+
+    // Directly return full source when full source or an SVG image is requested.
+		if ( 'full' === $size || 'image/svg+xml' === $timber_image->post_mime_type ) {
+			$attributes = [ 'src' => wp_get_attachment_url( $timber_image->ID ) ];
+
+			if ( 'string' === $args['return_format'] ) {
+				return Helper::get_attribute_html( $attributes );
+			}
+
+			return $attributes;
+		}
+
+		$img_size = Helper::get_image_size( $size );
+
+		if ( ! $img_size ) {
+			return false;
+    }
+
+    if (!isset($img_size['srcset']) || !in_array($srcset_src, $img_size['srcset'])) {
+      return;
+    }
+
+    list(
+			$file_src,
+			$width,
+			$height,
+			$crop,
+			$force,
+			$max_width,
+			$max_height,
+			$oversize,
+    ) = Timmy::get_image_params( $timber_image, $img_size );
+
+    list(
+      $width_intermediate,
+      $height_intermediate
+    ) = Helper::get_dimensions_for_srcset_size( $img_size['resize'], $srcset_src );
+
+    // TODO: handle bailout if no oversize like in get_timber_image_responsive_src.
+
+    return Timmy::resize(
+      $img_size,
+      $file_src,
+      $width_intermediate,
+      $height_intermediate,
+      $crop,
+      $force
+    );
+  }
+endif;
+
+
 if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 	/**
 	 * Get srcset and sizes for a TimberImage.
