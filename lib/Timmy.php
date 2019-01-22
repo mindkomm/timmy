@@ -47,15 +47,23 @@ class Timmy {
 	public function after_setup_theme() {
 		$this->validate_get_image_sizes();
 
-		// Add filters to make TimberImages work with normal WordPress image functionality
+		// Add filters to make Timber Images work with normal WordPress image functionality.
 		add_filter( 'image_downsize', array( $this, 'filter_image_downsize' ), 10, 3 );
 		add_filter( 'image_size_names_choose', array( $this, 'filter_image_size_names_choose' ), 10 );
+
+		// Filters the list of intermediate image sizes.
 		add_filter( 'intermediate_image_sizes', array( $this, 'filter_intermediate_image_sizes' ) );
+
+		// Filters the image sizes automatically generated when uploading an image.
 		add_filter( 'intermediate_image_sizes_advanced', array( $this, 'filter_intermediate_image_sizes_advanced' ) );
+
+		// Filters the generated attachment meta data.
 		add_filter( 'wp_generate_attachment_metadata', array( $this, 'filter_wp_generate_attachment_metadata' ), 10, 2 );
+
+		// Filters the attachment data prepared for JavaScript.
 		add_filter( 'wp_prepare_attachment_for_js', array( $this, 'filter_wp_prepare_attachment_for_js' ), 10, 3 );
 
-		// Set global $_wp_additional_image_sizes
+		// Set global $_wp_additional_image_sizes.
 		$this->set_wp_additional_image_sizes();
 
 		/**
@@ -130,10 +138,12 @@ class Timmy {
 	/**
 	 * Filter the image sizes automatically generated when uploading an image.
 	 *
-	 * We tell WordPress that we don’t have intermediate sizes, because
-	 * we have our own image thingy we want to work with.
+	 * We tell WordPress that we don’t have intermediate sizes, because we have our own image
+	 * thingy we want to work with.
+	 *
 	 *
 	 * @since 0.10.0
+	 * @see wp_generate_attachment_metadata()
 	 * @param array $sizes Image sizes.
 	 * @return array
 	 */
@@ -142,10 +152,10 @@ class Timmy {
 	}
 
 	/**
-	 * Hook into the filter that generates additional image sizes to generate all additional image
+	 * Hooks into the filter that generates additional image sizes to generate all additional image
 	 * sizes with TimberImageHelper.
 	 *
-	 * This function will when you upload an image. It will also run if you run Regenerate
+	 * This function will run when you upload an image. It will also run if you run Regenerate
 	 * Thumbnails, so all additional images sizes registered with Timber will be first deleted and
 	 * then regenerated through Timmy.
 	 *
