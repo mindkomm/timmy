@@ -76,7 +76,7 @@ For better compatibility with third party plugins like Yoast SEO, it’s best to
 
 ### Reserved keys
 
-You shoudn’t use the following keys in your configuration
+You shouldn’t use the following keys in your configuration
 
 * `full`
 * `original`
