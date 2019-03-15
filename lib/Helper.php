@@ -168,6 +168,10 @@ class Helper {
 	public static function get_attribute_html( $attributes = array() ) {
 		$html = '';
 
+		if ( ! $attributes ) {
+			return $html;
+		}
+
 		foreach ( $attributes as $key => $attribute ) {
 			$html .= ' ' . esc_attr( $key ) . '="' . esc_attr( $attribute ) . '"';
 		}
