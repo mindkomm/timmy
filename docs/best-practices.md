@@ -1,11 +1,10 @@
-# Best Practices
+# Performance and Best Practices
 
 <!-- TOC -->
-
 - [Keep amount of generated images low](#keep-amount-of-generated-images-low)
 - [Run Regenerate Thumbnails when you made changes to the image configuration](#run-regenerate-thumbnails-when-you-made-changes-to-the-image-configuration)
 - [Working with Advanced Custom Fields](#working-with-advanced-custom-fields)
-
+- [Working with WooCommerce](#working-with-woocommerce)
 <!-- /TOC -->
 
 ## Keep amount of generated images low
@@ -67,4 +66,48 @@ add_filter( 'acf/load_field/type=image', function( $field ) {
 
     return $field;
 } );
+```
+
+## Working with WooCommerce
+
+When you run Timmy in combination with WooCommerce, you might define the image sizes that WooCommerce uses to let Timmy handle the images:
+
+```php
+add_filter( 'timmy/sizes', function( $sizes ) {
+    return array(
+        'woocommerce_thumbnail' => [
+			'resize'     => [ 264, 176, 'center' ],
+			'post_types' => [ 'product' ],
+		],
+		'woocommerce_single'    => [
+			'resize'     => [ 412 ],
+			'post_types' => [ 'product' ],
+		],
+    );
+} );
+```
+
+However, if you do this, you might also want to disable the automatic image generation for these image sizes, because otherwise, WooCommerce will generate these image sizes on every page call where a WooCommerce image is requested, which will result in a massive performance drain.
+
+```php
+/**
+ * Disable WooCommerce’s automatic image generation for certain WooCommerce sizes.
+ */
+add_filter( 'woocommerce_image_sizes_to_resize', function( $image_sizes ) {
+    // Filter out images that shouldn’t be resized.
+    $image_sizes = array_filter( $image_sizes, function( $image_size ) {
+        return ! in_array( $image_size, [
+            'woocommerce_thumbnail',
+            'woocommerce_single',
+        ], true );
+    } );
+
+    return $image_sizes;
+} );
+```
+
+If you handle all WooCommerce images through Timmy, it might be easier to disable the automatic image generation for all images:
+
+```php
+add_filter( 'woocommerce_resize_images', '__return_false' );
 ```

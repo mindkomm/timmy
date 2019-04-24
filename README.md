@@ -29,7 +29,7 @@ title="Your image title">
 - [Responsive Content Images](./docs/responsive-content-images.md)
 - [Hooks (Filters)](./docs/hooks.md)
 - [Lazy Loading](./docs/lazy-loading.md)
-- [Best Practices](./docs/best-practices.md)
+- [Performance and Best Practices](./docs/best-practices.md)
 - [FAQ](./docs/faq.md)
 
 ## Features
