@@ -345,12 +345,12 @@ add_filter( 'timmy/sizes', function( $sizes ) {
          * The thumbnail size is used to show thumbnails in the backend.
          * You should always have an entry with the 'thumbnail' key.
          */
-        'thumbnail' => array(
+        'thumbnail'     => array(
             'resize'     => array( 150, 150 ),
             'name'       => 'Thumbnail',
             'post_types' => array( 'all' ),
         ),
-        'custom-4' => array(
+        'custom-4'      => array(
             'resize' => array( 370 ),
             'sizes'  => '(min-width: 62rem) 33.333vw, 100vw',
             'name'   => 'Width 1/4',
@@ -363,7 +363,7 @@ add_filter( 'timmy/sizes', function( $sizes ) {
             'show_in_ui' => false,
             'post_types' => array( 'example', 'post', 'page' ),
         ),
-        'custom-6' => array(
+        'custom-6'      => array(
             // If you do not set a second value in the array, the image will not be cropped
             'resize'     => array( 570 ),
             'srcset'     => array( 0.5, 2 ),
@@ -371,7 +371,7 @@ add_filter( 'timmy/sizes', function( $sizes ) {
             'name'       => 'Width 1/2',
             'post_types' => array( 'example' ),
         ),
-        'sponsor-logo' => array(
+        'sponsor-logo'  => array(
             'resize'    => array( 370, 370 ),
             /**
              * Letterbox the image with white color,
@@ -380,24 +380,24 @@ add_filter( 'timmy/sizes', function( $sizes ) {
             'letterbox' => '#ffffff',
             // And also convert it to JPG if it is a PNG
             'tojpg'     => true,
-        )
-        'large' => array(
+        ),
+        'large'         => array(
             'resize'     => array( 1400 ),
             'show_in_ui' => false,
         ),
         // 14:6 crop
-        'header' => array(
+        'header'        => array(
             // This is the normal size at which the image is displayed
-            'resize'        => array( 1400, 600 ),
+            'resize'                => array( 1400, 600 ),
             // These are alternative sizes for responsiveness
-            'srcset'        => array(
+            'srcset'                => array(
                 array( 768, 329 ),
                 array( 480, 206 ),
                 2, // This is the same as array(2800, 1200)
             ),
-            'sizes'         => '(max-width: 61.9375rem) 125vw, 100vw',
-            'show_in_ui'    => false,
-            'resize_srcset' => true,
+            'sizes'                 => '(max-width: 61.9375rem) 125vw, 100vw',
+            'show_in_ui'            => false,
+            'generate_srcset_sizes' => true,
         ),
     );
 } );
