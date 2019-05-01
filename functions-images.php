@@ -125,7 +125,7 @@ if ( ! function_exists( 'get_timber_image_attributes_responsive' ) ) :
 			return false;
 		}
 
-		// Return attributes as array
+		// Return attributes as array.
 		$args = wp_parse_args( $args, [
 			'return_format' => 'array',
 		] );
@@ -164,14 +164,16 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 	 * @param array            $args {
 	 *      Optional. Array of options.
 	 *
-	 *      @type bool $attr_width  Whether to add a width attribute to an image, if needed.
-	 *                              Default false.
-	 *      @type bool $attr_height Whether to add a height attribute to an image, if need.
-	 *                              Default false.
-	 *      @type bool $lazy_srcset Whether the srcset attribute should be prepended with "data-".
-	 *                              Default false.
-	 *      @type bool $lazy_src    Whether the src attribute should be prepended with "data-".
-	 *                              Default false.
+	 *      @type bool   $attr_width    Whether to add a width attribute to an image, if needed.
+	 *                                  Default false.
+	 *      @type bool   $attr_height   Whether to add a height attribute to an image, if need.
+	 *                                  Default false.
+	 *      @type bool   $lazy_srcset   Whether the srcset attribute should be prepended with
+	 *                                  "data-". Default false.
+	 *      @type bool   $lazy_src      Whether the src attribute should be prepended with "data-".
+	 *                                  Default false.
+	 *      @type string $return_format What format should be returned. Can either be 'string' or
+	 *                                  'array'. Default 'string'.
 	 * }
 	 * @return string|bool|array Image srcset and sizes attributes. False if image can’t be found.
 	 */
@@ -183,7 +185,7 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 		}
 
 		/**
-		 * Default arguments for image markup
+		 * Default arguments for image markup.
 		 *
 		 * @since 0.12.0
 		 */
@@ -227,10 +229,10 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 
 		$srcset = array();
 
-		// Get proper width_key to handle width values of 0
+		// Get proper width_key to handle width values of 0.
 		$width_key = Timmy::get_width_key( $width, $height, $timber_image );
 
-		// Get default size for image
+		// Get default size for image.
 		$default_size = Timmy::resize( $img_size, $file_src, $width, $height, $crop, $force );
 
 		// Add the image source with the width as the key so they can be sorted later.
@@ -244,7 +246,7 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 					$height_intermediate
 				) = Helper::get_dimensions_for_srcset_size( $img_size['resize'], $srcset_src );
 
-				// Bail out if the current size’s width is bigger than available width
+				// Bail out if the current size’s width is bigger than available width.
 				if ( ! $oversize['allow']
 					&& ( $width_intermediate > $max_width
 						|| ( 0 === $width_intermediate && $height_intermediate > $max_height )
@@ -259,7 +261,7 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 					$timber_image
 				);
 
-				// For the new source, we use the same $crop and $force values as the default image
+				// For the new source, we use the same $crop and $force values as the default image.
 				$srcset[ $width_key ] = Timmy::resize(
 					$img_size,
 					$file_src,
