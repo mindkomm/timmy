@@ -388,6 +388,10 @@ class Timmy {
 			$img_size = Helper::get_thumbnail_size();
 		}
 
+		if ( ! $img_size ) {
+			return $return;
+		}
+
 		list( $width, $height ) = Helper::get_dimensions_for_size( $img_size );
 
 		$crop  = Helper::get_crop_for_size( $img_size );
