@@ -1,38 +1,44 @@
 {
-    "name": "mindkomm/timmy",
-    "type": "library",
-    "description": "Advanced image manipulation for Timber.",
-    "license": "MIT",
-    "require": {
-      "composer/installers": "~1.0",
-      "php": ">=5.4.0",
-      "timber/timber": "^1.3"
+  "name": "mindkomm/timmy",
+  "type": "library",
+  "description": "Advanced image manipulation for Timber.",
+  "license": "MIT",
+  "require": {
+    "composer/installers": "~1.0",
+    "php": ">=5.4.0",
+    "timber/timber": "^1.3"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^6.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Timmy\\": "lib/"
     },
-    "autoload": {
-      "psr-4": {
-        "Timmy\\": "lib/"
-      },
-      "files": [
-        "functions-images.php",
-        "functions-deprecated.php"
-      ]
-    },
-    "keywords": [
-      "timber",
-      "timmy",
-      "wordpress",
-      "images",
-      "responsive"
-    ],
-    "authors": [
-        {
-            "name": "Lukas Gaechter",
-            "email": "lukas.gaechter@mind.ch",
-            "homepage": "https://www.mind.ch"
-        }
-    ],
-    "support": {
-      "issues": "https://github.com/mindkomm/timmy/issues",
-      "source": "https://github.com/mindkomm/timmy"
+    "files": [
+      "functions-images.php",
+      "functions-deprecated.php"
+    ]
+  },
+  "keywords": [
+    "timber",
+    "timmy",
+    "wordpress",
+    "images",
+    "responsive"
+  ],
+  "authors": [
+    {
+      "name": "Lukas Gaechter",
+      "email": "lukas.gaechter@mind.ch",
+      "homepage": "https://www.mind.ch"
     }
+  ],
+  "support": {
+    "issues": "https://github.com/mindkomm/timmy/issues",
+    "source": "https://github.com/mindkomm/timmy"
+  },
+  "scripts": {
+    "install-tests": "bash bin/install-wp-tests.sh timmy-tests root \"\" localhost latest"
+  }
 }
