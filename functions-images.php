@@ -131,8 +131,8 @@ if ( ! function_exists( 'get_timber_image_attributes_responsive' ) ) :
 		] );
 
 		return array_merge(
-			get_timber_image_texts( $timber_image ),
-			get_timber_image_responsive_src( $timber_image, $size, $args )
+			get_timber_image_responsive_src( $timber_image, $size, $args ),
+			get_timber_image_texts( $timber_image )
 		);
 	}
 endif;
