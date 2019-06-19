@@ -1,13 +1,7 @@
 <?php
-/**
- * Class SampleTest
- *
- * @package Timmy
- */
 
 use Timber\ImageHelper;
 use Timber\Timber;
-use Timber\Image;
 
 /**
  * Sample test case.

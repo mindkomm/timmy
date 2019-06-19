@@ -13,7 +13,7 @@ class TimmyUnitTestCase extends WP_UnitTestCase {
 	 *
 	 * @return string
 	 */
-	public function copyTestImage( $img = 'test.jpg', $dest_name = null ) {
+	public function copy_test_image( $img = 'test.jpg', $dest_name = null ) {
 		$upload_dir = wp_upload_dir();
 
 		if ( is_null( $dest_name ) ) {
@@ -28,6 +28,15 @@ class TimmyUnitTestCase extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Gets the upload dir base path.
+	 *
+	 * @return string
+	 */
+	public function get_upload_url() {
+		return wp_upload_dir()['url'];
+	}
+
+	/**
 	 * Gets an attachment for a post.
 	 *
 	 * @param int    $post_id
@@ -36,7 +45,7 @@ class TimmyUnitTestCase extends WP_UnitTestCase {
 	 * @return int|\WP_Error
 	 */
 	public function create_image_attachment( $post_id = 0, $file = 'test.jpg' ) {
-		$filename = $this->copyTestImage( $file );
+		$filename = $this->copy_test_image( $file );
 
 		$filetype   = wp_check_filetype( basename( $filename ), null );
 		$attachment = [
