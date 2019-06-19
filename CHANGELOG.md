@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.14.1 - 2019-06-19
+
+- Added bailout in `image_downsize` filter when no image size could be found.
+- Updated the order of the image attributes when using `get_timber_image_responsive()`.
+- Fixed bug when `full` image size couldn’t be found when using `get_timber_image()`.
+
+### Documentation
+
+- Added [docs section about WooCommerce](https://github.com/mindkomm/timmy/blob/master/docs/best-practices.md#working-with-woocommerce).
+- Fixed name of inexistent setting in example in the docs.
+
+### Development
+
+- Added testing setup to be able to test Timmy functionality and make it more robust.
+
 ## 0.14.0 - 2018-07-24
 
 - Introduced new function `Helper::get_attribute_html()` that is used to turn an associative array of HTML attributes into a string. Internally, the handling of a list of HTML attributes was improved by introducing attribute arrays that get passed around and will be turned into HTML by this new function.
