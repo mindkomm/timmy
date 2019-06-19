@@ -87,4 +87,13 @@ class TestFunctions extends TimmyUnitTestCase {
 
 		$this->assertEquals( $result, false );
 	}
+
+	public function test_timber_image_full_with_gif() {
+		$attachment = $this->create_image( [ 'file' => 'logo-small.gif' ] );
+		$result     = get_timber_image( $attachment, 'full' );
+
+		$image = ' src="' . $this->get_upload_url() . '/logo-small.gif" alt=""';
+
+		$this->assertEquals( $image, $result );
+	}
 }
