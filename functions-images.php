@@ -47,8 +47,8 @@ if ( ! function_exists( 'get_timber_image_src' ) ) :
 			return false;
 		}
 
-		// Directly return full source when an SVG image is requested.
-		if ( 'image/svg+xml' === $timber_image->post_mime_type ) {
+		// Directly return full source when full source or an SVG image is requested.
+		if ( 'full' === $size || 'image/svg+xml' === $timber_image->post_mime_type ) {
 			return wp_get_attachment_url( $timber_image->ID );
 		}
 
