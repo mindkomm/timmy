@@ -134,7 +134,7 @@ Filters the src default.
 	*(string)* Src default. Default `data:image/gif;base64,R0lGODlhAQABAAAAADs=`.
 - **$attributes**  
     *(array)* An array of helpful attributes in the filter.  
-    - **$default_src**
+    - **$default_src**  
         *(string)* The default src for the image.
     - **$timber_image**  
         *(\Timber\Image)* Timber image instance.
