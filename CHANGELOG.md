@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.14.2 - 2019
+
+- Added new filter `timmy/use_src_default` to define whether a src attribute should be added as a fallback.
+- Added new filter `timmy/src_default` to define what the src attribute’s should be.
+
 ## 0.14.1 - 2019-06-19
 
 - Added bailout in `image_downsize` filter when no image size could be found.

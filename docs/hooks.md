@@ -5,6 +5,8 @@
 	- [timmy/resize/ignore](#timmyresizeignore)
 	- [timmy/generate_srcset_sizes](#timmygenerate_srcset_sizes)
 	- [timmy/oversize](#timmyoversize)
+	- [timmy/use_src_default](#timmyuse_src_default)
+	- [timmy/src_default](#timmysrc_default)
 
 ## Filters
 
@@ -100,4 +102,54 @@ add_filter( 'timmy/oversize', function( $oversize ) {
 
 // Shortcut to set all oversize parameters to false
 add_filter( 'timmy/oversize', '__return_false' );
+```
+
+### timmy/use_src_default
+
+Filters whether a default src attribute should be added as a fallback.
+If this filter returns `true` (the default), then a base64 string will be used as a fallback to
+prevent double downloading images in older browsers. If this filter returns `false`, then no src
+attribute will be added to the image. Use the `timmy/src_default` filter to define what should be
+used as the src attribute’s value.
+
+**Parameters**
+
+- **$use_src_default**  
+	*(bool)* Whether to apply the fallback. Default `true`.
+
+**Example**
+
+```php
+// Disable default src attribute.
+add_filter( 'timmy/use_src_default', '__return_false' );
+```
+
+### timmy/src_default
+
+Filters the src default.
+
+**Parameters**
+
+- **$src_default**  
+	*(string)* Src default. Default `data:image/gif;base64,R0lGODlhAQABAAAAADs=`.
+- **$attributes**  
+    *(array)* An array of helpful attributes in the filter.  
+    - **$default_src**
+        *(string)* The default src for the image.
+    - **$timber_image**  
+        *(\Timber\Image)* Timber image instance.
+    - **$size**  
+        *(string)* The requested image size.
+    - **$img_size**  
+        *(array)* The image size configuration.
+    - **$attributes**  
+        *(array)* Attributes for the image markup.
+
+**Example**
+
+```php
+// Use the default src URL as a fallback.
+add_filter( 'timmy/src_default', function( $src_default, $attributes ) {
+    return $attributes['default_src'];
+}, 10, 2 );
 ```

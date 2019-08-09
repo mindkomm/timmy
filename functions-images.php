@@ -331,12 +331,56 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 			$attributes[ $srcset_name ] = implode( ', ', $srcset );
 
 			/**
-			 * Add fallback for src attribute to provide valid image markup and prevent double
-			 * downloads in older browsers.
+			 * Filters whether a default src attribute should be added as a fallback.
 			 *
-			 * @link http://scottjehl.github.io/picturefill/#support
+			 * If this filter returns `true` (the default), then a base64 string will be used as a
+			 * fallback to prevent double downloading images in older browsers. If this filter
+			 * returns `false`, then no src attribute will be added to the image. Use the
+			 * `timmy/src_default` filter to define what should be used as the src attribute’s
+			 * value.
+			 *
+			 * @param bool $use_src_default Whether to apply the fallback. Default true.
 			 */
-			$attributes[ $src_name ] = 'data:image/gif;base64,R0lGODlhAQABAAAAADs=';
+			$use_src_default = apply_filters( 'timmy/use_src_default', true );
+
+			if ( $use_src_default ) {
+				// Default fallback src.
+				$src_default = 'data:image/gif;base64,R0lGODlhAQABAAAAADs=';
+
+				/**
+				 * Filters the src default.
+				 *
+				 * @param string $src_default Src default. Default `data:image/gif;base64,R0lGODlhAQABAAAAADs=`.
+				 * @param array  $attributes  {
+				 *     An array of helpful attributes in the filter.
+				 *
+				 *     @type string        $default_src  The default src for the image.
+				 *     @type \Timber\Image $timber_image Timber image instance.
+				 *     @type string        $size         The requested image size.
+				 *     @type array         $img_size     The image size configuration.
+				 *     @type array         $attributes   Attributes for the image markup.
+				 * }
+				 */
+				$src_default = apply_filters(
+					'timmy/src_default',
+					$src_default,
+					[
+						'default_src'  => $default_size,
+						'timber_image' => $timber_image,
+						'size'         => $size,
+						'img_size'     => $img_size,
+						'attributes'   => $attributes,
+					]
+				);
+
+				/**
+				 * Add fallback for src attribute to provide valid image markup and prevent double
+				 * downloads in older browsers.
+				 *
+				 * @link http://scottjehl.github.io/picturefill/#support
+				 */
+				$attributes[ $src_name ] = $src_default;
+			}
 		} else {
 			$attributes[ $src_name ] = $default_size;
 		}
