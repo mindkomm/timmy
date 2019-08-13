@@ -139,15 +139,19 @@ Returns the src for a post thumbnail. This is practically the same as `get_post_
 
 ## make_timber_image_lazy
 
-`make_timber_image_lazy( string $image_markup )`
+`make_timber_image_lazy( string $image_markup, array $attributes = ['srcset'] )`
 
-Prepares the srcset markup for lazy-loading. Replaces `srcset` with `data-srcset`.
+Prepares the srcset markup for lazy-loading. Updates the attributes passed in the `$attributes` parameter with a `data-` prefix. For example `srcset` is replaced with `data-srcset`.
 
 #### Usage in WordPress templates
 
 ```php
 <img<?php echo make_timber_image_lazy(
 	get_timber_image_responsive( get_post_thumbnail_id(), 'custom-6' )
+); ?>>
+
+<img<?php echo make_timber_image_lazy(
+	get_timber_image_responsive( get_post_thumbnail_id(), 'custom-6', ['srcset', 'src', 'sizes'] )
 ); ?>>
 ```
 
@@ -156,5 +160,9 @@ Prepares the srcset markup for lazy-loading. Replaces `srcset` with `data-srcset
 In Twig, you can use the `lazy` filter.
 
 ```twig
+{# Default, srcset only. #}
 <img{{ post.thumbnail|get_timber_image_responsive('custom-6')|lazy }}>
+
+{# Custom array of attributes #}
+<img{{ post.thumbnail|get_timber_image_responsive('custom-6')|lazy(['srcset', 'src', 'sizes']) }}>
 ```

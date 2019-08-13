@@ -495,7 +495,7 @@ if ( ! function_exists( 'make_timber_image_lazy' ) ) :
 	/**
 	 * Prepares the srcset markup for lazy-loading.
 	 *
-	 * Replaces `srcset` with `data-srcset`.
+	 * Updates attributes with a data-prefix. E.g. updates `srcset` with `data-srcset`.
 	 *
 	 * @since 0.13.3
 	 *
