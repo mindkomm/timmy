@@ -194,6 +194,7 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 			'attr_height'   => false,
 			'lazy_srcset'   => false,
 			'lazy_src'      => false,
+			'lazy_sizes'    => false,
 			'return_format' => 'string',
 		);
 
@@ -273,7 +274,10 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 			}
 		}
 
-		$attributes = array();
+		$attributes  = array();
+		$srcset_name = $args['lazy_srcset'] ? 'data-srcset' : 'srcset';
+		$src_name    = $args['lazy_src'] ? 'data-src' : 'src';
+		$sizes_name  = $args['lazy_sizes'] ? 'data-sizes' : 'sizes';
 
 		/**
 		 * Check for 'sizes' option in image configuration.
@@ -282,7 +286,7 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 		 * @since 0.10.0
 		 */
 		if ( isset( $img_size['sizes'] ) ) {
-			$attributes['sizes'] = $img_size['sizes'];
+			$attributes[ $sizes_name ] = $img_size['sizes'];
 		} elseif ( isset( $img_size['size'] ) ) {
 			/**
 			 * For backwards compatibility.
@@ -290,7 +294,7 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 			 * @deprecated since 0.10.0
 			 * @todo Remove in 1.x
 			 */
-			$attributes['sizes'] = $img_size['size'];
+			$attributes[ $sizes_name ] = $img_size['size'];
 		}
 
 		/**
@@ -314,9 +318,6 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 		if ( $args['attr_height'] ) {
 			$attributes['height'] = $height;
 		}
-
-		$srcset_name = $args['lazy_srcset'] ? 'data-srcset' : 'srcset';
-		$src_name    = $args['lazy_src'] ? 'data-src' : 'src';
 
 		/**
 		 * Only add responsive srcset and sizes attributes if there are any present.
@@ -498,7 +499,7 @@ if ( ! function_exists( 'make_timber_image_lazy' ) ) :
 	 *
 	 * @since 0.13.3
 	 *
-	 * @param string $markup Existing image HTML markup.
+	 * @param string $markup     Existing image HTML markup.
 	 * @param array  $attributes Optional. An array of attributes that should be replaced with
 	 *                           'data-' as a prefix. Default `[ 'srcset' ]`.
 	 *
