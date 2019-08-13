@@ -4,6 +4,9 @@
 
 - Added new filter `timmy/use_src_default` to define whether a src attribute should be added as a fallback.
 - Added new filter `timmy/src_default` to define what the src attribute’s should be.
+- Added new `lazy_sizes` parameter to `get_timber_image_responsive_src()` function. This will allow you to prefix the `sizes` attribute with `data-`.
+- Improved lazy filter by adding a parameter to define which attributes should be prefixed with `data-`. E.g., you can now use `image|get_timber_image_responsive('large')|lazy(['srcset', 'src', 'sizes'])` to prefix the `srcset`, the `src` and the `sizes` attributes with `data-`. 
+- Improved the default src fallback for images with `data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7`. This fixes bugs in IE 11.
 
 ## 0.14.1 - 2019-06-19
 
