@@ -499,10 +499,19 @@ if ( ! function_exists( 'make_timber_image_lazy' ) ) :
 	 * @since 0.13.3
 	 *
 	 * @param string $markup Existing image HTML markup.
+	 * @param array  $attributes Optional. An array of attributes that should be replaced with
+	 *                           'data-' as a prefix. Default `[ 'srcset' ]`.
+	 *
 	 * @return string HTML markup.
 	 */
-	function make_timber_image_lazy( $markup ) {
-		$markup = str_replace( ' srcset=', ' data-srcset=', $markup );
+	function make_timber_image_lazy( $markup, $attributes = [ 'srcset' ] ) {
+		foreach ( $attributes as $attribute ) {
+			$markup = str_replace(
+				" {$attribute}=",
+				" data-{$attribute}=",
+				$markup
+			);
+		}
 
 		return $markup;
 	}
