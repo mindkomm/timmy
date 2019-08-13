@@ -345,12 +345,13 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 
 			if ( $use_src_default ) {
 				// Default fallback src.
-				$src_default = 'data:image/gif;base64,R0lGODlhAQABAAAAADs=';
+				$src_default = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
 
 				/**
 				 * Filters the src default.
 				 *
-				 * @param string $src_default Src default. Default `data:image/gif;base64,R0lGODlhAQABAAAAADs=`.
+				 * @param string $src_default Src default. Default
+				 *                            `data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7`.
 				 * @param array  $attributes  {
 				 *     An array of helpful attributes in the filter.
 				 *
