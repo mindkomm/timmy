@@ -41,5 +41,4 @@ class TestFilters extends TimmyUnitTestCase {
 
 		remove_filter( 'timmy/src_default', $callback );
 	}
-
 }

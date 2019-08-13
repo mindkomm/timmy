@@ -55,7 +55,7 @@ class TestFunctions extends TimmyUnitTestCase {
 
 		$attributes = [
 			'sizes'  => '100vw',
-			'src'    => 'data:image/gif;base64,R0lGODlhAQABAAAAADs=',
+			'src'    => 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
 			'srcset' => $this->get_upload_url() . '/test-560x0-c-default.jpg 560w, ' . $this->get_upload_url() . '/test-1400x0-c-default.jpg 1400w',
 			'alt'    => $alt_text,
 		];
@@ -68,7 +68,7 @@ class TestFunctions extends TimmyUnitTestCase {
 		$attachment = $this->create_image( [ 'alt' => $alt_text ] );
 		$result     = get_timber_image_responsive( $attachment, 'large' );
 
-		$image = ' sizes="100vw" srcset="' . $this->get_upload_url() . '/test-560x0-c-default.jpg 560w, ' . $this->get_upload_url() . '/test-1400x0-c-default.jpg 1400w" src="data:image/gif;base64,R0lGODlhAQABAAAAADs=" alt="Burrito Wrap"';
+		$image = ' sizes="100vw" srcset="' . $this->get_upload_url() . '/test-560x0-c-default.jpg 560w, ' . $this->get_upload_url() . '/test-1400x0-c-default.jpg 1400w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Burrito Wrap"';
 
 		$this->assertEquals( $result, $image );
 	}
@@ -77,7 +77,10 @@ class TestFunctions extends TimmyUnitTestCase {
 		$attachment = $this->create_image();
 		$result     = get_timber_image_responsive_src( $attachment, 'large' );
 
-		$image = ' sizes="100vw" srcset="' . $this->get_upload_url() . '/test-560x0-c-default.jpg 560w, ' . $this->get_upload_url() . '/test-1400x0-c-default.jpg 1400w" src="data:image/gif;base64,R0lGODlhAQABAAAAADs="';
+		$image = ' sizes="100vw" srcset="' . $this->get_upload_url() . '/test-560x0-c-default.jpg 560w, ' . $this->get_upload_url() . '/test-1400x0-c-default.jpg 1400w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"';
+
+		$this->assertEquals( $result, $image );
+	}
 
 		$this->assertEquals( $result, $image );
 	}
