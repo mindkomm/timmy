@@ -26,6 +26,7 @@ require_once $_tests_dir . '/includes/functions.php';
  */
 function _manually_load_plugin() {
 	require dirname( __FILE__ ) . '/../vendor/autoload.php';
+	new Timber\Timber();
 	new Timmy();
 
 	require dirname( dirname( __FILE__ ) ) . '/timmy.php';

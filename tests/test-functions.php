@@ -82,6 +82,19 @@ class TestFunctions extends TimmyUnitTestCase {
 		$this->assertEquals( $result, $image );
 	}
 
+	public function test_get_timber_image_responsive_src_lazy_args() {
+		$attachment = $this->create_image();
+		$result     = get_timber_image_responsive_src( $attachment, 'large', [
+			'lazy_src'    => true,
+			'lazy_srcset' => true,
+			'lazy_sizes'  => true,
+		] );
+
+		$image = sprintf(
+			' data-sizes="100vw" data-srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" data-src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"',
+			$this->get_upload_url()
+		);
+
 		$this->assertEquals( $result, $image );
 	}
 
