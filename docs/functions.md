@@ -151,7 +151,7 @@ Prepares the srcset markup for lazy-loading. Updates the attributes passed in th
 ); ?>>
 
 <img<?php echo make_timber_image_lazy(
-	get_timber_image_responsive( get_post_thumbnail_id(), 'custom-6', ['srcset', 'src', 'sizes'] )
+	get_timber_image_responsive( get_post_thumbnail_id(), 'custom-6' ), ['srcset', 'src', 'sizes']
 ); ?>>
 ```
 
