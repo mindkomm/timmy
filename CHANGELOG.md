@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.14.3 - 2019-09-25
+
+- Added new filter for `wp_get_attachment_metadata` that adds a sizes configuration for image sizes that are missing in the image meta data. This should improve compatibility when image data is requested through the WP REST API.
+
 ## 0.14.2 - 2019-08-09
 
 - Added new filter `timmy/use_src_default` to define whether a src attribute should be added as a fallback.
