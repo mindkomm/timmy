@@ -169,7 +169,34 @@ class Timmy {
 			return $meta_data;
 		}
 
-		$meta_data['sizes'] = $this->timber_generate_sizes( $attachment_id );
+		$attachment = get_post( $attachment_id );
+
+		/**
+		 * Never automatically generate image sizes on upload for SVG and GIF images.
+		 * SVG and GIF images will still be resized when requested on the fly.
+		 */
+		if ( in_array( $attachment->post_mime_type, array(
+			'image/svg+xml',
+			'image/gif',
+		), true ) ) {
+			return $meta_data;
+		}
+
+		// Timber needs the file src as an URL.
+		$file_src = wp_get_attachment_url( $attachment_id );
+
+		/**
+		 * Delete all existing image sizes for that file.
+		 *
+		 * This way, when Regenerate Thumbnails will be used, all non-registered image sizes will be
+		 * deleted as well. Because Timber creates image sizes when they’re needed, we can safely do
+		 * this.
+		 */
+		Timber\ImageHelper::delete_generated_files( $file_src );
+
+		$meta_data['sizes'] = $this->generate_image_sizes( $attachment );
+
+		$this->generate_srcset_sizes( $attachment );
 
 		return $meta_data;
 	}
@@ -337,8 +364,6 @@ class Timmy {
 			return array( $src, $width, $height, true );
 		}
 
-		$img_sizes = Helper::get_image_sizes();
-
 		/**
 		 * Bailout if a GIF is uploaded in the backend and a size other than the thumbnail size is
 		 * requested.
@@ -376,6 +401,8 @@ class Timmy {
 
 			return array( $file_src, 0, 0, false );
 		}
+
+		$img_sizes = Helper::get_image_sizes();
 
 		// Sort out which image size we need to take from our own image configuration.
 		if ( ! is_array( $size ) && isset( $img_sizes[ $size ] ) ) {
@@ -660,125 +687,175 @@ class Timmy {
 	/**
 	 * Generate image sizes defined for Timmy with Timber\ImageHelper.
 	 *
-	 * @param int $attachment_id The attachment ID for which all images should be resized.
+	 * @param \WP_Post $attachment The attachment for which all images should be resized.
 	 *
-	 * @return array An array of generated image sizes that will be saved in attachment metdata.
+	 * @return array An array of generated image sizes that will can saved in attachment metdata.
 	 */
-	private function timber_generate_sizes( $attachment_id ) {
-		$sizes      = [];
-		$img_sizes  = Helper::get_image_sizes();
-		$attachment = get_post( $attachment_id );
-
-		/**
-		 * Never automatically generate image sizes on upload for SVG and GIF images.
-		 * SVG and GIF images will still be resized when requested on the fly.
-		 */
-		if ( in_array( $attachment->post_mime_type, array(
-			'image/svg+xml',
-			'image/gif',
-		), true ) ) {
-			return $sizes;
-		}
-
-		// Timber needs the file src as an URL.
-		$file_src  = wp_get_attachment_url( $attachment_id );
-
-		// Get unfiltered meta data to prevent potential recursion.
-		$meta_data = wp_get_attachment_metadata( $attachment_id, true );
-
-		/**
-		 * Delete all existing image sizes for that file.
-		 *
-		 * This way, when Regenerate Thumbnails will be used, all non-registered image sizes will be
-		 * deleted as well. Because Timber creates image sizes when they’re needed, we can safely do
-		 * this.
-		 */
-		Timber\ImageHelper::delete_generated_files( $file_src );
+	private function generate_image_sizes( $attachment ) {
+		$sizes     = [];
+		$img_sizes = Helper::get_image_sizes();
 
 		foreach ( $img_sizes as $key => $img_size ) {
-			if ( ! $this->timber_should_resize( $attachment->post_parent, $img_size ) ) {
-				continue;
-			}
+			$generated_meta = $this->generate_image_size( $attachment, $key, $img_size );
 
-			// Create downsized version of the image.
-			$downsized = image_downsize( $attachment_id, $key );
-
-			// Bail out if there was an error while downsizing the image.
-			if ( ! is_array( $downsized ) ) {
-				continue;
-			}
-
-			list( $file_src, $file_width, $file_height ) = $downsized;
-
-			/**
-			 * Create an image definition array that will be used for attachment metadata.
-			 *
-			 * WordPress saves an array with the file src, the width, the height and the mime type
-			 * of an attachment in the postmeta database table. By generating this array and saving
-			 * it in the database, we can improve the compatibility with the core image
-			 * functionality.
-			 *
-			 * Correct width and height values of '0' by calculating them from the original image
-			 * ratio, if meta data is available.
-			 */
-			if ( ! empty( $meta_data['height'] ) && ! empty( $meta_data['width'] ) ) {
-				if ( 0 === (int) $file_width && ! empty( $meta_data['height'] ) ) {
-					$file_width = round( $file_height / $meta_data['height'] * $meta_data['width'] );
-				} elseif ( 0 === (int) $file_height ) {
-					$file_height = round( $file_width / $meta_data['width'] * $meta_data['height'] );
-				}
-			}
-
-			if ( is_numeric( $file_width ) && is_numeric( $file_height ) ) {
-				$sizes[ $key ] = [
-					'file'      => wp_basename( $file_src ),
-					'width'     => $file_width,
-					'height'    => $file_height,
-					'mime-type' => wp_check_filetype( $file_src )['type'],
-				];
-			}
-
-			/**
-			 * Filters whether srcset sizes should be generated when an image is uploaded.
-			 *
-			 * @since 0.13.0
-			 *
-			 * @param bool     $generate_srcset_sizes Whether to generate srcset sizes. Passing false will prevent
-			 *                                        srcset sizes to generated when an image is uploaded. Default false.
-			 * @param string   $key                   The image size key.
-			 * @param array    $img_size              The image size configuration array.
-			 * @param \WP_Post $attachment            The attachment post.
-			 */
-			$generate_srcset_sizes = apply_filters( 'timmy/generate_srcset_sizes', false, $key, $img_size, $attachment );
-
-			// Get setting from image configuration.
-			$generate_srcset_sizes = isset( $img_size['generate_srcset_sizes'] )
-				? $img_size['generate_srcset_sizes']
-				: $generate_srcset_sizes;
-
-			if ( false === $generate_srcset_sizes ) {
-				continue;
-			}
-
-			// Get values for the default image.
-			$crop  = Helper::get_crop_for_size( $img_size );
-			$force = Helper::get_force_for_size( $img_size );
-
-			// Generate additional image sizes used for srcset.
-			if ( isset( $img_size['srcset'] ) ) {
-				foreach ( $img_size['srcset'] as $srcset_size ) {
-					list( $width, $height ) = Helper::get_dimensions_for_srcset_size(
-						$img_size['resize'],
-						$srcset_size
-					);
-
-					// For the new source, we use the same $crop and $force values as the default image
-					self::resize( $img_size, $file_src, $width, $height, $crop, $force );
-				}
+			if ( ! empty( $generated_meta ) ) {
+				$sizes[ $key ] = $generated_meta;
 			}
 		}
 
 		return $sizes;
+	}
+
+	/**
+	 * Generates an image size.
+	 *
+	 * @param \WP_Post $attachment An attachment.
+	 * @param string   $size       The image size key.
+	 * @param array    $img_size   The configuration array for an image size.
+	 *
+	 * @return array Generated meta data for an image.
+	 */
+	private function generate_image_size( $attachment, $size, $img_size ) {
+		if ( ! $this->timber_should_resize( $attachment->post_parent, $img_size ) ) {
+			return [];
+		}
+
+		// Create downsized version of the image.
+		$downsized = image_downsize( $attachment->ID, $size );
+
+		// Bail out if there was an error while downsizing the image.
+		if ( ! is_array( $downsized ) ) {
+			return [];
+		}
+
+		list( $file_src, $file_width, $file_height ) = $downsized;
+
+		// Get unfiltered meta data to prevent potential recursion.
+		$meta_data = wp_get_attachment_metadata( $attachment->ID, true );
+
+		$generated_meta = $this->generate_meta_size(
+			$meta_data,
+			$file_src,
+			$file_width,
+			$file_height
+		);
+
+		return $generated_meta;
+	}
+
+	/**
+	 * Generates the srcset sizes for an image.
+	 *
+	 * @param \WP_Post $attachment An attachment.
+	 */
+	private function generate_srcset_sizes( $attachment ) {
+		$img_sizes = Helper::get_image_sizes();
+
+		foreach ( $img_sizes as $key => $img_size ) {
+			$this->generate_srcset_size( $attachment, $key, $img_size );
+		}
+	}
+
+	/**
+	 * Generates the srcset sizes for an image size.
+	 *
+	 * @param \WP_Post $attachment An attachment.
+	 * @param string   $size       The image size key.
+	 * @param array    $img_size   The configuration array for an image size.
+	 */
+	private function generate_srcset_size( $attachment, $size, $img_size ) {
+		if ( ! $this->timber_should_resize( $attachment->post_parent, $img_size ) ) {
+			return;
+		}
+
+		/**
+		 * Filters whether srcset sizes should be generated when an image is uploaded.
+		 *
+		 * @since 0.13.0
+		 *
+		 * @param bool     $generate_srcset_sizes Whether to generate srcset sizes. Passing false will prevent
+		 *                                        srcset sizes to generated when an image is uploaded. Default false.
+		 * @param string   $size                  The image size key.
+		 * @param array    $img_size              The image size configuration array.
+		 * @param \WP_Post $attachment            The attachment post.
+		 */
+		$generate_srcset_sizes = apply_filters( 'timmy/generate_srcset_sizes', false, $size, $img_size, $attachment );
+
+		// Get setting from image configuration.
+		$generate_srcset_sizes = isset( $img_size['generate_srcset_sizes'] )
+			? $img_size['generate_srcset_sizes']
+			: $generate_srcset_sizes;
+
+		// Bail out if srcset sizes shouldn’t be generated.
+		if ( false === $generate_srcset_sizes ) {
+			return;
+		}
+
+		// Get values for the default image.
+		$crop  = Helper::get_crop_for_size( $img_size );
+		$force = Helper::get_force_for_size( $img_size );
+
+		// Get unfiltered meta data to prevent potential recursion.
+		$meta_data = wp_get_attachment_metadata( $attachment->ID, true );
+		$file_src  = $meta_data['file_src'];
+
+		// Generate additional image sizes used for srcset.
+		if ( isset( $img_size['srcset'] ) ) {
+			foreach ( $img_size['srcset'] as $srcset_size ) {
+				list( $width, $height ) = Helper::get_dimensions_for_srcset_size(
+					$img_size['resize'],
+					$srcset_size
+				);
+
+				// For the new source, we use the same $crop and $force values as the default image
+				self::resize( $img_size, $file_src, $width, $height, $crop, $force );
+			}
+		}
+	}
+
+	/**
+	 * Creates an image definition array that will be used for attachment metadata.
+	 *
+	 * WordPress saves an array with the file src, the width, the height and the mime type of an
+	 * attachment in the postmeta database table. By generating this array (and eventually saving it
+	 * in the database), we can improve the compatibility with the core image functionality.
+	 *
+	 * Corrects width and height values of '0' by calculating them from the original image ratio,
+	 * if meta data is available.
+	 *
+	 * @since 1.4.3
+	 *
+	 * @param array  $meta_data   Image meta data, containing the original width and height of the
+	 *                            file.
+	 * @param string $file_src    The file src.
+	 * @param int    $file_width  The known width of the size.
+	 * @param int    $file_height The known height of the size.
+	 *
+	 * @return array
+	 */
+	private function generate_meta_size( $meta_data, $file_src, $file_width, $file_height ) {
+		if ( ! empty( $meta_data['height'] ) && ! empty( $meta_data['width'] ) ) {
+			if ( 0 === (int) $file_width && ! empty( $meta_data['height'] ) ) {
+				$file_width = intval(
+					round( $file_height / $meta_data['height'] * $meta_data['width'] )
+				);
+			} elseif ( 0 === (int) $file_height ) {
+				$file_height = intval(
+					round( $file_width / $meta_data['width'] * $meta_data['height'] )
+				);
+			}
+		}
+
+		if ( is_numeric( $file_width ) && is_numeric( $file_height ) ) {
+			return [
+				'file'      => wp_basename( $file_src ),
+				'width'     => $file_width,
+				'height'    => $file_height,
+				'mime-type' => wp_check_filetype( $file_src )['type'],
+			];
+		}
+
+		return [];
 	}
 
 	/**
