@@ -32,10 +32,10 @@ class Timmy {
 	 * Hook into WordPress
 	 */
 	public function init() {
-		// Wait for theme to initialize to make sure that we can access all image sizes
+		// Wait for theme to initialize to make sure that we can access all image sizes.
 		add_action( 'after_setup_theme', array( $this, 'after_setup_theme' ) );
 
-		// Add filters and functions to integrate Timmy into Timber and Twig
+		// Add filters and functions to integrate Timmy into Timber and Twig.
 		add_filter( 'timber/twig', array( $this, 'filter_twig' ) );
 
 		add_filter( 'timmy/resize/ignore', array( __CLASS__, 'ignore_gif' ), 10, 2 );
@@ -205,12 +205,12 @@ class Timmy {
 	 * @return array Array of image sizes from image config for Timmy.
 	 */
 	public function get_image_sizes_for_ui() {
-		// We start from scratch and build our own sizes array
+		// We start from scratch and build our own sizes array.
 		$sizes = array();
 
-		// Build up new array of image sizes
+		// Build up new array of image sizes.
 		foreach ( Helper::get_image_sizes() as $key => $size ) {
-			// Do not add our own size if it is set to false in the image config
+			// Do not add our own size if it is set to false in the image config.
 			if ( isset( $size['show_in_ui'] ) && false === $size['show_in_ui'] ) {
 				continue;
 			}
@@ -321,7 +321,7 @@ class Timmy {
 			$crop  = Helper::get_crop_for_size( $thumbnail_size );
 			$force = Helper::get_force_for_size( $thumbnail_size );
 
-			// Resize to thumbnail size
+			// Resize to thumbnail size.
 			$src = self::resize( $thumbnail_size, $file_src, $width, $height, $crop, $force );
 
 			/**
@@ -377,7 +377,7 @@ class Timmy {
 			return array( $file_src, 0, 0, false );
 		}
 
-		// Sort out which image size we need to take from our own image configuration
+		// Sort out which image size we need to take from our own image configuration.
 		if ( ! is_array( $size ) && isset( $img_sizes[ $size ] ) ) {
 			$img_size = $img_sizes[ $size ];
 
@@ -397,10 +397,10 @@ class Timmy {
 		$crop  = Helper::get_crop_for_size( $img_size );
 		$force = Helper::get_force_for_size( $img_size );
 
-		// Resize the image for that size
+		// Resize the image for that size.
 		$src = self::resize( $img_size, $file_src, $width, $height, $crop, $force );
 
-		// When the input size is an array of width and height
+		// When the input size is an array of width and height.
 		if ( is_array( $size ) ) {
 			$width  = $size[0];
 			$height = $size[1];
@@ -449,13 +449,12 @@ class Timmy {
 	public static function get_timber_image( $timber_image ) {
 		if ( is_numeric( $timber_image ) ) {
 			$timber_image = new Timber\Image( $timber_image );
-
-		// Convert an ACF image array into a Timber image
 		} elseif ( is_array( $timber_image ) && isset( $timber_image['ID'] ) ) {
+			// Convert an ACF image array into a Timber image.
 			$timber_image = new Timber\Image( $timber_image['ID'] );
 		}
 
-		// Check if non-empty TimberImage was found before returning it
+		// Check if non-empty TimberImage was found before returning it.
 		if ( ! $timber_image instanceof Timber\Image
 			|| ! isset( $timber_image->post_type )
 			|| 'attachment' !== $timber_image->post_type
@@ -502,10 +501,10 @@ class Timmy {
 		 */
 		$oversize = apply_filters( 'timmy/oversize', $oversize_defaults );
 
-		// Overwrite default value with oversize value
+		// Overwrite default value with oversize value.
 		$oversize = isset( $img_size['oversize'] ) ? $img_size['oversize'] : $oversize;
 
-		// Turn shortcut boolean value for oversize into array
+		// Turn shortcut boolean value for oversize into array.
 		if ( is_bool( $oversize ) ) {
 			$oversize = array(
 				'allow'      => $oversize,
@@ -518,7 +517,7 @@ class Timmy {
 
 		$resize = $img_size['resize'];
 
-		// Get values for the default image size
+		// Get values for the default image size.
 		list( $width, $height ) = Helper::get_dimensions_for_size( $img_size );
 
 		/**
@@ -534,16 +533,16 @@ class Timmy {
 		 */
 		if ( ! $oversize['allow'] ) {
 			if ( $width > $max_width ) {
-				// Overwrite $width to use a max width
+				// Overwrite $width to use a max width.
 				$width = $max_width;
 
-				// Calculate new height based on new width
+				// Calculate new height based on new width.
 				if ( isset( $resize[1] ) ) {
 					$height = (int) round( $width * ( $resize[1] / $resize[0] ) );
 				}
 
 				if ( $oversize['style_attr'] ) {
-					// Restrict to width
+					// Restrict to width.
 					$oversize['style_attr'] = 'width';
 				}
 			} elseif ( $height > 0 && $height > $max_height ) {
@@ -551,7 +550,7 @@ class Timmy {
 				$width  = (int) round( $max_width / $max_height * $height );
 
 				if ( $oversize['style_attr'] ) {
-					// Restrict to height
+					// Restrict to height.
 					$oversize['style_attr'] = 'height';
 				}
 			}
@@ -587,14 +586,14 @@ class Timmy {
 	 * @return string The src of the image.
 	 */
 	public static function resize( $img_size, $file_src, $width, $height, $crop, $force ) {
-		// Check if image should be converted to JPG first
+		// Check if image should be converted to JPG first.
 		if ( self::should_convert_to_jpg( $img_size, $file_src ) ) {
-			// Sort out background color which will show instead of transparency
+			// Sort out background color which will show instead of transparency.
 			$bgcolor  = is_string( $img_size['tojpg'] ) ? $img_size['tojpg'] : '#FFFFFF';
 			$file_src = Timber\ImageHelper::img_to_jpg( $file_src, $bgcolor, $force );
 		}
 
-		// Check for letterbox parameter
+		// Check for letterbox parameter.
 		if ( isset( $img_size['letterbox'] ) && $img_size['letterbox']
 			&& $width > 0 && $height > 0
 		) {
@@ -681,7 +680,7 @@ class Timmy {
 			return $sizes;
 		}
 
-		// Timber needs the file src as an URL
+		// Timber needs the file src as an URL.
 		$file_src  = wp_get_attachment_url( $attachment_id );
 		$meta_data = wp_get_attachment_metadata( $attachment_id );
 
@@ -699,7 +698,7 @@ class Timmy {
 				continue;
 			}
 
-			// Create downsized version of the image
+			// Create downsized version of the image.
 			$downsized = image_downsize( $attachment_id, $key );
 
 			// Bail out if there was an error while downsizing the image.
@@ -759,11 +758,11 @@ class Timmy {
 				continue;
 			}
 
-			// Get values for the default image
+			// Get values for the default image.
 			$crop  = Helper::get_crop_for_size( $img_size );
 			$force = Helper::get_force_for_size( $img_size );
 
-			// Generate additional image sizes used for srcset
+			// Generate additional image sizes used for srcset.
 			if ( isset( $img_size['srcset'] ) ) {
 				foreach ( $img_size['srcset'] as $srcset_size ) {
 					list( $width, $height ) = Helper::get_dimensions_for_srcset_size( $img_size['resize'], $srcset_size );
@@ -794,7 +793,7 @@ class Timmy {
 		 */
 		$attachment_post_type = array( '' );
 
-		// Check if image is attached to a post and sort out post type
+		// Check if image is attached to a post and sort out post type.
 		if ( 0 !== $attachment_parent_id ) {
 			$parent               = get_post( $attachment_parent_id );
 			$attachment_post_type = array( $parent->post_type );
@@ -816,7 +815,7 @@ class Timmy {
 			$attachment_post_type = array( $attachment_post_type );
 		}
 
-		// Reset post types that should be applied as a standard
+		// Reset post types that should be applied as a standard.
 		$post_types_to_apply = array( '', 'page', 'post' );
 
 		/**
@@ -828,7 +827,7 @@ class Timmy {
 		}
 
 		if ( ! in_array( 'all', $post_types_to_apply, true ) ) {
-			// Check if we should really resize that picture
+			// Check if we should really resize that picture.
 			$intersections = array_intersect( $post_types_to_apply, $attachment_post_type );
 
 			if ( ! empty( $intersections ) ) {
@@ -869,7 +868,7 @@ class Timmy {
 	 * @return bool
 	 */
 	public static function ignore_gif( $return, $attachment ) {
-		// Ignore GIF images
+		// Ignore GIF images.
 		if ( 'image/gif' === $attachment->post_mime_type ) {
 			return true;
 		}
