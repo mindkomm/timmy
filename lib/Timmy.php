@@ -57,6 +57,9 @@ class Timmy {
 		// Filters the image sizes automatically generated when uploading an image.
 		add_filter( 'intermediate_image_sizes_advanced', array( $this, 'filter_intermediate_image_sizes_advanced' ) );
 
+		// Filters the metadata for an image.
+		add_filter( 'wp_get_attachment_metadata', array( $this, 'filter_attachment_metadata' ), 10, 2 );
+
 		// Filters the generated attachment meta data.
 		add_filter( 'wp_generate_attachment_metadata', array( $this, 'filter_wp_generate_attachment_metadata' ), 10, 2 );
 
@@ -149,6 +152,70 @@ class Timmy {
 	 */
 	public function filter_intermediate_image_sizes_advanced( $sizes ) {
 		return array();
+	}
+
+	/**
+	 * Filters the attachment meta data.
+	 *
+	 * Adds missing image sizes to the sizes array dynamically. This is useful when image sizes are
+	 * requested in other places than your templates, e.g. through the media endpoint of REST API
+	 * in the Block Editor.
+	 *
+	 * Image sizes can be missing when a new image size was added after an image was uploaded. This
+	 * can be circumvented when image meta data is regenerated, e.g. with Regenerate Thumbnails.
+	 *
+	 * When an image size is present in the array, it doesn’t mean that the image will be generated
+	 * automatically. You still have to control when an image is generated through the
+	 * `post_types` configuration key. Otherwise, the full size will be used as a fallback.
+	 *
+	 * @since 0.14.3
+	 *
+	 * @param array|bool $meta_data     Array of meta data for the given attachment, or false
+	 *                                  if the object does not exist.
+	 * @param int        $attachment_id Attachment post ID.
+	 *
+	 * @return array|bool
+	 */
+	public function filter_attachment_metadata( $meta_data, $attachment_id ) {
+		/**
+		 * Bail out if no meta data is present yet or if the attachment is not an image. Meta data
+		 * will be empty when uploading images.
+		 */
+		if ( empty( $meta_data )
+			|| ! is_array( $meta_data )
+			|| ! isset( $meta_data['file'] )
+			|| ! wp_attachment_is_image( $attachment_id )
+		) {
+			return $meta_data;
+		}
+
+		$missing_sizes    = [];
+		$configured_sizes = Helper::get_image_sizes();
+
+		if ( ! isset( $meta_data['sizes'] ) && ! empty( $configured_sizes ) ) {
+			$meta_data['sizes'] = [];
+		}
+
+		$sizes = array_keys( $meta_data['sizes'] );
+
+		foreach ( $configured_sizes as $size => $config ) {
+			if ( ! in_array( $size, $sizes, true ) ) {
+				$missing_sizes[ $size ] = $config;
+			}
+		}
+
+		if ( ! empty( $missing_sizes ) ) {
+			foreach ( $missing_sizes as $size => $config ) {
+				$meta_data['sizes'][ $size ] = $this->generate_meta_size(
+					$meta_data,
+					$meta_data['file'],
+					$meta_data['width'],
+					$meta_data['height']
+				);
+			}
+		}
+
+		return $meta_data;
 	}
 
 	/**
