@@ -232,20 +232,26 @@ Assigning a color to fill the transparent space is not possible with the [normal
 
 (`array`), optional, Default: `array( '', 'post', page )`
 
-When you want to restrict generating of image sizes to certain post types while uploading an image in the backend, you can define a `post_types` key containing an array with all the post types you want to allow. If you omit that key, post types `post` and `page` as well as attachments not assigned to any post will be used as defaults.
+When you want to restrict generating of image sizes to certain post types while uploading an image in the backend, you can define a `post_types` key containing an array with all the post types you want to allow. If you omit that key, post types `post` and `page` as well as attachments not assigned to any post (defined with `''`) will be used as defaults.
 
-Say you want an image size only to be used for pages and an *employee* post type:
+Say you want an image size to only be used for pages and an *employee* post type:
 
 ```php
 'post_types' => array( 'page', 'employee' ),
 ```
 
-If you use that image size with another post type, it will be resized on the fly.
+If you use that image size with another post type, it will still be resized on the fly when needed.
 
-You can use `post_types' => array( 'all' )` to always generate this size, for all post types.
+You can use `array( 'all' )` to always generate the size for all post types.
 
 ```php
 'post_types' => array( 'all' ),
+```
+
+You can use an empty array for `post_type` to ignore the size entirely when an image is uploaded. The image size will still be generated on the fly when needed.
+
+```php
+'post_types' => array(),
 ```
 
 ---
