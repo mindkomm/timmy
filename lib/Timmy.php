@@ -363,7 +363,7 @@ class Timmy {
 		 * Certain functions or plugins ask for the full size of an image.
 		 */
 		if ( in_array( $size, array( 'original', 'full' ), true ) ) {
-			$meta_data = wp_get_attachment_metadata( $attachment_id );
+			$meta_data = wp_get_attachment_metadata( $attachment_id, true );
 
 			if ( isset( $meta_data['width'] ) && isset( $meta_data['height'] ) ) {
 				return array(
@@ -682,7 +682,9 @@ class Timmy {
 
 		// Timber needs the file src as an URL.
 		$file_src  = wp_get_attachment_url( $attachment_id );
-		$meta_data = wp_get_attachment_metadata( $attachment_id );
+
+		// Get unfiltered meta data to prevent potential recursion.
+		$meta_data = wp_get_attachment_metadata( $attachment_id, true );
 
 		/**
 		 * Delete all existing image sizes for that file.
