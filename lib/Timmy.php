@@ -765,7 +765,10 @@ class Timmy {
 			// Generate additional image sizes used for srcset.
 			if ( isset( $img_size['srcset'] ) ) {
 				foreach ( $img_size['srcset'] as $srcset_size ) {
-					list( $width, $height ) = Helper::get_dimensions_for_srcset_size( $img_size['resize'], $srcset_size );
+					list( $width, $height ) = Helper::get_dimensions_for_srcset_size(
+						$img_size['resize'],
+						$srcset_size
+					);
 
 					// For the new source, we use the same $crop and $force values as the default image
 					self::resize( $img_size, $file_src, $width, $height, $crop, $force );
