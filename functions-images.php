@@ -138,6 +138,11 @@ if ( ! function_exists( 'get_timber_image_srcset' ) ) :
 					$timber_image
 				);
 
+				// Check for x-notation in srcset, e.g. '2x'.
+				$suffix = is_string( $srcset_src ) && 'x' === substr( $srcset_src, -1, 1 )
+					? " {$srcset_src}"
+					: " {$width_key}w";
+
 				// For the new source, we use the same $crop and $force values as the default image.
 				$srcset[ $width_key ] = Timmy::resize(
 					$img_size,
@@ -146,7 +151,7 @@ if ( ! function_exists( 'get_timber_image_srcset' ) ) :
 					$height_intermediate,
 					$crop,
 					$force
-				) . " {$width_key}w";
+				) . $suffix;
 			}
 		}
 
