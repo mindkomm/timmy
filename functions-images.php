@@ -49,6 +49,7 @@ if ( ! function_exists( 'get_timber_image_src' ) ) :
 
 		// Directly return full source when full source or an SVG image is requested.
 		if ( 'full' === $size || 'image/svg+xml' === $timber_image->post_mime_type ) {
+			// Deliberately return the attachment URL, which can be a 'scaled' version of an image.
 			return wp_get_attachment_url( $timber_image->ID );
 		}
 
@@ -202,6 +203,7 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 
 		// Directly return full source when full source or an SVG image is requested.
 		if ( 'full' === $size || 'image/svg+xml' === $timber_image->post_mime_type ) {
+			// Deliberately get the attachment URL, which can be a 'scaled' version of an image.
 			$attributes = [ 'src' => wp_get_attachment_url( $timber_image->ID ) ];
 
 			if ( 'string' === $args['return_format'] ) {

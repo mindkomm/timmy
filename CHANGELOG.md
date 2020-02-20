@@ -1,6 +1,20 @@
 # Changelog
 
-## 0.14.3 - 2019-09-25
+## 0.14.4
+
+- Fixed a bug when low-quality image sizes were generated when using WordPress 5.3+.
+
+### Added support for scaled images
+
+As of WordPress 5.3, [images above 2560px will be scaled down](https://make.wordpress.org/core/2019/10/09/introducing-handling-of-big-images-in-wordpress-5-3/) to a smaller version for the `full` size of an image. This version will include `-scaled` in its filename. Because Timmy relied on `wp_get_attachment_url()`, smaller image sizes would be created based on this scaled version, which resulted in a **very visible quality loss**. Luckily, we can use the the new [`wp_get_original_image_url()`](https://developer.wordpress.org/reference/functions/wp_get_original_image_url/) function when needed.
+
+With this update, Timmy may return the scaled version of an image, when the full image size is requested. If you want to disable scaled images, you’ll have to use the `big_image_size_threshold` filter:
+
+```php
+add_filter( 'big_image_size_threshold', '__return_false' );
+```
+
+## 0.14.3 - 2020-02-20
 
 - Added new filter for `wp_get_attachment_metadata` that adds a sizes configuration for image sizes that are missing in the image meta data. This should improve compatibility when image data is requested through the WP REST API.
 

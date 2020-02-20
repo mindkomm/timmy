@@ -24,6 +24,53 @@ class TestFunctions extends TimmyUnitTestCase {
 		$this->assertEquals( $result, $image );
 	}
 
+	/**
+	 * Tests whether we get a scaled or a non-scaled image in return.
+	 *
+	 * With images bigger than 2560px, WordPress will create an image version with '-scaled' in its
+	 * name. We always want the image to be created from the original size.
+	 *
+	 * @since 0.14.4
+	 */
+	public function test_get_timber_image_huge_nonscaled() {
+		$attachment = $this->create_image( [ 'file' => 'huge.jpg' ] );
+		$result     = get_timber_image( $attachment, 'large' );
+
+		$image = ' src="' . $this->get_upload_url() . '/huge-1400x0-c-default.jpg" alt=""';
+
+		$this->assertEquals( $result, $image );
+	}
+
+	/**
+	 * Tests whether a '-scaled' version of the image is returned when the
+	 * 'big_image_size_threshold' kicks in.
+	 */
+	public function test_get_timber_image_full_scaled() {
+		$attachment = $this->create_image( [ 'file' => 'huge.jpg' ] );
+		$result     = get_timber_image( $attachment, 'full' );
+
+		$image = ' src="' . $this->get_upload_url() . '/huge-scaled.jpg" alt=""';
+
+		$this->assertEquals( $result, $image );
+	}
+
+	/**
+	 * Tests whether the 'big_image_size_threshold' works properly and non-scaled version of the
+	 * image is returned.
+	 */
+	public function test_get_timber_image_full_ignored_threshold() {
+		add_filter( 'big_image_size_threshold', '__return_false' );
+
+		$attachment = $this->create_image( [ 'file' => 'huge.jpg' ] );
+		$result     = get_timber_image( $attachment, 'full' );
+
+		$image = ' src="' . $this->get_upload_url() . '/huge.jpg" alt=""';
+
+		$this->assertEquals( $image, $result );
+
+		remove_filter( 'big_image_size_threshold', '__return_false' );
+	}
+
 	public function test_get_timber_image_texts() {
 		$attachment  = $this->create_image();
 		$alt_text    = 'A marvellous doggo';
@@ -110,6 +157,34 @@ class TestFunctions extends TimmyUnitTestCase {
 		$result     = get_timber_image( $attachment, 'full' );
 
 		$image = ' src="' . $this->get_upload_url() . '/logo-small.gif" alt=""';
+
+		$this->assertEquals( $image, $result );
+	}
+
+	/**
+	 * Tests whether we get the full src of an SVG with size full.
+	 *
+	 * @since 0.14.4
+	 */
+	public function test_timber_image_full_with_svg() {
+		$attachment = $this->create_image( [ 'file' => 'sveegee.svg' ] );
+		$result     = get_timber_image( $attachment, 'full' );
+
+		$image = ' src="' . $this->get_upload_url() . '/sveegee.svg" alt=""';
+
+		$this->assertEquals( $image, $result );
+	}
+
+	/**
+	 * Tests whether we get the full src of an SVG with size large.
+	 *
+	 * @since 0.14.4
+	 */
+	public function test_timber_image_large_with_svg() {
+		$attachment = $this->create_image( [ 'file' => 'sveegee.svg' ] );
+		$result     = get_timber_image( $attachment, 'large' );
+
+		$image = ' src="' . $this->get_upload_url() . '/sveegee.svg" alt=""';
 
 		$this->assertEquals( $image, $result );
 	}
