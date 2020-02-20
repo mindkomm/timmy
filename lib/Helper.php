@@ -180,6 +180,35 @@ class Helper {
 	}
 
 	/**
+	 * Gets original attachment URL.
+	 *
+	 * In WordPress 5.3, WordPress added new functionality to create scaled images. This can be
+	 * disabled through the `big_image_size_threshold` filter. However, when getting the attachment
+	 * URL, we should always get the original size to generate sizes, otherwise we lose a lot of
+	 * quality.
+	 *
+	 * @since 0.14.4
+	 *
+	 * @param int $attachment_id An attachment ID.
+	 *
+	 * @return false|string
+	 */
+	public static function get_original_attachment_url( $attachment_id ) {
+		/**
+		 * The wp_get_original_image_url() function checks for wp_attachment_is_image(). SVG images
+		 * don’t qualify as images, so to not return false here, we need to check for
+		 * wp_attachment_is_image() before running wp_get_original_image_url().
+		 */
+		if ( function_exists( 'wp_get_original_image_url' )
+			&& wp_attachment_is_image( $attachment_id )
+		) {
+			return wp_get_original_image_url( $attachment_id );
+		}
+
+		return wp_get_attachment_url( $attachment_id );
+	}
+
+	/**
 	 * Output an error message.
 	 *
 	 * Triggers a notice, but only in development environments, when WP_DEBUG is set to true.

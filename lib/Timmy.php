@@ -250,7 +250,7 @@ class Timmy {
 		}
 
 		// Timber needs the file src as an URL.
-		$file_src = wp_get_attachment_url( $attachment_id );
+		$file_src = Helper::get_original_attachment_url( $attachment_id );
 
 		/**
 		 * Delete all existing image sizes for that file.
@@ -342,7 +342,7 @@ class Timmy {
 	 */
 	public function filter_image_downsize( $return, $attachment_id, $size ) {
 		// Timber needs the file src as an URL. Also checks if ID belongs to an attachment.
-		$file_src = wp_get_attachment_url( $attachment_id );
+		$file_src = Helper::get_original_attachment_url( $attachment_id );
 
 		if ( ! $file_src ) {
 			return false;
