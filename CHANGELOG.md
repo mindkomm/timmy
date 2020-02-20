@@ -2,13 +2,19 @@
 
 ## 0.14.4
 
-- Fixed a bug when low-quality image sizes were generated when using WordPress 5.3+.
+This release fixes a bug when low-quality image sizes were generated when using WordPress 5.3+.
 
 ### Added support for scaled images
 
-As of WordPress 5.3, [images above 2560px will be scaled down](https://make.wordpress.org/core/2019/10/09/introducing-handling-of-big-images-in-wordpress-5-3/) to a smaller version for the `full` size of an image. This version will include `-scaled` in its filename. Because Timmy relied on `wp_get_attachment_url()`, smaller image sizes would be created based on this scaled version, which resulted in a **very visible quality loss**. Luckily, we can use the the new [`wp_get_original_image_url()`](https://developer.wordpress.org/reference/functions/wp_get_original_image_url/) function when needed.
+[As of WordPress 5.3](https://make.wordpress.org/core/2019/10/09/introducing-handling-of-big-images-in-wordpress-5-3/), images above 2560px will be scaled down to a smaller version for the `full` size of an image. This version will include `-scaled` in its filename. Because Timmy relied on `wp_get_attachment_url()`, smaller image sizes would be created based on this scaled version, which resulted in a **very visible quality loss**.
 
-With this update, Timmy may return the scaled version of an image, when the full image size is requested. If you want to disable scaled images, you’ll have to use the `big_image_size_threshold` filter:
+Timmy now uses the new [`wp_get_original_image_url()`](https://developer.wordpress.org/reference/functions/wp_get_original_image_url/) function when needed. There’s also a fallback to `wp_get_attachment_url()` for WordPress versions below 5.3.
+
+**Wrongly generated images will be regenerated on the fly** as soon as you install this update.
+
+Timmy now returns the scaled version of an image, when the `full` image size is requested. You can always get the original size of an image when using `original` instead of `full` as the size.
+
+If you want to disable scaled images, you’ll have to use the `big_image_size_threshold` filter:
 
 ```php
 add_filter( 'big_image_size_threshold', '__return_false' );

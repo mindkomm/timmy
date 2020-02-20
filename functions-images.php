@@ -47,10 +47,17 @@ if ( ! function_exists( 'get_timber_image_src' ) ) :
 			return false;
 		}
 
-		// Directly return full source when full source or an SVG image is requested.
+		/**
+		 * Directly return full source when full source or an SVG image is requested.
+		 *
+		 * The full size may be a scaled version of the image. To always request the original
+		 * version, 'original' has to be used as the size.
+		 */
 		if ( 'full' === $size || 'image/svg+xml' === $timber_image->post_mime_type ) {
 			// Deliberately return the attachment URL, which can be a 'scaled' version of an image.
 			return wp_get_attachment_url( $timber_image->ID );
+		} elseif ( 'original' === $size ) {
+			return Helper::get_original_attachment_url( $timber_image->ID );
 		}
 
 		$img_size = Helper::get_image_size( $size );
@@ -201,10 +208,21 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 
 		$args = wp_parse_args( $args, $default_args );
 
-		// Directly return full source when full source or an SVG image is requested.
-		if ( 'full' === $size || 'image/svg+xml' === $timber_image->post_mime_type ) {
-			// Deliberately get the attachment URL, which can be a 'scaled' version of an image.
-			$attributes = [ 'src' => wp_get_attachment_url( $timber_image->ID ) ];
+		/**
+		 * Directly return full source when full source or an SVG image is requested.
+		 *
+		 * The full size may be a scaled version of the image. To always request the original
+		 * version, 'original' has to be used as the size.
+		 */
+		if ( in_array( $size, [ 'full', 'original' ], true )
+			|| 'image/svg+xml' === $timber_image->post_mime_type
+		) {
+			if ( 'original' === $size ) {
+				$attributes = [ 'src' => Helper::get_original_attachment_url( $timber_image->ID ) ];
+			} else {
+				// Deliberately get the attachment URL, which can be a 'scaled' version of an image.
+				$attributes = [ 'src' => wp_get_attachment_url( $timber_image->ID ) ];
+			}
 
 			if ( 'string' === $args['return_format'] ) {
 				return Helper::get_attribute_html( $attributes );

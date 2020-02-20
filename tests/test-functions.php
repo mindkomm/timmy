@@ -55,6 +55,19 @@ class TestFunctions extends TimmyUnitTestCase {
 	}
 
 	/**
+	 * Tests whether a non-scaled version of the image is returned when the
+	 * `original` size is requested.
+	 */
+	public function test_get_timber_image_original_nonscaled() {
+		$attachment = $this->create_image( [ 'file' => 'huge.jpg' ] );
+		$result     = get_timber_image( $attachment, 'original' );
+
+		$image = ' src="' . $this->get_upload_url() . '/huge.jpg" alt=""';
+
+		$this->assertEquals( $image, $result );
+	}
+
+	/**
 	 * Tests whether the 'big_image_size_threshold' works properly and non-scaled version of the
 	 * image is returned.
 	 */
