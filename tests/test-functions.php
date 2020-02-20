@@ -12,7 +12,7 @@ class TestFunctions extends TimmyUnitTestCase {
 
 		$image = $this->get_upload_url() . '/test-1400x0-c-default.jpg';
 
-		$this->assertEquals( $result, $image );
+		$this->assertEquals( $image, $result );
 	}
 
 	public function test_get_timber_image() {
@@ -21,7 +21,7 @@ class TestFunctions extends TimmyUnitTestCase {
 
 		$image = ' src="' . $this->get_upload_url() . '/test-1400x0-c-default.jpg" alt=""';
 
-		$this->assertEquals( $result, $image );
+		$this->assertEquals( $image, $result );
 	}
 
 	/**
@@ -38,7 +38,7 @@ class TestFunctions extends TimmyUnitTestCase {
 
 		$image = ' src="' . $this->get_upload_url() . '/huge-1400x0-c-default.jpg" alt=""';
 
-		$this->assertEquals( $result, $image );
+		$this->assertEquals( $image, $result );
 	}
 
 	/**
@@ -51,7 +51,7 @@ class TestFunctions extends TimmyUnitTestCase {
 
 		$image = ' src="' . $this->get_upload_url() . '/huge-scaled.jpg" alt=""';
 
-		$this->assertEquals( $result, $image );
+		$this->assertEquals( $image, $result );
 	}
 
 	/**
@@ -107,7 +107,7 @@ class TestFunctions extends TimmyUnitTestCase {
 			'alt'    => $alt_text,
 		];
 
-		$this->assertEquals( $result, $attributes );
+		$this->assertEquals( $attributes, $result );
 	}
 
 	public function test_get_timber_image_responsive() {
@@ -117,7 +117,7 @@ class TestFunctions extends TimmyUnitTestCase {
 
 		$image = ' sizes="100vw" srcset="' . $this->get_upload_url() . '/test-560x0-c-default.jpg 560w, ' . $this->get_upload_url() . '/test-1400x0-c-default.jpg 1400w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Burrito Wrap"';
 
-		$this->assertEquals( $result, $image );
+		$this->assertEquals( $image, $result );
 	}
 
 	public function test_get_timber_image_responsive_src() {
@@ -126,7 +126,7 @@ class TestFunctions extends TimmyUnitTestCase {
 
 		$image = ' sizes="100vw" srcset="' . $this->get_upload_url() . '/test-560x0-c-default.jpg 560w, ' . $this->get_upload_url() . '/test-1400x0-c-default.jpg 1400w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"';
 
-		$this->assertEquals( $result, $image );
+		$this->assertEquals( $image, $result );
 	}
 
 	public function test_get_timber_image_responsive_src_lazy_args() {
@@ -142,14 +142,14 @@ class TestFunctions extends TimmyUnitTestCase {
 			$this->get_upload_url()
 		);
 
-		$this->assertEquals( $result, $image );
+		$this->assertEquals( $image, $result );
 	}
 
 	public function test_get_post_thumbnail() {
 		$attachment = $this->create_image();
 		$result     = get_post_thumbnail( $attachment );
 
-		$this->assertEquals( $result, false );
+		$this->assertEquals( false, $result );
 	}
 
 	public function test_timber_image_full_with_gif() {
