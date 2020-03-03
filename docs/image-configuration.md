@@ -74,14 +74,12 @@ When you use a `thumbnail` key, Timmy will tell WordPress to use that size for t
 
 For better compatibility with third party plugins like Yoast SEO, it’s best to always define a `large` key. Yoast will take this size to generate the markup for OG image tags.
 
-### Reserved keys
+### The `full` and `original` keys
 
-You shouldn’t use the following keys in your configuration
+You shouldn’t use `full` or `original` as keys in your configuration. If you define these, you will get errors when you upload images.
 
-* `full`
-* `original`
-
-These sizes are reserved for the original size of the image. If you define these, you will get errors when you upload images.
+* `full` – This size is reserved for the full (and maybe scaled) size of an image. ([Scaled image versions](https://make.wordpress.org/core/2019/10/09/introducing-handling-of-big-images-in-wordpress-5-3/) for big images were introduced in WordPress 5.3)
+* `original` – This size is reserved for the original size of the image (the image as it was uploaded to WordPress).
 
 ## Image configuration options
 

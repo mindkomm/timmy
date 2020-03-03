@@ -47,7 +47,21 @@ class TimmyUnitTestCase extends WP_UnitTestCase {
 	public function create_image_attachment( $post_id = 0, $file = 'test.jpg' ) {
 		$filename = $this->copy_test_image( $file );
 
-		$filetype   = wp_check_filetype( basename( $filename ), null );
+		$filetype = wp_check_filetype( basename( $filename ), null );
+
+		/**
+		 * Primitive check for SVG extension.
+		 *
+		 * In a normal WordPress environment, SVG images have to be allowed manually.
+		 */
+		if ( ! $filetype['type'] ) {
+			if ( '.svg' === substr( $file, -4, 4 ) ) {
+				$filetype = [
+					'type' => 'image/svg+xml',
+				];
+			}
+		}
+
 		$attachment = [
 			'post_title'     => 'The Arch',
 			'post_content'   => '',
