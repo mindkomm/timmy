@@ -14,19 +14,24 @@ add_image_size( 'large', 0, 0 );
  */
 add_filter( 'timmy/sizes', function( $sizes ) {
 	return array_merge( $sizes, [
-		'thumbnail'   => [
+		'thumbnail'           => [
 			'resize'     => [ 150, 150 ],
 			'name'       => 'Thumbnail',
 			'post_types' => [ 'all' ],
 			'sizes'      => '100vw',
 		],
 		// For better compatibility with other plugins, define the 'large' image size.
-		'large'       => [
+		'large'               => [
 			'resize' => [ 1400 ],
 			'srcset' => [ [ 560 ] ],
 			'sizes'  => '100vw',
 		],
-		'header-wide' => [
+		'large-x-descriptors' => [
+			'resize' => [ 1400 ],
+			'srcset' => [ [ 560 ], '1x', '1.5x' ],
+			'sizes'  => '100vw',
+		],
+		'header-wide'         => [
 			'resize'                => [ 1400 ],
 			'srcset'                => [
 				[ 768, 329 ],

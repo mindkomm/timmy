@@ -201,4 +201,31 @@ class TestFunctions extends TimmyUnitTestCase {
 
 		$this->assertEquals( $image, $result );
 	}
+
+	/**
+	 * @since 0.14.5
+	 */
+	public function test_get_timber_image_srcset() {
+		$attachment = $this->create_image();
+		$result     = get_timber_image_srcset( $attachment, 'large' );
+
+		$expected = sprintf(
+			'%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w',
+			$this->get_upload_url()
+		);
+
+		$this->assertEquals( $expected, $result );
+	}
+
+	public function test_get_timber_image_srcset_x_descriptors() {
+		$attachment = $this->create_image();
+		$result     = get_timber_image_srcset( $attachment, 'large-x-descriptors' );
+
+		$expected = sprintf(
+			'%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1x, %1$s/test-2100x0-c-default.jpg 1.5x',
+			$this->get_upload_url()
+		);
+
+		$this->assertEquals( $expected, $result );
+	}
 }
