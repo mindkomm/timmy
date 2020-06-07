@@ -36,7 +36,7 @@ if ( ! function_exists( 'get_timber_image_src' ) ) :
 	/**
 	 * Returns the src (url) for a TimberImage.
 	 *
-	 * @param  int|Timber\Image $timber_image Instance of TimberImage or Attachment ID.
+	 * @param  int|Timber\Image $timber_image Instance of TimberImage or attachment ID.
 	 * @param  string|array     $size         Size key or array of the image to return.
 	 * @return string|bool Image src. False if image can’t be found.
 	 */
@@ -76,6 +76,107 @@ if ( ! function_exists( 'get_timber_image_src' ) ) :
 
 		// Resize the image for that size
 		return Timmy::resize( $img_size, $file_src, $width, $height, $crop, $force );
+	}
+endif;
+
+if ( ! function_exists( 'get_timber_image_srcset' ) ) :
+	/**
+	 * Returns the srcset for a TimberImage.
+	 *
+	 * @param  int|Timber\Image $timber_image Instance of TimberImage or attachment ID.
+	 * @param  string|array     $size         Size key or array of the image to return.
+	 * @return string|bool Image src. False if image can’t be found or no srcset is available.
+	 */
+	function get_timber_image_srcset( $timber_image, $size ) {
+		$timber_image = Timmy::get_timber_image( $timber_image );
+
+		if ( ! $timber_image ) {
+			return false;
+		}
+
+		$img_size = Helper::get_image_size( $size );
+
+		if ( ! $img_size ) {
+			return false;
+		}
+
+		list(
+			$file_src,
+			$width,
+			$height,
+			$crop,
+			$force,
+			$max_width,
+			$max_height,
+			$oversize,
+		) = Timmy::get_image_params( $timber_image, $img_size );
+
+		$return = false;
+		$srcset = array();
+
+		// Get proper width_key to handle width values of 0.
+		$width_key = Timmy::get_width_key( $width, $height, $timber_image );
+
+		// Get default size for image.
+		$default_size = Timmy::resize( $img_size, $file_src, $width, $height, $crop, $force );
+
+		// Add the image source with the width as the key so they can be sorted later.
+		$srcset[ $width_key ] = $default_size . " {$width_key}w";
+
+		// Add additional image sizes to srcset.
+		if ( isset( $img_size['srcset'] ) ) {
+			foreach ( $img_size['srcset'] as $srcset_src ) {
+				list(
+					$width_intermediate,
+					$height_intermediate
+				) = Helper::get_dimensions_for_srcset_size( $img_size['resize'], $srcset_src );
+
+				// Bail out if the current size’s width is bigger than available width.
+				if ( ! $oversize['allow']
+					&& ( $width_intermediate > $max_width
+						|| ( 0 === $width_intermediate && $height_intermediate > $max_height )
+					)
+				) {
+					continue;
+				}
+
+				$width_key = Timmy::get_width_key(
+					$width_intermediate,
+					$height_intermediate,
+					$timber_image
+				);
+
+				// Check for x-notation in srcset, e.g. '2x'.
+				$suffix = is_string( $srcset_src ) && 'x' === substr( $srcset_src, -1, 1 )
+					? " {$srcset_src}"
+					: " {$width_key}w";
+
+				// For the new source, we use the same $crop and $force values as the default image.
+				$srcset[ $width_key ] = Timmy::resize(
+					$img_size,
+					$file_src,
+					$width_intermediate,
+					$height_intermediate,
+					$crop,
+					$force
+				) . $suffix;
+			}
+		}
+
+		/**
+		 * Only add responsive srcset and sizes attributes if there are any present.
+		 *
+		 * If there’s only one srcset src, it’s always the default size. In that case, we just add
+		 * it as a src.
+		 */
+		if ( count( $srcset ) > 1 ) {
+			// Sort entries from smallest to highest
+			ksort( $srcset );
+
+			$return = implode( ', ', $srcset );
+		}
+
+		return $return;
 	}
 endif;
 
@@ -248,108 +349,18 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 			$oversize,
 		) = Timmy::get_image_params( $timber_image, $img_size );
 
-		$srcset = array();
-
-		// Get proper width_key to handle width values of 0.
-		$width_key = Timmy::get_width_key( $width, $height, $timber_image );
-
 		// Get default size for image.
 		$default_size = Timmy::resize( $img_size, $file_src, $width, $height, $crop, $force );
-
-		// Add the image source with the width as the key so they can be sorted later.
-		$srcset[ $width_key ] = $default_size . " {$width_key}w";
-
-		// Add additional image sizes to srcset.
-		if ( isset( $img_size['srcset'] ) ) {
-			foreach ( $img_size['srcset'] as $srcset_src ) {
-				list(
-					$width_intermediate,
-					$height_intermediate
-				) = Helper::get_dimensions_for_srcset_size( $img_size['resize'], $srcset_src );
-
-				// Bail out if the current size’s width is bigger than available width.
-				if ( ! $oversize['allow']
-					&& ( $width_intermediate > $max_width
-						|| ( 0 === $width_intermediate && $height_intermediate > $max_height )
-					)
-				) {
-					continue;
-				}
-
-				$width_key = Timmy::get_width_key(
-					$width_intermediate,
-					$height_intermediate,
-					$timber_image
-				);
-
-				// For the new source, we use the same $crop and $force values as the default image.
-				$srcset[ $width_key ] = Timmy::resize(
-					$img_size,
-					$file_src,
-					$width_intermediate,
-					$height_intermediate,
-					$crop,
-					$force
-				) . " {$width_key}w";
-			}
-		}
 
 		$attributes  = array();
 		$srcset_name = $args['lazy_srcset'] ? 'data-srcset' : 'srcset';
 		$src_name    = $args['lazy_src'] ? 'data-src' : 'src';
 		$sizes_name  = $args['lazy_sizes'] ? 'data-sizes' : 'sizes';
 
-		/**
-		 * Check for 'sizes' option in image configuration.
-		 * Before v0.10.0, this was just `size`'.
-		 *
-		 * @since 0.10.0
-		 */
-		if ( isset( $img_size['sizes'] ) ) {
-			$attributes[ $sizes_name ] = $img_size['sizes'];
-		} elseif ( isset( $img_size['size'] ) ) {
-			/**
-			 * For backwards compatibility.
-			 *
-			 * @deprecated since 0.10.0
-			 * @todo Remove in 1.x
-			 */
-			$attributes[ $sizes_name ] = $img_size['size'];
-		}
+		$srcset = get_timber_image_srcset( $timber_image, $img_size );
 
-		/**
-		 * Set width or height in px as a style attribute to act as max-width and max-height
-		 * and prevent the image to be displayed bigger than it is.
-		 *
-		 * @since 0.10.0
-		 */
-		if ( $oversize['style_attr'] ) {
-			if ( 'width' === $oversize['style_attr'] && ! $args['attr_width'] ) {
-				$attributes['style'] = 'width:' . $max_width . 'px;';
-			} elseif ( 'height' === $oversize['style_attr'] && ! $args['attr_height'] ) {
-				$attributes['style'] = 'height:' . $max_height . 'px;';
-			}
-		}
-
-		if ( $args['attr_width'] ) {
-			$attributes['width'] = $width;
-		}
-
-		if ( $args['attr_height'] ) {
-			$attributes['height'] = $height;
-		}
-
-		/**
-		 * Only add responsive srcset and sizes attributes if there are any present.
-		 *
-		 * If there’s only one srcset src, it’s always the default size. In that case, we just add
-		 * it as a src.
-		 */
-		if ( count( $srcset ) > 1 ) {
-			// Sort entries from smallest to highest
-			ksort( $srcset );
-
-			$attributes[ $srcset_name ] = implode( ', ', $srcset );
+		if ( $srcset ) {
+			$attributes[ $srcset_name ] = $srcset;
 
 			/**
 			 * Filters whether a default src attribute should be added as a fallback.
@@ -405,6 +416,46 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 			}
 		} else {
 			$attributes[ $src_name ] = $default_size;
+		}
+
+		/**
+		 * Check for 'sizes' option in image configuration.
+		 * Before v0.10.0, this was just `size`'.
+		 *
+		 * @since 0.10.0
+		 */
+		if ( isset( $img_size['sizes'] ) ) {
+			$attributes[ $sizes_name ] = $img_size['sizes'];
+		} elseif ( isset( $img_size['size'] ) ) {
+			/**
+			 * For backwards compatibility.
+			 *
+			 * @deprecated since 0.10.0
+			 * @todo Remove in 1.x
+			 */
+			$attributes[ $sizes_name ] = $img_size['size'];
+		}
+
+		/**
+		 * Set width or height in px as a style attribute to act as max-width and max-height
+		 * and prevent the image to be displayed bigger than it is.
+		 *
+		 * @since 0.10.0
+		 */
+		if ( $oversize['style_attr'] ) {
+			if ( 'width' === $oversize['style_attr'] && ! $args['attr_width'] ) {
+				$attributes['style'] = 'width:' . $max_width . 'px;';
+			} elseif ( 'height' === $oversize['style_attr'] && ! $args['attr_height'] ) {
+				$attributes['style'] = 'height:' . $max_height . 'px;';
+			}
+		}
+
+		if ( $args['attr_width'] ) {
+			$attributes['width'] = $width;
+		}
+
+		if ( $args['attr_height'] ) {
+			$attributes['height'] = $height;
 		}
 
 		if ( 'array' === $args['return_format'] ) {

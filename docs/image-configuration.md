@@ -151,6 +151,19 @@ If you want to, you can also use a **ratio number** of the size you want to use 
 
 The sizes added in the srcset option will automatically be added to the srcset output together with the image size in resize in ascending order.
 
+Additionally to using integers to define the ratio an image should be resized with, you can also use strings with an `x` descriptor.
+
+```php
+'srcset' => array( '1x', '2x' ),
+```
+
+This will update the resulting srcset so you get `1x` and `2x` descriptors instead of `1400w` and `2800w`.
+
+```html
+<img srcset="header_example-1400x600-c-default.jpg 1x,
+    header_example-2800x1200-c-default.jpg 2x">
+```
+
 ---
 
 ### sizes

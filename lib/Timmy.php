@@ -91,6 +91,7 @@ class Timmy {
 	public function filter_twig( $twig ) {
 		$twig->addFilter( new Twig_SimpleFilter( 'get_timber_image', 'get_timber_image' ) );
 		$twig->addFilter( new Twig_SimpleFilter( 'get_timber_image_src', 'get_timber_image_src' ) );
+		$twig->addFilter( new Twig_SimpleFilter( 'get_timber_image_srcset', 'get_timber_image_srcset' ) );
 		$twig->addFilter( new Twig_SimpleFilter( 'get_timber_image_responsive', 'get_timber_image_responsive' ) );
 		$twig->addFilter( new Twig_SimpleFilter( 'get_timber_image_responsive_src', 'get_timber_image_responsive_src' ) );
 

@@ -57,7 +57,27 @@ Returns the src for a TimberImage.
 #### Usage in Twig
 
 ```twig
-<img{{ post.thumbnail|get_timber_image_src('custom-4-crop') }}>
+<img src="{{ post.thumbnail|get_timber_image_src('custom-4-crop') }}">
+```
+
+---
+
+## get_timber_image_srcset
+
+`get_timber_image_srcset( int $post_id|TimberImage $timber_image, string|array $size )`
+
+Returns the srcset attribute based on the `srcset` entry in the image configuration for an image size.
+
+#### Usage in WordPress templates
+
+```php
+<img srcset="<?php echo get_timber_image_srcset( get_post_thumbnail_id(), 'teaser' ); ?>">
+```
+
+#### Usage in Twig
+
+```twig
+<img srcset="{{ post.thumbnail|get_timber_image_srcset('teaser') }}">
 ```
 
 ---

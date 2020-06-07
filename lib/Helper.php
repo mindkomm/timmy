@@ -127,6 +127,11 @@ class Helper {
 			$width  = $srcset_size[0];
 			$height = isset( $srcset_size[1] ) ? $srcset_size[1] : 0;
 		} else {
+			// Check for x-notation, e.g. '2x' or '1.5x'.
+			if ( ! is_numeric( $srcset_size ) && 'x' === substr( $srcset_size, -1, 1 ) ) {
+				$srcset_size = (float) rtrim( $srcset_size, 'x' );
+			}
+
 			$width  = (int) round( $resize[0] * $srcset_size );
 			$height = isset( $resize[1] ) ? (int) round( $resize[1] * $srcset_size ) : 0;
 		}
