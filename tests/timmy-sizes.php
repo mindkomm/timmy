@@ -14,27 +14,27 @@ add_image_size( 'large', 0, 0 );
  */
 add_filter( 'timmy/sizes', function( $sizes ) {
 	return array_merge( $sizes, [
-		'thumbnail'           => [
+		'thumbnail'                => [
 			'resize'     => [ 150, 150 ],
 			'name'       => 'Thumbnail',
 			'post_types' => [ 'all' ],
 			'sizes'      => '100vw',
 		],
-		'resize-only'         => [
+		'resize-only'              => [
 			'resize' => [ 500 ],
 		],
 		// For better compatibility with other plugins, define the 'large' image size.
-		'large'               => [
+		'large'                    => [
 			'resize' => [ 1400 ],
 			'srcset' => [ [ 560 ] ],
 			'sizes'  => '100vw',
 		],
-		'large-x-descriptors' => [
+		'large-x-descriptors'      => [
 			'resize' => [ 1400 ],
 			'srcset' => [ [ 560 ], '1x', '1.5x' ],
 			'sizes'  => '100vw',
 		],
-		'header-wide'         => [
+		'header-wide'              => [
 			'resize'                => [ 1400 ],
 			'srcset'                => [
 				[ 768, 329 ],
@@ -45,6 +45,11 @@ add_filter( 'timmy/sizes', function( $sizes ) {
 			'generate_srcset_sizes' => true,
 			'show_in_ui'            => false,
 			'post_types'            => [ 'page' ],
+		],
+		'responsive-content-image' => [
+			'resize' => [ 400 ],
+			'srcset' => [ [ 370 ], [ 768 ] ],
+			'sizes'  => '100vw',
 		],
 	] );
 } );
