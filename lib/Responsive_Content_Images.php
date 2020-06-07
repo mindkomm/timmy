@@ -69,11 +69,13 @@ class Responsive_Content_Images {
 		 *
 		 * This is possibly not the best way to do it, but it works.
 		 *
-		 * Matches all figures with class "wp-block-image" and "size-" classes. The part after
-		 * "size-" is a capturing group to catch the image size that’s used.
+		 * Matches all figures with class "wp-block-image" and "size-" classes. There are two
+		 * capturing groups:
+		 * - The CSS classes.
+		 * - The part after "size-" to catch the name of the image size that’s used.
 		 */
 		if ( preg_match_all(
-			'/<figure class="[^"]*wp-block-image size-([^\s]+)\s?[^"]*"[^>]*><img [^>]+><\/figure>/',
+			'/<figure class="([^"]*wp-block-image size-([^\s]+)\s?[^"]*)"[^>]*><img [^>]+>.*<\/figure>/',
 			$content,
 			$block_images
 		) ) {
@@ -98,7 +100,7 @@ class Responsive_Content_Images {
 		$attachment_ids  = array();
 
 		/**
-		 * Loop through possible images and get attachment ids.
+		 * Loop through possible images and get attachment IDs.
 		 *
 		 * Ignore images that already contain a srcset.
 		 */
@@ -108,7 +110,8 @@ class Responsive_Content_Images {
 				continue;
 			}
 
-			$image_size = $block_images[1][ $match_key ];
+			$classes    = explode( ' ', $block_images[1][ $match_key ] );
+			$image_size = $block_images[2][ $match_key ];
 			$image      = $image_match[0];
 
 			// Bailout if image size couldn’t be read.
@@ -127,6 +130,7 @@ class Responsive_Content_Images {
 				$selected_images[ $image ] = [
 					'attachment_id' => $attachment_id,
 					'image_size'    => $image_size,
+					'is_resized'    => in_array( 'is-resized', $classes, true ),
 				];
 
 				// Overwrite the ID when the same image is included more than once.
@@ -238,6 +242,7 @@ class Responsive_Content_Images {
 
 		$img_size      = $data['image_size'];
 		$attachment_id = $data['attachment_id'];
+		$is_resized    = isset( $data['is_resized'] ) ? $data['is_resized'] : false;
 
 		// Maybe select replacement size.
 		if ( ! empty( $this->args['map_sizes'] ) ) {
@@ -265,15 +270,40 @@ class Responsive_Content_Images {
 		$image = preg_replace( '/ src="([^"]+)"/', '', $image );
 
 		/**
-		 * Remove width, height and alt attributes, because they are handled by
-		 * get_timber_image_responsive_src().
+		 * Remove attributes that are handled by get_timber_image_responsive_src().
+		 *
+		 * - Keep width and height attributes if image was resized in the block editor.
+		 * - Always remove the title attribute.
+		 * - Remove the alt attribute if it is empty.
 		 *
 		 * @see get_timber_image_responsive_src()
 		 */
-		$image = preg_replace( '/ height="([^"]+)"/', '', $image );
-		$image = preg_replace( '/ width="([^"]+)"/', '', $image );
-		$image = preg_replace( '/ alt="([^"]*)"/', '', $image );
+		if ( ! $is_resized ) {
+			$image = preg_replace( '/ height="([^"]+)"/', '', $image );
+			$image = preg_replace( '/ width="([^"]+)"/', '', $image );
+		} else {
+			// Remove attributes from Timmy markup that we should ignore.
+			foreach ( [ 'width', 'height', 'styles' ] as $attribute ) {
+				if ( array_key_exists( $attribute, $attributes ) ) {
+					unset( $attributes[ $attribute ] );
+				}
+			}
+		}
+
+		// Remove title attribute.
 		$image = preg_replace( '/ title="([^"]*)"/', '', $image );
+
+		/**
+		 * Handle alt attribute.
+		 *
+		 * If a non-empty alt attribute is found for an image, use that one and leave it there,
+		 * otherwise fall back to the default Timmy alt text.
+		 */
+		if ( preg_match( '/ alt="([^"]*)"/', $image, $alt_match ) && ! empty( $alt_match[1] ) ) {
+			unset( $attributes['alt'] );
+		} else {
+			$image = preg_replace( '/ alt="([^"]*)"/', '', $image );
+		}
 
 		// Replace closing tag.
 		$image = preg_replace( '/\s?\/>/', '>', $image );
