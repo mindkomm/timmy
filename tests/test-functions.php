@@ -217,6 +217,13 @@ class TestFunctions extends TimmyUnitTestCase {
 		$this->assertEquals( $expected, $result );
 	}
 
+	public function test_get_timber_image_srcset_without_srcset() {
+		$attachment = $this->create_image();
+		$result     = get_timber_image_srcset( $attachment, 'resize-only' );
+
+		$this->assertEquals( false, $result );
+	}
+
 	public function test_get_timber_image_srcset_x_descriptors() {
 		$attachment = $this->create_image();
 		$result     = get_timber_image_srcset( $attachment, 'large-x-descriptors' );

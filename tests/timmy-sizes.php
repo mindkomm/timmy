@@ -20,6 +20,9 @@ add_filter( 'timmy/sizes', function( $sizes ) {
 			'post_types' => [ 'all' ],
 			'sizes'      => '100vw',
 		],
+		'resize-only'         => [
+			'resize' => [ 500 ],
+		],
 		// For better compatibility with other plugins, define the 'large' image size.
 		'large'               => [
 			'resize' => [ 1400 ],
