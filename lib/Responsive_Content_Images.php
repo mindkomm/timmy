@@ -69,7 +69,7 @@ class Responsive_Content_Images {
 		 *
 		 * This is possibly not the best way to do it, but it works.
 		 *
-		 * Matches all figures with class "wp-block-image" and "size-" classes. The part is after
+		 * Matches all figures with class "wp-block-image" and "size-" classes. The part after
 		 * "size-" is a capturing group to catch the image size that’s used.
 		 */
 		if ( preg_match_all(
@@ -77,7 +77,7 @@ class Responsive_Content_Images {
 			$content,
 			$block_images
 		) ) {
-			return $this->handle_block_images( $content, $block_images );
+			$content = $this->handle_block_images( $content, $block_images );
 		}
 
 		return $this->handle_classic_images( $content, $classic_images );
@@ -272,8 +272,11 @@ class Responsive_Content_Images {
 		 */
 		$image = preg_replace( '/ height="([^"]+)"/', '', $image );
 		$image = preg_replace( '/ width="([^"]+)"/', '', $image );
-		$image = preg_replace( '/ alt="([^"]+)"/', '', $image );
-		$image = preg_replace( '/ title="([^"]+)"/', '', $image );
+		$image = preg_replace( '/ alt="([^"]*)"/', '', $image );
+		$image = preg_replace( '/ title="([^"]*)"/', '', $image );
+
+		// Replace closing tag.
+		$image = preg_replace( '/\s?\/>/', '>', $image );
 
 		// Remove class attribute and save class attribute content in attributes array.
 		if ( preg_match( '/ class="([^"]+)"/', $image, $class_matches ) ) {
@@ -296,9 +299,21 @@ class Responsive_Content_Images {
 		);
 
 		// Replace image markup.
-		$image = preg_replace(
-			'/<img ([^>]+?)[\/ ]*>/',
-			'<img $1 ' . Helper::get_attribute_html( $attributes ) . ' />',
+		$image = preg_replace_callback(
+			'/<img([^>]*)>/',
+			function( $matches ) use ( $attributes ) {
+				$existing_attributes = trim( $matches[1] );
+
+				if ( ! empty( $existing_attributes ) ) {
+					$existing_attributes = ' ' . $existing_attributes;
+				}
+
+				return sprintf(
+					'<img%1$s %2$s>',
+					$existing_attributes,
+					trim( Helper::get_attribute_html( $attributes ) )
+				);
+			},
 			$image
 		);
 
