@@ -7,6 +7,13 @@ namespace Timmy;
  */
 class Responsive_Content_Images {
 	/**
+	 * Args.
+	 *
+	 * @var array
+	 */
+	protected $args;
+
+	/**
 	 * Responsive_Content_Images constructor.
 	 *
 	 * @param array $args {
@@ -25,6 +32,13 @@ class Responsive_Content_Images {
 			'map_sizes' => array(),
 		) );
 
+		$this->init();
+	}
+
+	/**
+	 * Inits hooks.
+	 */
+	public function init() {
 		// Remove the default filter used by WordPress.
 		remove_filter( 'the_content', 'wp_make_content_images_responsive' );
 
@@ -45,11 +59,41 @@ class Responsive_Content_Images {
 	 * @return string Filtered content
 	 */
 	public function make_content_images_responsive( $content ) {
-		// Select images in content
-		if ( ! preg_match_all( '/<img [^>]+>/', $content, $matches ) ) {
+		// Select images in content.
+		if ( ! preg_match_all( '/<img [^>]+>/', $content, $classic_images ) ) {
 			return $content;
 		}
 
+		/**
+		 * Check for Gutenberg blocks.
+		 *
+		 * This is possibly not the best way to do it, but it works.
+		 *
+		 * Matches all figures with class "wp-block-image" and "size-" classes. The part is after
+		 * "size-" is a capturing group to catch the image size that’s used.
+		 */
+		if ( preg_match_all(
+			'/<figure class="[^"]*wp-block-image size-([^\s]+)\s?[^"]*"[^>]*><img [^>]+><\/figure>/',
+			$content,
+			$block_images
+		) ) {
+			return $this->handle_block_images( $content, $block_images );
+		}
+
+		return $this->handle_classic_images( $content, $classic_images );
+	}
+
+	/**
+	 * Handles images define as blocks.
+	 *
+	 * @since 0.14.5
+	 *
+	 * @param string $content      Post content.
+	 * @param array  $block_images An array of regex matches.
+	 *
+	 * @return string
+	 */
+	public function handle_block_images( $content, $block_images ) {
 		$selected_images = array();
 		$attachment_ids  = array();
 
@@ -58,7 +102,20 @@ class Responsive_Content_Images {
 		 *
 		 * Ignore images that already contain a srcset.
 		 */
-		foreach ( $matches[0] as $image ) {
+		foreach ( $block_images[0] as $match_key => $figure ) {
+			// Get all images.
+			if ( ! preg_match( '/<img [^>]+>/', $figure, $image_match ) ) {
+				continue;
+			}
+
+			$image_size = $block_images[1][ $match_key ];
+			$image      = $image_match[0];
+
+			// Bailout if image size couldn’t be read.
+			if ( ! $image_size ) {
+				continue;
+			}
+
 			if ( false === strpos( $image, ' srcset=' )
 				&& preg_match( '/wp-image-([0-9]+)/i', $image, $class_id )
 				&& ( $attachment_id = absint( $class_id[1] ) )
@@ -67,13 +124,78 @@ class Responsive_Content_Images {
 				 * If exactly the same image tag is used more than once, overwrite it.
 				 * All identical tags will be replaced later with str_replace().
 				 */
-				$selected_images[ $image ] = $attachment_id;
+				$selected_images[ $image ] = [
+					'attachment_id' => $attachment_id,
+					'image_size'    => $image_size,
+				];
 
 				// Overwrite the ID when the same image is included more than once.
 				$attachment_ids[ $attachment_id ] = true;
 			}
 		}
 
+		return $this->handle_images( $content, $selected_images, $attachment_ids );
+	}
+
+	/**
+	 * Handles images added through the classic editor.
+	 *
+	 * @param string $content        Post content.
+	 * @param array  $classic_images An array of regex matches.
+	 *
+	 * @return string
+	 */
+	public function handle_classic_images( $content, $classic_images ) {
+		$selected_images = array();
+		$attachment_ids  = array();
+
+		/**
+		 * Loop through possible images and get attachment ids.
+		 *
+		 * Ignore images that already contain a srcset.
+		 */
+		foreach ( $classic_images[0] as $image ) {
+			if ( false === strpos( $image, ' srcset=' )
+				&& preg_match( '/wp-image-([0-9]+)/i', $image, $class_id )
+				&& ( $attachment_id = absint( $class_id[1] ) )
+			) {
+				// Select image size from classname starting with 'size-'.
+				$image_size = preg_match( '/ size-([^\s"]+)/', $image, $match_size )
+					? $match_size[1]
+					: false;
+
+				// Bailout if image size couldn’t be read.
+				if ( ! $image_size ) {
+					continue;
+				}
+
+				/**
+				 * If exactly the same image tag is used more than once, overwrite it.
+				 * All identical tags will be replaced later with str_replace().
+				 */
+				$selected_images[ $image ] = [
+					'attachment_id' => $attachment_id,
+					'image_size'    => $image_size,
+				];
+
+				// Overwrite the ID when the same image is included more than once.
+				$attachment_ids[ $attachment_id ] = true;
+			}
+		}
+
+		return $this->handle_images( $content, $selected_images, $attachment_ids );
+	}
+
+	/**
+	 * Handles replacing the image markup with Timmy markup.
+	 *
+	 * @param string $content         Post content.
+	 * @param array  $selected_images An array of image data.
+	 * @param array  $attachment_ids  An array of attachment IDs to warm object cache.
+	 *
+	 * @return string|string[]
+	 */
+	public function handle_images( $content, $selected_images, $attachment_ids ) {
 		/**
 		 * Warm object cache for use with 'get_post_meta()'.
 		 *
@@ -84,9 +206,9 @@ class Responsive_Content_Images {
 			update_meta_cache( 'post', array_keys( $attachment_ids ) );
 		}
 
-		// Loop through images and apply responsive markup
-		foreach ( $selected_images as $image => $attachment_id ) {
-			$image_updated = $this->generate_srcset_and_sizes( $image, $attachment_id );
+		// Loop through images and apply responsive markup.
+		foreach ( $selected_images as $image => $image_data ) {
+			$image_updated = $this->generate_srcset_and_sizes( $image, $image_data );
 			$content       = str_replace( $image, $image_updated, $content );
 		}
 
@@ -96,14 +218,16 @@ class Responsive_Content_Images {
 	/**
 	 * Updates image tag with responsive srcset and sizes attributes.
 	 *
-	 * @param string $image         HTML image tag.
-	 * @param int    $attachment_id Attachment ID.
+	 * @param string $image HTML image tag.
+	 * @param int    $data  Image data.
 	 *
 	 * @return string Reponsive image markup
 	 */
-	public function generate_srcset_and_sizes( $image, $attachment_id ) {
+	public function generate_srcset_and_sizes( $image, $data ) {
 		// Ensure the image meta exists.
-		$image_src = preg_match( '/src="([^"]+)"/', $image, $match_src ) ? $match_src[1] : '';
+		$image_src = preg_match( '/src="([^"]+)"/', $image, $match_src )
+			? $match_src[1]
+			: '';
 
 		list( $image_src ) = explode( '?', $image_src );
 
@@ -112,13 +236,8 @@ class Responsive_Content_Images {
 			return $image;
 		}
 
-		// Select image size from classname starting with 'size-'.
-		$img_size = preg_match( '/ size-([^\s"]+)/', $image, $match_size ) ? $match_size[1] : false;
-
-		// Bailout if image size couldn’t be read.
-		if ( ! $img_size ) {
-			return $image;
-		}
+		$img_size      = $data['image_size'];
+		$attachment_id = $data['attachment_id'];
 
 		// Maybe select replacement size.
 		if ( ! empty( $this->args['map_sizes'] ) ) {
@@ -142,7 +261,7 @@ class Responsive_Content_Images {
 			return $image;
 		}
 
-		// Remove existing src
+		// Remove existing src.
 		$image = preg_replace( '/ src="([^"]+)"/', '', $image );
 
 		/**
@@ -176,7 +295,7 @@ class Responsive_Content_Images {
 			$img_size
 		);
 
-		// Replace image markup
+		// Replace image markup.
 		$image = preg_replace(
 			'/<img ([^>]+?)[\/ ]*>/',
 			'<img $1 ' . Helper::get_attribute_html( $attributes ) . ' />',
