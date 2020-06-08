@@ -863,9 +863,8 @@ class Timmy {
 		$crop  = Helper::get_crop_for_size( $img_size );
 		$force = Helper::get_force_for_size( $img_size );
 
-		// Get unfiltered meta data to prevent potential recursion.
-		$meta_data = wp_get_attachment_metadata( $attachment->ID, true );
-		$file_src  = $meta_data['file_src'];
+		// Timber needs the file src as an URL. Also checks if ID belongs to an attachment.
+		$file_src = Helper::get_original_attachment_url( $attachment->ID );
 
 		// Generate additional image sizes used for srcset.
 		if ( isset( $img_size['srcset'] ) ) {
@@ -875,7 +874,7 @@ class Timmy {
 					$srcset_size
 				);
 
-				// For the new source, we use the same $crop and $force values as the default image
+				// For the new source, we use the same $crop and $force values as the default image.
 				self::resize( $img_size, $file_src, $width, $height, $crop, $force );
 			}
 		}
