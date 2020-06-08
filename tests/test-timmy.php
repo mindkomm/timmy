@@ -4,7 +4,7 @@ use Timber\ImageHelper;
 use Timber\Timber;
 
 /**
- * Sample test case.
+ * Class TestTimmy
  */
 class TestTimmy extends TimmyUnitTestCase {
 	/**

@@ -1,9 +1,7 @@
 <?php
 
-use Timber\Image;
-
 /**
- * Class TestTimmy
+ * Class TestFilters
  */
 class TestFilters extends TimmyUnitTestCase {
 	public function test_use_src_fallback_disable() {

@@ -3,7 +3,7 @@
 use Timber\Image;
 
 /**
- * Class TestTimmy
+ * Class TestFunctions
  */
 class TestFunctions extends TimmyUnitTestCase {
 	public function test_get_timber_image_src() {
