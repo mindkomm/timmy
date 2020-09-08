@@ -39,8 +39,19 @@ class Responsive_Content_Images {
 	 * Inits hooks.
 	 */
 	public function init() {
-		// Remove the default filter used by WordPress.
-		remove_filter( 'the_content', 'wp_make_content_images_responsive' );
+		/**
+		 * Remove the default filter used by WordPress.
+		 *
+		 * As of WordPress 5.5, the wp_make_content_images_responsive() function is deprecated and
+		 * replaced with wp_filter_content_tags().
+		 *
+		 * @see wp_filter_content_tags()
+		 */
+		if ( function_exists( 'wp_filter_content_tags' ) ) {
+			remove_filter( 'the_content', 'wp_filter_content_tags' );
+		} else {
+			remove_filter( 'the_content', 'wp_make_content_images_responsive' );
+		}
 
 		// Add our own custom filter.
 		add_filter( 'the_content', array( $this, 'make_content_images_responsive' ) );
@@ -52,7 +63,7 @@ class Responsive_Content_Images {
 	/**
 	 * Filter content and apply responsive image markup to images.
 	 *
-	 * @see wp_make_content_images_responsive()
+	 * @see wp_filter_content_tags()
 	 *
 	 * @param string $content Post content.
 	 *
