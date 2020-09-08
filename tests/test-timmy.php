@@ -4,7 +4,7 @@ use Timber\ImageHelper;
 use Timber\Timber;
 
 /**
- * Sample test case.
+ * Class TestTimmy
  */
 class TestTimmy extends TimmyUnitTestCase {
 	/**
@@ -31,39 +31,39 @@ class TestTimmy extends TimmyUnitTestCase {
 		];
 
 		// Default, srcset only.
-		$src   = Timber::compile_string(
+		$result   = Timber::compile_string(
 			'{{ image|get_timber_image_responsive(size)|lazy }}',
 			$context
 		);
-		$image = sprintf(
-			' sizes="100vw" data-srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt=""',
+		$expected = sprintf(
+			' data-srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" alt=""',
 			$this->get_upload_url()
 		);
 
-		$this->assertEquals( $src, $image );
+		$this->assertEquals( $expected, $result );
 
 		// Srcset and src.
-		$src   = Timber::compile_string(
+		$result   = Timber::compile_string(
 			"{{ image|get_timber_image_responsive(size)|lazy(['srcset', 'src']) }}",
 			$context
 		);
-		$image = sprintf(
-			' sizes="100vw" data-srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" data-src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt=""',
+		$expected = sprintf(
+			' data-srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" data-src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" alt=""',
 			$this->get_upload_url()
 		);
 
-		$this->assertEquals( $src, $image );
+		$this->assertEquals( $expected, $result );
 
 		// Srcset, src and sizes.
-		$src   = Timber::compile_string(
+		$result   = Timber::compile_string(
 			"{{ image|get_timber_image_responsive(size)|lazy(['srcset', 'src', 'sizes']) }}",
 			$context
 		);
-		$image = sprintf(
-			' data-sizes="100vw" data-srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" data-src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt=""',
+		$exptected = sprintf(
+			' data-srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" data-src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-sizes="100vw" alt=""',
 			$this->get_upload_url()
 		);
 
-		$this->assertEquals( $src, $image );
+		$this->assertEquals( $exptected, $result );
 	}
 }

@@ -37,6 +37,29 @@ class TimmyUnitTestCase extends WP_UnitTestCase {
 	}
 
 	/**
+	 * Gets a file path from an attachment object.
+	 *
+	 * @param \Timber\Post $attachment An attachment.
+	 * @param string       $size       Image size.
+	 *
+	 * @return string
+	 */
+	public function get_file_path( $attachment, $size ) {
+		$src  = $attachment->src( $size );
+		return \Timber\ImageHelper::get_server_location( $src );
+	}
+
+	/**
+	 * Deletes all images from current upload folder.
+	 */
+	public function delete_test_images() {
+		$dir = wp_upload_dir();
+
+		// @link https://stackoverflow.com/a/26423999/1059980
+		array_map( 'unlink', glob( "{$dir['path']}/*.*" ) );
+	}
+
+	/**
 	 * Gets an attachment for a post.
 	 *
 	 * @param int    $post_id
