@@ -51,5 +51,9 @@ add_filter( 'timmy/sizes', function( $sizes ) {
 			'srcset' => [ [ 370 ], [ 768 ] ],
 			'sizes'  => '100vw',
 		],
+		'one-size' => [
+			'resize' => [ 768 ],
+			'sizes' => '50vw',
+		],
 	] );
 } );

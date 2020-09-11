@@ -59,4 +59,20 @@ class TestTimmy extends TimmyUnitTestCase {
 
 		$this->assertEquals( $exptected, $result );
 	}
+
+	/**
+	 * Tests when an image has only one size.
+	 *
+	 * No 'sizes' attribute should be present when an image has only one size.
+	 *
+	 * @ticket https://github.com/mindkomm/timmy/issues/32
+	 */
+	function test_one_size_without_srcset() {
+		$attachment = $this->create_image();
+		$result     = get_timber_image_responsive_src( $attachment, 'one-size' );
+
+		$expected = ' src="' . $this->get_upload_url() . '/test-768x0-c-default.jpg"';
+
+		$this->assertEquals( $expected, $result );
+	}
 }

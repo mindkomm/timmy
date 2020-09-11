@@ -414,26 +414,26 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 				 */
 				$attributes[ $src_name ] = $src_default;
 			}
+
+			/**
+			 * Check for 'sizes' option in image configuration.
+			 * Before v0.10.0, this was just `size`'.
+			 *
+			 * @since 0.10.0
+			 */
+			if ( isset( $img_size['sizes'] ) ) {
+				$attributes[ $sizes_name ] = $img_size['sizes'];
+			} elseif ( isset( $img_size['size'] ) ) {
+				/**
+				 * For backwards compatibility.
+				 *
+				 * @deprecated since 0.10.0
+				 * @todo Remove in 1.x
+				 */
+				$attributes[ $sizes_name ] = $img_size['size'];
+			}
 		} else {
 			$attributes[ $src_name ] = $default_size;
-		}
-
-		/**
-		 * Check for 'sizes' option in image configuration.
-		 * Before v0.10.0, this was just `size`'.
-		 *
-		 * @since 0.10.0
-		 */
-		if ( isset( $img_size['sizes'] ) ) {
-			$attributes[ $sizes_name ] = $img_size['sizes'];
-		} elseif ( isset( $img_size['size'] ) ) {
-			/**
-			 * For backwards compatibility.
-			 *
-			 * @deprecated since 0.10.0
-			 * @todo Remove in 1.x
-			 */
-			$attributes[ $sizes_name ] = $img_size['size'];
 		}
 
 		/**
