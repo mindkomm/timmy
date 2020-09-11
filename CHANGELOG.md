@@ -2,7 +2,12 @@
 
 ## 0.14.5 - 2020-09-11
 
+- Added Block Editor support for the Responsive Content Images functionality.
+- Added new `timber_image_srcset()` function to get only the srcset for an image size.
+- Added support for using values like `1x` and `2x` in the srcset definition.
 - Fixed `get_timber_image_responsive_acf()` function.
+- Fixed a bug when `srcset` sizes weren’t generated on upload.
+- Fixed a bug when the `sizes` was written into the markup even though there was no `srcset`.
 - Deprecated function `get_acf_image_attr()`.
 
 ## 0.14.4 - 2020-03-03
