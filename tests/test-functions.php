@@ -165,7 +165,7 @@ class TestFunctions extends TimmyUnitTestCase {
 		$this->assertEquals( false, $result );
 	}
 
-	public function test_timber_image_full_with_gif() {
+	public function test_get_timber_image_full_with_gif() {
 		$attachment = $this->create_image( [ 'file' => 'logo-small.gif' ] );
 		$result     = get_timber_image( $attachment, 'full' );
 
@@ -179,7 +179,7 @@ class TestFunctions extends TimmyUnitTestCase {
 	 *
 	 * @since 0.14.4
 	 */
-	public function test_timber_image_full_with_svg() {
+	public function test_get_timber_image_full_with_svg() {
 		$attachment = $this->create_image( [ 'file' => 'sveegee.svg' ] );
 		$result     = get_timber_image( $attachment, 'full' );
 
@@ -193,7 +193,7 @@ class TestFunctions extends TimmyUnitTestCase {
 	 *
 	 * @since 0.14.4
 	 */
-	public function test_timber_image_large_with_svg() {
+	public function test_get_timber_image_large_with_svg() {
 		$attachment = $this->create_image( [ 'file' => 'sveegee.svg' ] );
 		$result     = get_timber_image( $attachment, 'large' );
 

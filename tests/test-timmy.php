@@ -7,13 +7,6 @@ use Timber\Timber;
  * Class TestTimmy
  */
 class TestTimmy extends TimmyUnitTestCase {
-	/**
-	 * A single example test.
-	 */
-	public function test_sample() {
-		$this->assertTrue( true );
-	}
-
 	public function test_create_image() {
 		$attachment = $this->create_image();
 
