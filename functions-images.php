@@ -484,24 +484,7 @@ if ( ! function_exists( 'get_timber_image_responsive_acf' ) ) :
 			return false;
 		}
 
-		return Helper::get_attribute_html( [
-			'src' => get_timber_image_responsive_src( $timber_image, $size ),
-		] ) . get_acf_image_attr( $image );
-	}
-endif;
-
-if ( ! function_exists( 'get_acf_image_attr' ) ) :
-	/**
-	 * Get image attributes for an image accessed via ACF.
-	 *
-	 * @param  array $image ACF Image.
-	 * @return string Alt and title attribute.
-	 */
-	function get_acf_image_attr( $image ) {
-		return Helper::get_attribute_html( [
-			'alt'   => ! empty( $image['alt'] ) ? $image['alt'] : '',
-			'title' => $image['description'],
-		] );
+		return get_timber_image_responsive( $timber_image, $size );
 	}
 endif;
 

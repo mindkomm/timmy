@@ -9,7 +9,8 @@
     "timber/timber": "^1.3"
   },
   "require-dev": {
-    "phpunit/phpunit": "^6.0"
+    "phpunit/phpunit": "^6.0",
+    "wpackagist-plugin/advanced-custom-fields": "5.*"
   },
   "autoload": {
     "psr-4": {
@@ -38,6 +39,12 @@
     "issues": "https://github.com/mindkomm/timmy/issues",
     "source": "https://github.com/mindkomm/timmy"
   },
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://wpackagist.org"
+    }
+  ],
   "scripts": {
     "install-tests": "bash bin/install-wp-tests.sh timmy-tests root \"\" localhost latest"
   }

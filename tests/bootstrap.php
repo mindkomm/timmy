@@ -30,6 +30,8 @@ function _manually_load_plugin() {
 	new Timmy();
 
 	require dirname( dirname( __FILE__ ) ) . '/timmy.php';
+
+	require dirname( __FILE__ ) . '/../wp-content/plugins/advanced-custom-fields/acf.php';
 }
 
 tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );

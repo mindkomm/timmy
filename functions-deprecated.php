@@ -46,3 +46,23 @@ if ( ! function_exists( 'get_timber_image_attr' ) ) :
 		return Helper::get_attribute_html( get_timber_image_texts( $timber_image ) );
 	}
 endif;
+
+if ( ! function_exists( 'get_acf_image_attr' ) ) :
+	/**
+	 * Get image attributes for an image accessed via ACF.
+	 *
+	 * @deprecated 0.14.5
+	 * @todo Remove in 1.x
+	 *
+	 * @param  array $image ACF Image.
+	 * @return string Alt and title attribute.
+	 */
+	function get_acf_image_attr( $image ) {
+		Helper::notice( 'This function is deprecated and will be removed in v1.0 of Timmy' );
+
+		return Helper::get_attribute_html( [
+			'alt'   => ! empty( $image['alt'] ) ? $image['alt'] : '',
+			'title' => $image['description'],
+		] );
+	}
+endif;

@@ -123,7 +123,7 @@ Takes the field name of an ACF image as the input and returns the same output as
 
 #### Usage in Twig
 
-You won’t use this function as a filter like the ones above.
+For Twig, you won’t use the function as a filter like in the examples above, but as a function.
 
 ```twig
 <img{{ get_timber_image_responsive_acf('image', 'custom-4-crop') }}>

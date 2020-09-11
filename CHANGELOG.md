@@ -1,6 +1,11 @@
 # Changelog
 
-## 0.14.4
+## 0.14.5 - 2020-09-11
+
+- Fixed `get_timber_image_responsive_acf()` function.
+- Deprecated function `get_acf_image_attr()`.
+
+## 0.14.4 - 2020-03-03
 
 This release fixes a bug when low-quality image sizes were generated when using WordPress 5.3+.
 
