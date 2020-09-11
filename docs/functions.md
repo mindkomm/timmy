@@ -6,6 +6,7 @@ You can use the following functions to get your images into your template:
 
 * [get_timber_image()](#get_timber_image) – Returns the src attribute together with optional alt and title attributes for an image.
 * [get_timber_image_src()](#get_timber_image_src) – Returns the src for an image.
+* [get_timber_image_srcset()](#get_timber_image_srcset) – Returns the srcset attribute based on the `srcset` entry in the image configuration for an image size.
 
 ## Responsive Images
 
