@@ -1,5 +1,7 @@
 # Changelog
 
+- Added `content_filters` argument for Responsive Content Images constructor.
+
 ## 0.14.5 - 2020-09-11
 
 - Added Block Editor support for the Responsive Content Images functionality.
