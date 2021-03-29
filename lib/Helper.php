@@ -214,6 +214,27 @@ class Helper {
 	}
 
 	/**
+	 * Gets cached mime types.
+	 *
+	 * Useful in combination with wp_check_filetype(), where you should pass a second parameter to
+	 * prevent get_allowed_mime_types() from being called too many times.
+	 *
+	 * @since 0.14.6
+	 * @see \wp_check_filetype()
+	 *
+	 * @return string[]|null
+	 */
+	public static function get_mime_types() {
+		static $mime_types = null;
+
+		if ( ! isset( $mime_types ) ) {
+			$mime_types = wp_get_mime_types();
+		}
+
+		return $mime_types;
+	}
+
+	/**
 	 * Output an error message.
 	 *
 	 * Triggers a notice, but only in development environments, when WP_DEBUG is set to true.

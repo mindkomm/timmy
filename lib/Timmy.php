@@ -715,7 +715,10 @@ class Timmy {
 	public static function should_convert_to_jpg( $img_size, $file_src ) {
 		if ( isset( $img_size['tojpg'] )
 			&& $img_size['tojpg']
-			&& 'application/pdf' !== wp_check_filetype( $file_src )['type']
+			&& 'application/pdf' !== wp_check_filetype(
+				$file_src,
+				Helper::get_mime_types()
+            )['type']
 		) {
 			return true;
 		}
@@ -918,7 +921,10 @@ class Timmy {
 				'file'      => wp_basename( $file_src ),
 				'width'     => $file_width,
 				'height'    => $file_height,
-				'mime-type' => wp_check_filetype( $file_src )['type'],
+				'mime-type' => wp_check_filetype(
+					$file_src,
+					Helper::get_mime_types()
+				)['type'],
 			];
 		}
 

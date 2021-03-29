@@ -1,6 +1,7 @@
 # Changelog
 
 - Added `content_filters` argument for Responsive Content Images constructor.
+- Fixed performance when a lot of image data is requested.
 
 ## 0.14.5 - 2020-09-11
 
