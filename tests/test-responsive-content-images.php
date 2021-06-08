@@ -144,4 +144,28 @@ class TestResponsiveContentImages extends TimmyUnitTestCase {
 
 		$this->assertEquals( $expected, $result );
 	}
+
+	/**
+	 * @link https://github.com/mindkomm/timmy/pull/37
+	 */
+	function test_block_image_pr_37() {
+		$image = $this->create_image();
+		$rci   = new Responsive_Content_Images();
+
+		$content = sprintf(
+			'\n<figure class="wp-block-image size-large"><a href="https://foo"><img src="%1$s/dog-400x0-c-default.jpg" alt="" class="wp-image-%2$s"/></a></figure>\n',
+			$this->get_upload_url(),
+			$image->ID
+		);
+
+		$expected = sprintf(
+			'\n<figure class="wp-block-image size-large"><a href="https://foo"><img srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" alt="" class="wp-image-%2$s"></a></figure>\n',
+			$this->get_upload_url(),
+			$image->ID
+		);
+
+		$result = $rci->make_content_images_responsive( $content );
+
+		$this->assertEquals( $expected, $result );
+	}
 }
