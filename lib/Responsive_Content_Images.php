@@ -86,7 +86,7 @@ class Responsive_Content_Images {
 		 * - The part after "size-" to catch the name of the image size that’s used.
 		 */
 		if ( preg_match_all(
-			'/<figure class="([^"]*wp-block-image size-(\w+).*?)".*?><img [^>]+>.*<\/figure>/',
+			'/<figure class="([^"]*wp-block-image size-([\w_-]+).*?)".*?><img [^>]+>.*<\/figure>/',
 			$content,
 			$block_images
 		) ) {
