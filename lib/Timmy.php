@@ -950,8 +950,12 @@ class Timmy {
 
 		// Check if image is attached to a post and sort out post type.
 		if ( 0 !== $attachment_parent_id ) {
-			$parent               = get_post( $attachment_parent_id );
-			$attachment_post_type = array( $parent->post_type );
+			$parent = get_post( $attachment_parent_id );
+
+			// Parent post could have been deleted.
+			if ( $parent ) {
+				$attachment_post_type = array( $parent->post_type );
+			}
 		}
 
 		return self::is_size_for_post_type( $img_size, $attachment_post_type );

@@ -103,9 +103,10 @@ class TimmyUnitTestCase extends WP_UnitTestCase {
 		$args = wp_parse_args( $args, [
 			'alt'  => null,
 			'file' => 'test.jpg',
+			'post_parent' => 0,
 		] );
 
-		$attachment_id = $this->create_image_attachment( 0, $args['file'] );
+		$attachment_id = $this->create_image_attachment( $args['post_parent'], $args['file'] );
 
 		if ( ! empty( $args['alt'] ) ) {
 			$this->set_alt_text( $attachment_id, $args['alt'] );

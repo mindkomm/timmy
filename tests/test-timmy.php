@@ -75,4 +75,27 @@ class TestTimmy extends TimmyUnitTestCase {
 
 		$this->assertEquals( $expected, $result );
 	}
+
+	/**
+	 * Test with when an attachment is assigned to a post that was already delete.
+	 *
+	 * @link https://github.com/mindkomm/timmy/issues/39
+	 */
+	function test_attached_image_with_missing_post() {
+		$post_id = $this->factory()->post->create();
+		wp_delete_post( $post_id, true );
+
+		$attachment = $this->create_image( [
+			'post_parent' => $post_id,
+		] );
+
+		$expected = sprintf(
+			' srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" alt=""',
+			$this->get_upload_url()
+		);
+
+		$result = get_timber_image_responsive( $attachment, 'large' );
+
+		$this->assertEquals( $expected, $result );
+	}
 }
