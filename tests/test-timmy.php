@@ -98,4 +98,15 @@ class TestTimmy extends TimmyUnitTestCase {
 
 		$this->assertEquals( $expected, $result );
 	}
+
+	public function test_timmy_do_not_upscale_images() {
+		$attachment  = $this->create_image( [
+			'file' => 'test-200px.jpg',
+		]);
+
+		image_downsize( $attachment->ID, 'large' );
+		$file_path = $this->get_upload_path() . '/test-200px-1400x0-c-default.jpg';
+
+		$this->assertFileNotExists( $file_path );
+	}
 }
