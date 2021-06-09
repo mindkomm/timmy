@@ -487,7 +487,23 @@ class Timmy {
 			return $return;
 		}
 
+		$meta_data  = wp_get_attachment_metadata( $attachment_id, true );
+		$upscale    = Helper::get_upscale_for_size( $img_size );
+		$max_width  = $meta_data['width'];
+		$max_height = $meta_data['height'];
+		$resize     = $img_size['resize'];
+
 		list( $width, $height ) = Helper::get_dimensions_for_size( $img_size );
+		list( $width, $height ) = Helper::get_dimensions_upscale( $width, $height, [
+			'upscale'    => $upscale,
+			'max_width'  => $max_width,
+			'max_height' => $max_height,
+			'resize'     => $resize,
+		] );
+
+		if ( $width === $max_width ) {
+			return [ $file_src, $width, $height, false ];
+		}
 
 		$crop  = Helper::get_crop_for_size( $img_size );
 		$force = Helper::get_force_for_size( $img_size );
@@ -578,78 +594,17 @@ class Timmy {
 			$max_height
 		) = wp_get_attachment_image_src( $timber_image->ID, 'full' );
 
-		$oversize_defaults = array(
-			'allow'      => false,
-			'style_attr' => true,
-		);
-
-		/**
-		 * Filters the default oversize parameters used for an image.
-		 *
-		 * An oversize parameter set for an individual image size will always overwrite values set through this filter.
-		 *
-		 * @since 0.13.1
-		 *
-		 * @param array|bool $oversize_defaults Default oversize parameters. Can be a boolean to set all values in the
-		 *                                      array or an array with keys `allow` and `style_attr`.
-		 *                                      Default `array( 'allow' => false, 'style_attr' => true )`.
-		 */
-		$oversize = apply_filters( 'timmy/oversize', $oversize_defaults );
-
-		// Overwrite default value with oversize value.
-		$oversize = isset( $img_size['oversize'] ) ? $img_size['oversize'] : $oversize;
-
-		// Turn shortcut boolean value for oversize into array.
-		if ( is_bool( $oversize ) ) {
-			$oversize = array(
-				'allow'      => $oversize,
-				'style_attr' => $oversize,
-			);
-		}
-
-		// Make sure all required values are set.
-		$oversize = wp_parse_args( $oversize, $oversize_defaults );
-
-		$resize = $img_size['resize'];
+		$upscale = Helper::get_upscale_for_size( $img_size );
+		$resize  = $img_size['resize'];
 
 		// Get values for the default image size.
 		list( $width, $height ) = Helper::get_dimensions_for_size( $img_size );
-
-		/**
-		 * Check oversize.
-		 *
-		 * If oversize is not allowed, then the image will not grow over its original size.
-		 *
-		 * Check whether the image source width is smaller than the desired width
-		 * or the image source height is smaller than the desired height.
-		 *
-		 * Inline styles will only be applied if $oversize['allow'] is false. It doesn’t make
-		 * sense to include bigger, low-quality sizes and still constrain an image’s dimensions.
-		 */
-		if ( ! $oversize['allow'] ) {
-			if ( $width > $max_width ) {
-				// Overwrite $width to use a max width.
-				$width = $max_width;
-
-				// Calculate new height based on new width.
-				if ( isset( $resize[1] ) ) {
-					$height = (int) round( $width * ( $resize[1] / $resize[0] ) );
-				}
-
-				if ( $oversize['style_attr'] ) {
-					// Restrict to width.
-					$oversize['style_attr'] = 'width';
-				}
-			} elseif ( $height > 0 && $height > $max_height ) {
-				$height = $max_height;
-				$width  = (int) round( $max_width / $max_height * $height );
-
-				if ( $oversize['style_attr'] ) {
-					// Restrict to height.
-					$oversize['style_attr'] = 'height';
-				}
-			}
-		}
+		list( $width, $height ) = Helper::get_dimensions_upscale( $width, $height, [
+			'upscale'    => $upscale,
+			'max_width'  => $max_width,
+			'max_height' => $max_height,
+			'resize'     => $resize,
+		] );
 
 		$crop  = Helper::get_crop_for_size( $img_size );
 		$force = Helper::get_force_for_size( $img_size );
@@ -662,9 +617,11 @@ class Timmy {
 			$force,
 			$max_width,
 			$max_height,
-			$oversize,
+			$upscale,
 		);
 	}
+
+
 
 	/**
 	 * Resize an image and apply letterbox and tojpg filters when defined.

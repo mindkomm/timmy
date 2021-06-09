@@ -100,6 +100,54 @@ class Helper {
 		return $img_size;
 	}
 
+	public static function get_dimensions_upscale( $width, $height, $args ) {
+		$upscale = $args['upscale'];
+
+		if ( $upscale['allow'] ) {
+			return [ $width, $height ];
+		}
+
+		$max_width  = $args['max_width'];
+		$max_height = $args['max_height'];
+		$resize     = $args['resize'];
+
+		/**
+		 * Check upscale.
+		 *
+		 * If upscale is not allowed, then the image will not grow over its original size.
+		 *
+		 * Check whether the image source width is smaller than the desired width
+		 * or the image source height is smaller than the desired height.
+		 *
+		 * Inline styles will only be applied if $oversize['allow'] is false. It doesn’t make
+		 * sense to include bigger, low-quality sizes and still constrain an image’s dimensions.
+		 */
+		if ( $width > $max_width ) {
+			// Overwrite $width to use a max width.
+			$width = $max_width;
+
+			// Calculate new height based on new width.
+			if ( isset( $resize[1] ) ) {
+				$height = (int) round( $width * ( $resize[1] / $resize[0] ) );
+			}
+
+			if ( $upscale['style_attr'] ) {
+				// Restrict to width.
+				$upscale['style_attr'] = 'width';
+			}
+		} elseif ( $height > 0 && $height > $max_height ) {
+			$height = $max_height;
+			$width  = (int) round( $max_width / $max_height * $height );
+
+			if ( $upscale['style_attr'] ) {
+				// Restrict to height.
+				$upscale['style_attr'] = 'height';
+			}
+		}
+
+		return [ $width, $height ];
+	}
+
 	/**
 	 * Get width and height for an image size.
 	 *
@@ -137,6 +185,50 @@ class Helper {
 		}
 
 		return array( $width, $height );
+	}
+
+	public static function get_upscale_for_size( $img_size ) {
+		$upscale_defaults = array(
+			'allow'      => false,
+			'style_attr' => true,
+		);
+
+		/**
+		 * Filters the default upscale parameters used for an image.
+		 *
+		 * An upscale parameter set for an individual image size will always overwrite values set
+		 * through this filter.
+		 *
+		 * @since 0.13.1
+		 *
+		 * @param array|bool $upscale Default upscale parameters. Can be a boolean to set all
+		 *                            values in the array or an array with keys `allow` and
+		 *                            `style_attr`.
+		 *                            Default `array( 'allow' => false, 'style_attr' => true )`.
+		 */
+		$upscale = apply_filters( 'timmy/oversize', $upscale_defaults );
+		$upscale = apply_filters( 'timmy/upscale', $upscale );
+
+		// Overwrite default value with upscale value.
+
+		// Deprecated.
+		$upscale = isset( $img_size['oversize'] ) ? $img_size['oversize'] : $upscale;
+
+		// New naming.
+		$upscale = isset( $img_size['upscale'] ) ? $img_size['upscale'] : $upscale;
+
+		// Turn shortcut boolean value for oversize into array.
+		if ( is_bool( $upscale ) ) {
+			$upscale = array(
+				'allow'      => $upscale,
+				'style_attr' => $upscale,
+			);
+		}
+
+		// Make sure all required values are set.
+		$upscale = wp_parse_args( $upscale, $upscale_defaults );
+
+		return $upscale;
 	}
 
 	/**

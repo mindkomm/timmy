@@ -109,4 +109,19 @@ class TestTimmy extends TimmyUnitTestCase {
 
 		$this->assertFileNotExists( $file_path );
 	}
+
+	public function test_timmy_upscale_images_with_filter() {
+		add_filter( 'timmy/upscale', '__return_true' );
+
+		$attachment  = $this->create_image( [
+			'file' => 'test-200px.jpg',
+		]);
+
+		image_downsize( $attachment->ID, 'large' );
+		$file_path = $this->get_upload_path() . '/test-200px-1400x0-c-default.jpg';
+
+		remove_filter( 'timmy/upscale', '__return_true' );
+
+		$this->assertFileExists( $file_path );
+	}
 }
