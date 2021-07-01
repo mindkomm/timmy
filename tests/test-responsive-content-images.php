@@ -216,4 +216,41 @@ class TestResponsiveContentImages extends TimmyUnitTestCase {
 
 		$this->assertEquals( $expected, $result );
 	}
+
+	function test_block_image_with_rare_size_characters() {
+		$filter = function( $sizes ) {
+			$sizes = array_merge( $sizes, [
+				'gallery/full_screen.and-other' => [
+					'resize' => [ 1400 ],
+					'srcset' => [ [ 560 ] ],
+					'sizes'  => '100vw',
+				],
+			] );
+
+			return $sizes;
+		};
+
+		add_filter( 'timmy/sizes', $filter );
+
+		$image = $this->create_image();
+		$rci   = new Responsive_Content_Images();
+
+		$content = sprintf(
+			'\n<figure class="wp-block-image alignfull size-gallery/full_screen.and-other"><a href="https://example.org"><img src="%1$s/dog-400x0-c-default.jpg" alt="" class="wp-image-%2$s"/></a></figure>\n',
+			$this->get_upload_url(),
+			$image->ID
+		);
+
+		$expected = sprintf(
+			'\n<figure class="wp-block-image alignfull size-gallery/full_screen.and-other"><a href="https://example.org"><img srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" alt="" class="wp-image-%2$s"></a></figure>\n',
+			$this->get_upload_url(),
+			$image->ID
+		);
+
+		$result = $rci->make_content_images_responsive( $content );
+
+		remove_filter( 'timmy/sizes', $filter );
+
+		$this->assertEquals( $expected, $result );
+	}
 }
