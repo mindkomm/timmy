@@ -1,8 +1,8 @@
 # Changelog
 
-## 0.14.8
+## 0.14.8 - 2021-07-28
 
-- Fixed issues with regex for Responsive Content Images.
+- Fixed more issues with regex for Responsive Content Images.
 
 ## 0.14.7 - 2021-07-01
 
