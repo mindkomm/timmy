@@ -602,8 +602,8 @@ class Timmy {
 		// Get values for the default image size.
 		list( $width, $height ) = Helper::get_dimensions_for_size( $img_size );
 
-		// Update upscale parameter.
-		if ( ! $upscale['allow'] && $upscale['style_attr'] ) {
+		// Update upscale style_attr parameter.
+		if ( $upscale['style_attr'] ) {
 			if ( $width > $max_width ) {
 				// Restrict to width.
 				$upscale['style_attr'] = 'width';

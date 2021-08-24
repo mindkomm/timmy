@@ -56,35 +56,34 @@ add_filter( 'timmy/sizes', function( $sizes ) {
 			'sizes'  => '50vw',
 		],
 		'upscale-default'                     => [
-			'resize' => [ 1400 ],
+			'resize' => [ 1401 ],
 			'srcset' => [ [ 150 ] ],
 		],
 		'upscale-default-portrait'            => [
-			'resize' => [ 0, 1400 ],
+			'resize' => [ 0, 1402 ],
 			'srcset' => [ [ 0, 150 ] ],
 		],
 		'upscale-allow-true'                  => [
-			'resize'   => [ 1400 ],
+			'resize'   => [ 1403 ],
 			'srcset'   => [ [ 150 ] ],
 			'upscale' => [
 				'allow' => true,
 			],
 		],
 		'deprecated-oversize' => [
-			'resize'   => [ 1400 ],
+			'resize'   => [ 1404 ],
 			'srcset'   => [ [ 150 ] ],
 			'oversize' => [
 				'allow' => true,
 			],
 		],
 		'upscale-allow-true-style-attr-false' => [
-			'resize'   => [ 1400 ],
+			'resize'   => [ 1405 ],
 			'srcset'   => [ [ 150 ] ],
 			'upscale' => [
 				'allow'      => true,
 				'style_attr' => false,
 			],
 		],
-
 	] );
 } );
