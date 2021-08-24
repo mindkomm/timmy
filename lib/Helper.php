@@ -24,8 +24,17 @@ class Helper {
 	 * @since 0.13.0
 	 */
 	public static function get_image_sizes() {
+		/**
+		 * Filters whether the internal sizes cache should be skipped.
+		 *
+		 * Mainly used for testing.
+		 *
+		 * @since 0.14.8
+		 */
+		$use_sizes_cache = apply_filters( 'timmy/sizes/use_cache', true );
+
 		// Bailout early if cached image configuration is available.
-		if ( self::$sizes ) {
+		if ( self::$sizes && $use_sizes_cache ) {
 			return self::$sizes;
 		}
 

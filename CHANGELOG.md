@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.14.8 - 2021-07-28
+
+- Fixed more issues with regex for Responsive Content Images.
+
+## 0.14.7 - 2021-07-01
+
+- Fixed regex for Responsive Content Images.
+- Fixed a bug for attachments that were deleted from the media library.
+
+## 0.14.6 - 2021-03-29
+
 - Added `content_filters` argument for Responsive Content Images constructor.
 - Fixed performance when a lot of image data is requested.
 
