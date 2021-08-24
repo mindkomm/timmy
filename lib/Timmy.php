@@ -487,20 +487,22 @@ class Timmy {
 			return $return;
 		}
 
+		// Get meta data not filtered by Timmy.
 		$meta_data = wp_get_attachment_metadata( $attachment_id, true );
-		$upscale    = Helper::get_upscale_for_size( $img_size );
+
 		$max_width  = $meta_data['width'];
 		$max_height = $meta_data['height'];
 		$resize     = $img_size['resize'];
 
 		list( $width, $height ) = Helper::get_dimensions_for_size( $img_size );
 		list( $width, $height ) = Helper::get_dimensions_upscale( $width, $height, [
-			'upscale'    => $upscale,
+			'upscale'    => Helper::get_upscale_for_size( $img_size ),
 			'max_width'  => $max_width,
 			'max_height' => $max_height,
 			'resize'     => $resize,
 		] );
 
+		// Bail out if no resize is needed.
 		if ( $width === $max_width ) {
 			return [ $file_src, $width, $height, false ];
 		}
