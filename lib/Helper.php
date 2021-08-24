@@ -208,6 +208,7 @@ class Helper {
 		 * through this filter.
 		 *
 		 * @since 0.13.1
+		 * @todo Deprecate timmy/oversize filter.
 		 *
 		 * @param array|bool $upscale Default upscale parameters. Can be a boolean to set all
 		 *                            values in the array or an array with keys `allow` and
@@ -220,12 +221,13 @@ class Helper {
 		// Overwrite default value with upscale value.
 
 		// Deprecated.
+		// @todo Add proper deprecation in the future.
 		$upscale = isset( $img_size['oversize'] ) ? $img_size['oversize'] : $upscale;
 
 		// New naming.
 		$upscale = isset( $img_size['upscale'] ) ? $img_size['upscale'] : $upscale;
 
-		// Turn shortcut boolean value for oversize into array.
+		// Turn shortcut boolean value for upscale into array.
 		if ( is_bool( $upscale ) ) {
 			$upscale = array(
 				'allow'      => $upscale,

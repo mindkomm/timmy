@@ -92,7 +92,7 @@ You shouldn’t use `full` or `original` as keys in your configuration. If you d
 - [name](#name)
 - [show_in_ui](#show_in_ui)
 - [generate_srcset_sizes](#generate_srcset_sizes)
-- [oversize](#oversize)
+- [upscale](#upscale) (formerly named `oversize`)
 
 ---
 
@@ -295,11 +295,13 @@ You can use the [`timmy/generate_srcset_sizes` filter](#timmy-generate-srcset-si
 
 ---
 
-### oversize
+### upscale
 
 (`bool|array`), optional, Default: `array( 'allow' => false, 'style_attr' => true )`
 
 Controls whether the image should be resized to a bigger size than its original size.
+
+This parameter was named `oversize` before, but was changed to `upscale`. Using `oversize` should still work.
 
 When `allow` is `true`, Timmy will check the size of the original image to see if it’s big enough to be resized with the given parameters. If not, Timmy returns the image at the original size, but still considers additional image sizes smaller than the original size to be added to srcset.
 
@@ -307,12 +309,12 @@ If you want to disable this and allow images to grow bigger than the original si
 
 ```php
 // Allow srcset sizes bigger than the original size of the image
-'oversize' => [
+'upscale' => [
     'allow' => true,
 ],
 ```
 
-You can also use the [`timmy/oversize` filter](#timmyoversize) to control this behavior for all image sizes.
+You can also use the [`timmy/upscale` filter](#timmyupscale) to control this behavior for all image sizes.
 
 #### Inline style attributes
 
@@ -325,8 +327,8 @@ If you want to disable inline style attributes, set `style_attr` to `false`.
  * Only output srcset sizes smaller or equal the original size of the image,
  * but do not add style attributes.
  */ 
-'oversize' => array(
-    'allow' => false,
+'upscale' => array(
+    'allow'      => false,
     'style_attr' => false,
 ),
 ```
@@ -335,17 +337,17 @@ If `allow` is set to `true`, inline styles will never be applied.
 
 #### Shortcuts
 
-You can use a boolean for `oversize` to set both `allow` and `style_attr` values at the same time:
+You can use a boolean for `upscale` to set both `allow` and `style_attr` values at the same time:
 
 ```php
-'oversize' => false,
+'upscale' => false,
 ```
 
 This is a shortcut for: 
 
 ```php
 // Allow srcset sizes bigger than the original size of the image
-'oversize' => array(
+'upscale' => array(
     'allow'      => false,
     'style_attr' => false,
 ),
@@ -353,7 +355,7 @@ This is a shortcut for:
 
 ## Image configuration example
 
-You will add this to `functions.php` of your theme:
+You will add this to the **functions.php** file of your theme:
 
 ```php
 add_filter( 'timmy/sizes', function( $sizes ) {
