@@ -586,7 +586,7 @@ class Timmy {
 	 * @param Timber\Image|int $timber_image Instance of TimberImage.
 	 * @param array            $img_size     Image configuration array for image size to be used.
 	 *
-	 * @return array An non-associative array with $file_src, $width, $height, $crop, $force,
+	 * @return array A non-associative array with $file_src, $width, $height, $crop, $force,
 	 *               $max_width, $undersized (in that order). Thought to be used with list().
 	 */
 	public static function get_image_params( $timber_image, $img_size ) {
@@ -601,6 +601,19 @@ class Timmy {
 
 		// Get values for the default image size.
 		list( $width, $height ) = Helper::get_dimensions_for_size( $img_size );
+
+		// Update upscale parameter.
+		if ( ! $upscale['allow'] && $upscale['style_attr'] ) {
+			if ( $width > $max_width ) {
+				// Restrict to width.
+				$upscale['style_attr'] = 'width';
+			} elseif ( $height > 0 && $height > $max_height ) {
+				// Restrict to height.
+				$upscale['style_attr'] = 'height';
+			}
+		}
+
+		// Get updated width and height.
 		list( $width, $height ) = Helper::get_dimensions_upscale( $width, $height, [
 			'upscale'    => $upscale,
 			'max_width'  => $max_width,
@@ -622,8 +635,6 @@ class Timmy {
 			$upscale,
 		);
 	}
-
-
 
 	/**
 	 * Resize an image and apply letterbox and tojpg filters when defined.

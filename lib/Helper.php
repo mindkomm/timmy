@@ -148,19 +148,9 @@ class Helper {
 
 			// Overwrite $width to use a max width.
 			$width = $max_width;
-
-			if ( $upscale['style_attr'] ) {
-				// Restrict to width.
-				$upscale['style_attr'] = 'width';
-			}
 		} elseif ( $height > 0 && $height > $max_height ) {
 			$height = $max_height;
 			$width  = (int) round( $max_width / $max_height * $height );
-
-			if ( $upscale['style_attr'] ) {
-				// Restrict to height.
-				$upscale['style_attr'] = 'height';
-			}
 		}
 
 		return [ $width, $height ];
