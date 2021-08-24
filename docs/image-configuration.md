@@ -314,7 +314,7 @@ If you want to disable this and allow images to grow bigger than the original si
 ],
 ```
 
-You can also use the [`timmy/upscale` filter](#timmyupscale) to control this behavior for all image sizes.
+You can also use the [`timmy/upscale` filter](https://github.com/mindkomm/timmy/blob/master/docs/hooks.md#timmyupscale) to control this behavior for all image sizes.
 
 #### Inline style attributes
 
