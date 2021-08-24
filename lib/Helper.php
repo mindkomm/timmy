@@ -109,6 +109,15 @@ class Helper {
 		return $img_size;
 	}
 
+	/**
+	 * Gets width and height dimensions by considering the upscale parameters.
+	 *
+	 * @param int $width Current width.
+	 * @param int $height Current height.
+	 * @param array $args
+	 *
+	 * @return array|int[]
+	 */
 	public static function get_dimensions_upscale( $width, $height, $args ) {
 		$upscale = $args['upscale'];
 
@@ -128,17 +137,17 @@ class Helper {
 		 * Check whether the image source width is smaller than the desired width
 		 * or the image source height is smaller than the desired height.
 		 *
-		 * Inline styles will only be applied if $oversize['allow'] is false. It doesn’t make
+		 * Inline styles will only be applied if $upscale['allow'] is false. It doesn’t make
 		 * sense to include bigger, low-quality sizes and still constrain an image’s dimensions.
 		 */
 		if ( $width > $max_width ) {
-			// Overwrite $width to use a max width.
-			$width = $max_width;
-
 			// Calculate new height based on new width.
 			if ( isset( $resize[1] ) ) {
-				$height = (int) round( $width * ( $resize[1] / $resize[0] ) );
+				$height = (int) round( $max_width * ( $height / $width ) );
 			}
+
+			// Overwrite $width to use a max width.
+			$width = $max_width;
 
 			if ( $upscale['style_attr'] ) {
 				// Restrict to width.

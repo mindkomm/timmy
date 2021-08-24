@@ -487,7 +487,7 @@ class Timmy {
 			return $return;
 		}
 
-		$meta_data  = wp_get_attachment_metadata( $attachment_id, true );
+		$meta_data = wp_get_attachment_metadata( $attachment_id, true );
 		$upscale    = Helper::get_upscale_for_size( $img_size );
 		$max_width  = $meta_data['width'];
 		$max_height = $meta_data['height'];
@@ -826,17 +826,39 @@ class Timmy {
 		// Timber needs the file src as an URL. Also checks if ID belongs to an attachment.
 		$file_src = Helper::get_original_attachment_url( $attachment->ID );
 
-		// Generate additional image sizes used for srcset.
-		if ( isset( $img_size['srcset'] ) ) {
-			foreach ( $img_size['srcset'] as $srcset_size ) {
-				list( $width, $height ) = Helper::get_dimensions_for_srcset_size(
-					$img_size['resize'],
-					$srcset_size
-				);
+		if ( ! isset( $img_size['srcset'] ) ) {
+			return;
+		}
 
-				// For the new source, we use the same $crop and $force values as the default image.
-				self::resize( $img_size, $file_src, $width, $height, $crop, $force );
+		$upscale = Helper::get_upscale_for_size( $img_size );
+
+		// Get meta data not filtered by Timmy.
+		$meta_data = wp_get_attachment_metadata( $attachment->ID, true );
+
+		$max_width  = $meta_data['width'];
+		$max_height = $meta_data['height'];
+
+		// Generate additional image sizes used for srcset.
+		foreach ( $img_size['srcset'] as $srcset_size ) {
+			list( $width, $height ) = Helper::get_dimensions_for_srcset_size(
+				$img_size['resize'],
+				$srcset_size
+			);
+
+			list( $width, $height ) = Helper::get_dimensions_upscale( $width, $height, [
+				'upscale'    => $upscale,
+				'max_width'  => $max_width,
+				'max_height' => $max_height,
+				'resize'     => $srcset_size,
+			] );
+
+			// Skip if no resize is needed.
+			if ( $width >= $max_width ) {
+				continue;
 			}
+
+			// For the new source, we use the same $crop and $force values as the default image.
+			self::resize( $img_size, $file_src, $width, $height, $crop, $force );
 		}
 	}
 
