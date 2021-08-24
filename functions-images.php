@@ -25,9 +25,9 @@ if ( ! function_exists( 'get_timber_image' ) ) :
 			return false;
 		}
 
-		return Helper::get_attribute_html( array_merge(
-			array( 'src' => $src ),
-			get_timber_image_texts( $timber_image )
+		return Helper::get_attribute_html( array(
+			'src' => $src,
+			'alt' => get_timber_image_alt( $timber_image ),
 		) );
 	}
 endif;
@@ -204,13 +204,66 @@ if ( ! function_exists( 'get_timber_image_texts' ) ) :
 			'alt' => $timber_image->alt(),
 		];
 
-		if ( ! empty( $timber_image->post_content ) ) {
-			$texts['title'] = $timber_image->post_content;
-		}
-
 		return $texts;
 	}
 endif;
+
+/**
+ * Gets the image alt text.
+ *
+ * @since 1.0.0
+ *
+ * @param int|Timber\Image $timber_image Image ID or instance of TimberImage.
+ *
+ * @return false|string False on error or image alt text on success.
+ */
+function get_timber_image_alt( $timber_image ) {
+	$timber_image = Timmy::get_timber_image( $timber_image );
+
+	if ( ! $timber_image ) {
+		return false;
+	}
+
+	return $timber_image->alt();
+}
+
+/**
+ * Gets the image caption.
+ *
+ * @since 1.0.0
+ *
+ * @param int|Timber\Image $timber_image Image ID or instance of TimberImage.
+ *
+ * @return false|string False on error or caption on success.
+ */
+function get_timber_image_caption( $timber_image ) {
+	$timber_image = Timmy::get_timber_image( $timber_image );
+
+	if ( ! $timber_image ) {
+		return false;
+	}
+
+	return $timber_image->caption;
+}
+
+/**
+ * Gets the image description.
+ *
+ * @since 1.0.0
+ *
+ * @param int|Timber\Image $timber_image Image ID or instance of TimberImage.
+ *
+ * @return false|string False on error or image description on success.
+ */
+function get_timber_image_description( $timber_image ) {
+	$timber_image = Timmy::get_timber_image( $timber_image );
+
+	if ( ! $timber_image ) {
+		return false;
+	}
+
+	return $timber_image->post_content;
+}
 
 if ( ! function_exists( 'get_timber_image_attributes_responsive' ) ) :
 	/**
@@ -241,7 +294,7 @@ if ( ! function_exists( 'get_timber_image_attributes_responsive' ) ) :
 
 		return array_merge(
 			get_timber_image_responsive_src( $timber_image, $size, $args ),
-			get_timber_image_texts( $timber_image )
+			[ 'alt' => get_timber_image_alt( $timber_image ) ]
 		);
 	}
 endif;
