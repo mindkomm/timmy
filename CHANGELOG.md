@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.14.9
+
+- Fixed issue when Timmy created upscaled image files even though it shouldn’t.
+- Changed oversize configuration option naming from `oversize` to `upscale`. You can still use `oversize`, but it will be deprecated in the future.
+
 ## 0.14.8 - 2021-07-28
 
 - Fixed more issues with regex for Responsive Content Images.
