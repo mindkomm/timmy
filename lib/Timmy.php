@@ -855,7 +855,7 @@ class Timmy {
 			] );
 
 			// Skip if no resize is needed.
-			if ( $width >= $max_width ) {
+			if ( $width === $max_width ) {
 				continue;
 			}
 
