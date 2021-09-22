@@ -38,7 +38,7 @@ class Timmy {
 		// Add filters and functions to integrate Timmy into Timber and Twig.
 		add_filter( 'timber/twig', array( $this, 'filter_twig' ) );
 
-		add_filter( 'timmy/resize/ignore', array( __CLASS__, 'ignore_gif' ), 10, 2 );
+		add_filter( 'timmy/resize/ignore', array( __CLASS__, 'ignore_unallowed_files' ), 10, 4 );
 	}
 
 	/**
@@ -362,17 +362,12 @@ class Timmy {
 			return $return;
 		}
 
-		// Bail out if we try to downsize an SVG file.
-		if ( 'image/svg+xml' === $mime_type ) {
-			return $return;
-		}
-
 		$ignore = false;
 
 		/**
 		 * Filters whether we should resize an image size.
 		 *
-		 * When true is returned in this filter, the function will bailout early and the
+		 * When true is returned in this filter, the function will bail out early and the
 		 * image will not be processed further.
 		 *
 		 * @since 0.13.0
@@ -568,7 +563,7 @@ class Timmy {
 	 * @param Timber\Image|int $timber_image Instance of TimberImage.
 	 * @param array            $img_size     Image configuration array for image size to be used.
 	 *
-	 * @return array An non-associative array with $file_src, $width, $height, $crop, $force,
+	 * @return array A non-associative array with $file_src, $width, $height, $crop, $force,
 	 *               $max_width, $undersized (in that order). Thought to be used with list().
 	 */
 	public static function get_image_params( $timber_image, $img_size ) {
@@ -1017,18 +1012,24 @@ class Timmy {
 	}
 
 	/**
-	 * Ignore resizing of GIF images.
+	 * Ignore resizing files that are not images or non-resizable images.
 	 *
 	 * @since 0.13.0
 	 *
 	 * @param bool     $return     Whether to ignore an image size.
 	 * @param \WP_Post $attachment The attachment mime type.
+	 * @param string   $size       Requested image size.
+	 * @param string   $file_src   File src.
 	 *
 	 * @return bool
 	 */
-	public static function ignore_gif( $return, $attachment ) {
-		// Ignore GIF images.
-		if ( 'image/gif' === $attachment->post_mime_type ) {
+	public static function ignore_unallowed_files( $return, $attachment, $size, $file_src ) {
+		$allowed_ext = [ 'jpg', 'jpeg', 'jpe', 'png' ];
+		$file_ext    = wp_check_filetype( $file_src, Helper::get_mime_types() )['ext'];
+
+		// We can’t use wp_attachment_is() for the check, because that will also allow GIF images.
+		if ( ! $file_ext || ! in_array( $file_ext, $allowed_ext, true ) ) {
+			// Ignore.
 			return true;
 		}
 
