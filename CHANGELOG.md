@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.14.9
+
+- Fixed a bug when Timmy tries to resize images it shouldn’t.
+
 ## 0.14.8 - 2021-07-28
 
 - Fixed more issues with regex for Responsive Content Images.

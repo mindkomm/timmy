@@ -98,4 +98,36 @@ class TestTimmy extends TimmyUnitTestCase {
 
 		$this->assertEquals( $expected, $result );
 	}
+
+	public function test_timmy_ignores_pdf() {
+		$attachment = $this->create_image( [ 'file' => 'example.pdf' ] );
+		$result     = image_downsize( $attachment->ID );
+
+		$image = false;
+		$this->assertEquals( $image, $result );
+	}
+
+	public function test_timmy_ignores_sgv() {
+		$filter = function( $ignore) {
+			$this->assertEquals( true, $ignore );
+
+			return $ignore;
+		};
+
+		add_filter( 'timmy/resize/ignore', $filter, 99 );
+
+		$attachment = $this->create_image( [ 'file' => 'sveegee.svg' ] );
+		image_downsize( $attachment->ID );
+
+		remove_filter( 'timmy/resize/ignore', $filter, 99 );
+	}
+
+	public function test_timmy_ignores_video() {
+		$attachment = $this->create_image( [ 'file' => 'video.mp4' ] );
+		$result     = image_downsize( $attachment->ID );
+
+		$image = false;
+
+		$this->assertEquals( $image, $result );
+	}
 }
