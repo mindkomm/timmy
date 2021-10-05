@@ -125,7 +125,10 @@ class TestFunctions extends TimmyUnitTestCase {
 
 	public function test_get_timber_image_responsive() {
 		$alt_text   = 'Burrito Wrap';
-		$attachment = $this->create_image( [ 'alt' => $alt_text ] );
+		$attachment = $this->create_image( [
+			'alt'         => $alt_text,
+			'description' => 'Burritolino',
+		] );
 		$result     = get_timber_image_responsive( $attachment, 'large' );
 
 		$expected = ' srcset="' . $this->get_upload_url() . '/test-560x0-c-default.jpg 560w, ' . $this->get_upload_url() . '/test-1400x0-c-default.jpg 1400w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" alt="Burrito Wrap"';

@@ -116,6 +116,10 @@ class TimmyUnitTestCase extends WP_UnitTestCase {
 			$this->set_alt_text( $attachment_id, $args['alt'] );
 		}
 
+		if ( ! empty( $args['description'] ) ) {
+			$this->set_description( $attachment_id, $args['description'] );
+		}
+
 		return new Image( $attachment_id );
 	}
 
