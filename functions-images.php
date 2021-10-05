@@ -200,11 +200,7 @@ if ( ! function_exists( 'get_timber_image_texts' ) ) :
 			return false;
 		}
 
-		$texts = [
-			'alt' => $timber_image->alt(),
-		];
-
-		return $texts;
+		return [ 'alt' => $timber_image->alt() ];
 	}
 endif;
 
