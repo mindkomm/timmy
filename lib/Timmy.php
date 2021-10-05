@@ -3,8 +3,9 @@
 namespace Timmy;
 
 use Timber;
+use Timber\Twig_Filter;
+use Timber\Twig_Function;
 use Twig_Environment;
-use Twig_SimpleFilter;
 
 /**
  * Class Timmy
@@ -89,19 +90,20 @@ class Timmy {
 	 * @return Twig_Environment $twig
 	 */
 	public function filter_twig( $twig ) {
-		$twig->addFilter( new Twig_SimpleFilter( 'get_timber_image', 'get_timber_image' ) );
-		$twig->addFilter( new Twig_SimpleFilter( 'get_timber_image_src', 'get_timber_image_src' ) );
-		$twig->addFilter( new Twig_SimpleFilter( 'get_timber_image_srcset', 'get_timber_image_srcset' ) );
-		$twig->addFilter( new Twig_SimpleFilter( 'get_timber_image_responsive', 'get_timber_image_responsive' ) );
-		$twig->addFilter( new Twig_SimpleFilter( 'get_timber_image_responsive_src', 'get_timber_image_responsive_src' ) );
+		$twig->addFilter( new Twig_Filter( 'get_timber_image', 'get_timber_image' ) );
+		$twig->addFilter( new Twig_Filter( 'get_timber_image_src', 'get_timber_image_src' ) );
+		$twig->addFilter( new Twig_Filter( 'get_timber_image_srcset', 'get_timber_image_srcset' ) );
+		$twig->addFilter( new Twig_Filter( 'get_timber_image_responsive', 'get_timber_image_responsive' ) );
+		$twig->addFilter( new Twig_Filter( 'get_timber_image_responsive_src', 'get_timber_image_responsive_src' ) );
 
-		$twig->addFilter( new Twig_SimpleFilter( 'lazy', 'make_timber_image_lazy' ) );
+		$twig->addFilter( new Twig_Filter( 'lazy', 'make_timber_image_lazy' ) );
 
-		$twig->addFunction( new \Twig_SimpleFunction( 'get_timber_image_responsive_acf', 'get_timber_image_responsive_acf' ) );
+		$twig->addFunction( new Twig_Function( 'get_timber_image_responsive_acf', 'get_timber_image_responsive_acf' ) );
+
 		// Image texts.
-		$twig->addFunction( new \Timber\Twig_Function( 'get_timber_image_alt', 'get_timber_image_alt' ) );
-		$twig->addFunction( new \Timber\Twig_Function( 'get_timber_image_caption', 'get_timber_image_caption' ) );
-		$twig->addFunction( new \Timber\Twig_Function( 'get_timber_image_description', 'get_timber_image_description' ) );
+		$twig->addFunction( new Twig_Function( 'get_timber_image_alt', 'get_timber_image_alt' ) );
+		$twig->addFunction( new Twig_Function( 'get_timber_image_caption', 'get_timber_image_caption' ) );
+		$twig->addFunction( new Twig_Function( 'get_timber_image_description', 'get_timber_image_description' ) );
 
 		return $twig;
 	}
