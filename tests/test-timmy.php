@@ -130,4 +130,28 @@ class TestTimmy extends TimmyUnitTestCase {
 
 		$this->assertEquals( $image, $result );
 	}
+
+	public function test_timmy_ignores_svg_when_generating_metadata() {
+		$attachment = $this->create_image( [ 'file' => 'sveegee.svg' ] );
+		$file_src   = get_attached_file( $attachment->ID );
+		$meta       = wp_generate_attachment_metadata( $attachment->ID, $file_src );
+
+		$this->assertArrayNotHasKey( 'sizes', $meta );
+	}
+
+	public function test_timmy_ignores_gif_when_generating_metadata() {
+		$attachment = $this->create_image( [ 'file' => 'logo-small.gif' ] );
+		$file_src   = get_attached_file( $attachment->ID );
+		$meta       = wp_generate_attachment_metadata( $attachment->ID, $file_src );
+
+		$this->assertEmpty( $meta['sizes'] );
+	}
+
+	public function test_timmy_ignores_video_when_generating_metadata() {
+		$attachment = $this->create_image( [ 'file' => 'video.mp4' ] );
+		$file_src   = get_attached_file( $attachment->ID );
+		$meta       = wp_generate_attachment_metadata( $attachment->ID, $file_src );
+
+		$this->assertArrayNotHasKey( 'sizes', $meta );
+	}
 }

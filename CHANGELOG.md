@@ -1,8 +1,8 @@
 # Changelog
 
-## 0.14.9
+## 0.15.0
 
-- Fixed a bug when Timmy tries to resize images it shouldn’t.
+- Fixed a bug when Timmy tries to resize files that it shouldn’t, like video files.
 
 ## 0.14.8 - 2021-07-28
 

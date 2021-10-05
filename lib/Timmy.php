@@ -38,7 +38,7 @@ class Timmy {
 		// Add filters and functions to integrate Timmy into Timber and Twig.
 		add_filter( 'timber/twig', array( $this, 'filter_twig' ) );
 
-		add_filter( 'timmy/resize/ignore', array( __CLASS__, 'ignore_unallowed_files' ), 10, 4 );
+		add_filter( 'timmy/resize/ignore', array( __CLASS__, 'ignore_unallowed_files' ), 10, 2 );
 	}
 
 	/**
@@ -233,25 +233,18 @@ class Timmy {
 	 * @return array $meta_data
 	 */
 	public function filter_wp_generate_attachment_metadata( $meta_data, $attachment_id ) {
-		if ( ! wp_attachment_is_image( $attachment_id ) ) {
+		/**
+		 * Don’t automatically generate image sizes on upload for SVG and GIF images.
+		 * GIF images will still be resized when requested on the fly.
+		 */
+		if ( self::ignore_attachment( $attachment_id ) ) {
 			return $meta_data;
 		}
+
+		// Timber needs the file src as a URL.
+		$file_src = Helper::get_original_attachment_url( $attachment_id );
 
 		$attachment = get_post( $attachment_id );
-
-		/**
-		 * Never automatically generate image sizes on upload for SVG and GIF images.
-		 * SVG and GIF images will still be resized when requested on the fly.
-		 */
-		if ( in_array( $attachment->post_mime_type, array(
-			'image/svg+xml',
-			'image/gif',
-		), true ) ) {
-			return $meta_data;
-		}
-
-		// Timber needs the file src as an URL.
-		$file_src = Helper::get_original_attachment_url( $attachment_id );
 
 		/**
 		 * Delete all existing image sizes for that file.
@@ -342,7 +335,7 @@ class Timmy {
 	 *                     the image is an intermediate size. False on failure.
 	 */
 	public function filter_image_downsize( $return, $attachment_id, $size ) {
-		// Timber needs the file src as an URL. Also checks if ID belongs to an attachment.
+		// Timber needs the file src as a URL. Also checks if ID belongs to an attachment.
 		$file_src = Helper::get_original_attachment_url( $attachment_id );
 
 		if ( ! $file_src ) {
@@ -1017,15 +1010,40 @@ class Timmy {
 	 * @since 0.13.0
 	 *
 	 * @param bool     $return     Whether to ignore an image size.
-	 * @param \WP_Post $attachment The attachment mime type.
+	 * @param \WP_Post $attachment Attachment post.
 	 * @param string   $size       Requested image size.
 	 * @param string   $file_src   File src.
 	 *
 	 * @return bool
 	 */
-	public static function ignore_unallowed_files( $return, $attachment, $size, $file_src ) {
+	public static function ignore_unallowed_files( $return, $attachment ) {
+		if ( self::ignore_attachment( $attachment->ID ) ) {
+			// Ignore.
+			return true;
+		}
+
+		return $return;
+	}
+
+	/**
+	 * Checks whether a file should be ignored based on the file extension.
+	 *
+	 * This is similar to wp_attachment_is_image(), except that it also ignores GIF images.
+	 *
+	 * @since 0.14.9
+	 * @param string $attachment_id An attachment ID.
+	 *
+	 * @return bool
+	 */
+	private static function ignore_attachment( $attachment_id ) {
+		$file = get_attached_file( $attachment_id );
+
+		if ( ! $file ) {
+			return true;
+		}
+
 		$allowed_ext = [ 'jpg', 'jpeg', 'jpe', 'png' ];
-		$file_ext    = wp_check_filetype( $file_src, Helper::get_mime_types() )['ext'];
+		$file_ext    = wp_check_filetype( $file, Helper::get_mime_types() )['ext'];
 
 		// We can’t use wp_attachment_is() for the check, because that will also allow GIF images.
 		if ( ! $file_ext || ! in_array( $file_ext, $allowed_ext, true ) ) {
@@ -1033,6 +1051,6 @@ class Timmy {
 			return true;
 		}
 
-		return $return;
+		return false;
 	}
 }
