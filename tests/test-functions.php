@@ -84,30 +84,6 @@ class TestFunctions extends TimmyUnitTestCase {
 		remove_filter( 'big_image_size_threshold', '__return_false' );
 	}
 
-	public function test_get_timber_image_texts() {
-		$attachment  = $this->create_image();
-		$alt_text    = 'A marvellous doggo';
-		$description = 'This will be the title';
-		$result      = get_timber_image_texts( $attachment, 'large' );
-
-		$this->assertEquals( $result, [
-			'alt' => '',
-		] );
-
-		$this->set_alt_text( $attachment->ID, $alt_text );
-		$this->set_description( $attachment->ID, $description );
-
-		// Reload attachment to get updated values.
-		$attachment = new Image( $attachment->ID );
-
-		$result = get_timber_image_texts( $attachment, 'large' );
-
-		$this->assertEquals( $result, [
-			'alt'   => $alt_text,
-			'title' => $description,
-		] );
-	}
-
 	public function test_get_timber_image_attributes_responsive() {
 		$alt_text   = 'A good boye.';
 		$attachment = $this->create_image( [ 'alt' => $alt_text ] );

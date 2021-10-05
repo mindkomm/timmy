@@ -49,7 +49,8 @@ class TimmyUnitTestCase extends WP_UnitTestCase {
 	 * @return string
 	 */
 	public function get_file_path( $attachment, $size ) {
-		$src  = $attachment->src( $size );
+		$src = $attachment->src( $size );
+
 		return \Timber\ImageHelper::get_server_location( $src );
 	}
 
@@ -82,7 +83,7 @@ class TimmyUnitTestCase extends WP_UnitTestCase {
 		 * In a normal WordPress environment, SVG images have to be allowed manually.
 		 */
 		if ( ! $filetype['type'] ) {
-			if ( '.svg' === substr( $file, -4, 4 ) ) {
+			if ( '.svg' === substr( $file, - 4, 4 ) ) {
 				$filetype = [
 					'type' => 'image/svg+xml',
 				];
@@ -105,15 +106,21 @@ class TimmyUnitTestCase extends WP_UnitTestCase {
 
 	public function create_image( $args = [] ) {
 		$args = wp_parse_args( $args, [
-			'alt'  => null,
-			'file' => 'test.jpg',
+			'file'        => 'test.jpg',
 			'post_parent' => 0,
+			'alt'         => null,
+			'caption'     => null,
+			'description' => null,
 		] );
 
 		$attachment_id = $this->create_image_attachment( $args['post_parent'], $args['file'] );
 
 		if ( ! empty( $args['alt'] ) ) {
 			$this->set_alt_text( $attachment_id, $args['alt'] );
+		}
+
+		if ( ! empty( $args['caption'] ) ) {
+			$this->set_caption( $attachment_id, $args['caption'] );
 		}
 
 		if ( ! empty( $args['description'] ) ) {
@@ -139,6 +146,13 @@ class TimmyUnitTestCase extends WP_UnitTestCase {
 
 	public function set_alt_text( $attachment_id, $alt_text ) {
 		update_post_meta( $attachment_id, '_wp_attachment_image_alt', $alt_text );
+	}
+
+	public function set_caption( $attachment_id, $description ) {
+		wp_update_post( [
+			'ID'           => $attachment_id,
+			'post_excerpt' => $description,
+		] );
 	}
 
 	public function set_description( $attachment_id, $description ) {

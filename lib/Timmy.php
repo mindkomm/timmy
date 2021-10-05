@@ -98,6 +98,10 @@ class Timmy {
 		$twig->addFilter( new Twig_SimpleFilter( 'lazy', 'make_timber_image_lazy' ) );
 
 		$twig->addFunction( new \Twig_SimpleFunction( 'get_timber_image_responsive_acf', 'get_timber_image_responsive_acf' ) );
+		// Image texts.
+		$twig->addFunction( new \Timber\Twig_Function( 'get_timber_image_alt', 'get_timber_image_alt' ) );
+		$twig->addFunction( new \Timber\Twig_Function( 'get_timber_image_caption', 'get_timber_image_caption' ) );
+		$twig->addFunction( new \Timber\Twig_Function( 'get_timber_image_description', 'get_timber_image_description' ) );
 
 		return $twig;
 	}
