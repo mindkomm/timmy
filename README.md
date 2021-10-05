@@ -18,7 +18,7 @@ To get this:
 src="data:image/gif;base64,R0lGODlhAQABAAAAADs="
 sizes="100vw"
 alt="Your alt text"
-title="Your image title">
+>
 ```
 
 ## Documentation

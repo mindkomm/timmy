@@ -2,19 +2,25 @@
 
 You can use the following functions to get your images into your template:
 
-## Basic stuff
+## Basic functions
 
 * [get_timber_image()](#get_timber_image) – Returns the src attribute together with optional alt and title attributes for an image.
 * [get_timber_image_src()](#get_timber_image_src) – Returns the src for an image.
 * [get_timber_image_srcset()](#get_timber_image_srcset) – Returns the srcset attribute based on the `srcset` entry in the image configuration for an image size.
 
-## Responsive Images
+## Responsive images
 
 * [get_timber_image_responsive()](#get_timber_image_responsive) – Returns the srcset, size, alt and title attributes for an image.
 * [get_timber_image_responsive_src()](#get_timber_image_responsive_src) – Returns the srcset and sizes for an image. This is practically the same as *get_timber_image_responsive*, just without alt and title tags.
 * [get_timber_image_responsive_acf()](#get_timber_image_responsive_acf) – Takes the field name of an ACF image as the input and returns the same output as *get_timber_image_responsive()*.
 
-## Additional Helpers
+## Image texts
+
+* [get_timber_image_alt()](#get_timber_image_alt) – Returns the alt text for an image.
+* [get_timber_image_caption()](#get_timber_image_caption) – Returns the caption for an image.
+* [get_timber_image_description()](#get_timber_image_description) – Returns the description for an image.
+
+## Additional helpers
 
 * [get_post_thumbnail()](#get_post_thumbnail) – Returns the src, alt and title attributes for a post thumbnail at a given size.
 * [get_post_thumbnail_src()](#get_post_thumbnail_src) – Returns the src for a post thumbnail. This is practically the same as *get_post_thumbnail*, just without alt and title tags.
@@ -128,6 +134,66 @@ For Twig, you won’t use the function as a filter like in the examples above, b
 
 ```twig
 <img{{ get_timber_image_responsive_acf('image', 'custom-4-crop') }}>
+```
+
+---
+
+## get_timber_image_alt
+
+`get_timber_image_alt( int|Timber\Image $timber_image )`
+
+Returns the alt text for an image. Be aware that `get_timber_image_responsive()` will always add an `alt` attribute.
+
+### Usage in WordPress templates
+
+```php
+<img … alt="<?php echo get_timber_image_alt( $post->thumbail() ); ?>">
+```
+
+### Usage in Twig
+
+```twig
+<img … alt="{{ get_timber_image_alt(post.thumbnail) }}">
+```
+
+---
+
+## get_timber_image_caption
+
+`get_timber_image_caption( int|Timber\Image $timber_image )`
+
+Returns the caption for an image.
+
+### Usage in WordPress templates
+
+```php
+<?php echo get_timber_image_caption( $post->thumbail() ); ?>
+```
+
+### Usage in Twig
+
+```twig
+{{ get_timber_image_caption(post.thumbnail) }}
+```
+
+---
+
+## get_timber_image_description
+
+`get_timber_image_description( int|Timber\Image $timber_image )`
+
+Returns the description for an image.
+
+### Usage in WordPress templates
+
+```php
+<?php echo get_timber_image_description( $post->thumbail() ); ?>
+```
+
+### Usage in Twig
+
+```twig
+{{ get_timber_image_description(post.thumbnail) }}
 ```
 
 ---
