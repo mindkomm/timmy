@@ -108,7 +108,7 @@ if ( ! function_exists( 'get_timber_image_srcset' ) ) :
 			$force,
 			$max_width,
 			$max_height,
-			$oversize,
+			$upscale,
 		) = Timmy::get_image_params( $timber_image, $img_size );
 
 		$return = false;
@@ -132,7 +132,7 @@ if ( ! function_exists( 'get_timber_image_srcset' ) ) :
 				) = Helper::get_dimensions_for_srcset_size( $img_size['resize'], $srcset_src );
 
 				// Bail out if the current size’s width is bigger than available width.
-				if ( ! $oversize['allow']
+				if ( ! $upscale['allow']
 					&& ( $width_intermediate > $max_width
 						|| ( 0 === $width_intermediate && $height_intermediate > $max_height )
 					)
@@ -346,7 +346,7 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 			$force,
 			$max_width,
 			$max_height,
-			$oversize,
+			$upscale,
 		) = Timmy::get_image_params( $timber_image, $img_size );
 
 		// Get default size for image.
@@ -442,10 +442,10 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 		 *
 		 * @since 0.10.0
 		 */
-		if ( $oversize['style_attr'] ) {
-			if ( 'width' === $oversize['style_attr'] && ! $args['attr_width'] ) {
+		if ( $upscale['style_attr'] ) {
+			if ( 'width' === $upscale['style_attr'] && ! $args['attr_width'] ) {
 				$attributes['style'] = 'width:' . $max_width . 'px;';
-			} elseif ( 'height' === $oversize['style_attr'] && ! $args['attr_height'] ) {
+			} elseif ( 'height' === $upscale['style_attr'] && ! $args['attr_height'] ) {
 				$attributes['style'] = 'height:' . $max_height . 'px;';
 			}
 		}

@@ -1,7 +1,5 @@
 <?php
 
-use Timber\ImageHelper;
-
 /**
  * Class TestFilters
  */

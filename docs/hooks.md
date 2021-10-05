@@ -4,7 +4,7 @@
 	- [timmy/sizes](#timmysizes)
 	- [timmy/resize/ignore](#timmyresizeignore)
 	- [timmy/generate_srcset_sizes](#timmygenerate_srcset_sizes)
-	- [timmy/oversize](#timmyoversize)
+	- [timmy/upscale](#timmyupscale)
 	- [timmy/use_src_default](#timmyuse_src_default)
 	- [timmy/src_default](#timmysrc_default)
 
@@ -79,29 +79,29 @@ add_filter( 'timmy/generate_srcset_sizes', '__return_true' );
 
 ---
 
-### timmy/oversize
+### timmy/upscale
 
-Filters the default oversize parameters used for an image.
+Filters the default upscale parameters used for an image.
 
-An oversize parameter set for an individual image size will always overwrite values set through this filter.
+An upscale parameter set for an individual image size will always overwrite values set through this filter.
 
 **Parameters**
 
-- **$oversize_defaults**  
-	*(array|bool)* Default oversize parameters. Can be a boolean to set all values in the array or an array with keys `allow` and `style_attr`. Default `array( 'allow' => false, 'style_attr' => true )`.
+- **$upscale_defaults**  
+	*(array|bool)* Default upscale parameters. Can be a boolean to set all values in the array or an associative array with keys `allow` and `style_attr`. Default `array( 'allow' => false, 'style_attr' => true )`.
 
 **Example**
 
 ```php
-add_filter( 'timmy/oversize', function( $oversize ) {
+add_filter( 'timmy/upscale', function( $upscale ) {
     // Never set the style_attr for an image
-    $oversize['style_attr'] = false;
+    $upscale['style_attr'] = false;
 
-    return $oversize;
+    return $upscale;
 } );
 
-// Shortcut to set all oversize parameters to false
-add_filter( 'timmy/oversize', '__return_false' );
+// Shortcut to set all upscale parameters to false
+add_filter( 'timmy/upscale', '__return_false' );
 ```
 
 ### timmy/use_src_default

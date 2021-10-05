@@ -36,6 +36,10 @@ class TimmyUnitTestCase extends WP_UnitTestCase {
 		return wp_upload_dir()['url'];
 	}
 
+	public function get_upload_path() {
+		return wp_upload_dir()['path'];
+	}
+
 	/**
 	 * Gets a file path from an attachment object.
 	 *
