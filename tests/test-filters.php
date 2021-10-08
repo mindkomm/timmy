@@ -11,7 +11,7 @@ class TestFilters extends TimmyUnitTestCase {
 		$result     = get_timber_image_responsive( $attachment, 'large' );
 
 		$expected = sprintf(
-			' srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" sizes="100vw" alt=""',
+			' srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" sizes="100vw" width="1400" height="933" loading="lazy" alt=""',
 			$this->get_upload_url()
 		);
 
@@ -31,7 +31,7 @@ class TestFilters extends TimmyUnitTestCase {
 		$result     = get_timber_image_responsive( $attachment, 'large' );
 
 		$expected = sprintf(
-			' srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" src="%1$s/test-1400x0-c-default.jpg" sizes="100vw" alt=""',
+			' srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" src="%1$s/test-1400x0-c-default.jpg" sizes="100vw" width="1400" height="933" loading="lazy" alt=""',
 			$this->get_upload_url()
 		);
 

@@ -180,6 +180,29 @@ if ( ! function_exists( 'get_timber_image_srcset' ) ) :
 	}
 endif;
 
+/**
+ * Gets value for loading attribute.
+ *
+ * @param $loading
+ *
+ * @since 0.15.0
+ *
+ * @return false|string
+ */
+function get_timber_image_loading( $loading = 'lazy' ) {
+	if ( ! wp_lazy_loading_enabled( 'img', 'timmy' ) ) {
+		return false;
+	}
+
+	$allowed_lazy_values = [ 'lazy', 'eager', 'auto' ];
+
+	if ( $loading && in_array( $loading, $allowed_lazy_values, true ) ) {
+		return $loading;
+	}
+
+	return false;
+}
+
 if ( ! function_exists( 'get_timber_image_texts' ) ) :
 	/**
 	 * Get the image attributes (alt and title) for a TimberImage.
@@ -288,9 +311,13 @@ if ( ! function_exists( 'get_timber_image_attributes_responsive' ) ) :
 			'return_format' => 'array',
 		] );
 
+		$attributes = [];
+
+		$attributes['alt'] = get_timber_image_alt( $timber_image );
+
 		return array_merge(
 			get_timber_image_responsive_src( $timber_image, $size, $args ),
-			[ 'alt' => get_timber_image_alt( $timber_image ) ]
+			$attributes
 		);
 	}
 endif;
@@ -316,6 +343,11 @@ endif;
 if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 	/**
 	 * Get srcset and sizes for a TimberImage.
+	 *
+	 * This is practically the same as get_timber_image_responsive(), just without an alt tag.
+	 *
+	 * @todo Merge this again with get_timber_image_responsive() and add the option to control the
+	 *       alt attribute there.
 	 *
 	 * @param Timber\Image|int $timber_image Instance of TimberImage or Attachment ID.
 	 * @param string|array     $size         Size key or array of the image to return.
@@ -348,15 +380,17 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 		 * @since 0.12.0
 		 */
 		$default_args = array(
-			'attr_width'    => false,
-			'attr_height'   => false,
+			'attr_width'    => true,
+			'attr_height'   => true,
 			'lazy_srcset'   => false,
 			'lazy_src'      => false,
 			'lazy_sizes'    => false,
+			'loading'       => 'lazy',
 			'return_format' => 'string',
 		);
 
 		$args = wp_parse_args( $args, $default_args );
+		$attributes  = array();
 
 		/**
 		 * Directly return full source when full source or an SVG image is requested.
@@ -368,10 +402,10 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 			|| 'image/svg+xml' === $timber_image->post_mime_type
 		) {
 			if ( 'original' === $size ) {
-				$attributes = [ 'src' => Helper::get_original_attachment_url( $timber_image->ID ) ];
+				$attributes['src'] = Helper::get_original_attachment_url( $timber_image->ID );
 			} else {
 				// Deliberately get the attachment URL, which can be a 'scaled' version of an image.
-				$attributes = [ 'src' => wp_get_attachment_url( $timber_image->ID ) ];
+				$attributes['src'] = wp_get_attachment_url( $timber_image->ID );
 			}
 
 			if ( 'string' === $args['return_format'] ) {
@@ -401,7 +435,6 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 		// Get default size for image.
 		$default_size = Timmy::resize( $img_size, $file_src, $width, $height, $crop, $force );
 
-		$attributes  = array();
 		$srcset_name = $args['lazy_srcset'] ? 'data-srcset' : 'srcset';
 		$src_name    = $args['lazy_src'] ? 'data-src' : 'src';
 		$sizes_name  = $args['lazy_sizes'] ? 'data-sizes' : 'sizes';
@@ -489,6 +522,12 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 		 * Set width or height in px as a style attribute to act as max-width and max-height
 		 * and prevent the image to be displayed bigger than it is.
 		 *
+		 * Using a style attribute is better than using width and height attributes, because width
+		 * and height attributes are presentational, which means that any CSS will have higher
+		 * specificity. If you automatically stretch images to the full width using "width: 100%",
+		 * there’s no way you can prevent these images from growing bigger than they should. With
+		 * a style attributes, that works.
+		 *
 		 * @since 0.10.0
 		 */
 		if ( $upscale['style_attr'] ) {
@@ -499,12 +538,37 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 			}
 		}
 
+		// Get real image dimension.
+		$real_size = $timber_image->sizes[ $size ];
+
 		if ( $args['attr_width'] ) {
-			$attributes['width'] = $width;
+			$width = min(
+				$real_size['width'] > 0 ? $real_size['width'] : $width,
+				$max_width
+			);
+
+			if ( $width > 0 ) {
+				$attributes['width'] = $width;
+			}
 		}
 
 		if ( $args['attr_height'] ) {
-			$attributes['height'] = $height;
+			$height = min(
+				$real_size['height'] > 0 ? $real_size['height'] : $height,
+				$max_height
+			);
+
+			// Add height only if bigger > 0.
+			if ( $height > 0 ) {
+				$attributes['height'] = $height;
+			}
+		}
+
+		// Lazy-loading.
+		$loading = get_timber_image_loading( $args['loading'] );
+
+		if ( $loading ) {
+			$attributes['loading'] = $loading;
 		}
 
 		if ( 'array' === $args['return_format'] ) {

@@ -80,7 +80,7 @@ class TestUpscale extends TimmyUnitTestCase {
 		] );
 		$result     = get_timber_image_responsive( $attachment, 'upscale-default' );
 
-		$expected = ' srcset="' . $this->get_upload_url() . '/test-200px-150x0-c-default.jpg 150w, ' . $this->get_upload_url() . '/test-200px-200x0-c-default.jpg 200w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="width:200px;" alt=""';
+		$expected = ' srcset="' . $this->get_upload_url() . '/test-200px-150x0-c-default.jpg 150w, ' . $this->get_upload_url() . '/test-200px-200x0-c-default.jpg 200w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" width="200" height="133" loading="lazy" alt=""';
 
 		$this->assertEquals( $expected, $result );
 	}
@@ -91,7 +91,7 @@ class TestUpscale extends TimmyUnitTestCase {
 		] );
 		$result     = get_timber_image_responsive( $attachment, 'upscale-default-portrait' );
 
-		$expected = ' srcset="' . $this->get_upload_url() . '/test-133px-portrait-0x150-c-default.jpg 100w, ' . $this->get_upload_url() . '/test-133px-portrait-133x200-c-default.jpg 133w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="height:200px;" alt=""';
+		$expected = ' srcset="' . $this->get_upload_url() . '/test-133px-portrait-0x150-c-default.jpg 100w, ' . $this->get_upload_url() . '/test-133px-portrait-133x200-c-default.jpg 133w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" width="133" height="200" loading="lazy" alt=""';
 
 		$this->assertEquals( $expected, $result );
 	}
@@ -102,7 +102,7 @@ class TestUpscale extends TimmyUnitTestCase {
 		] );
 		$result = get_timber_image_responsive( $attachment, 'upscale-allow-true' );
 
-		$expected = ' srcset="' . $this->get_upload_url() . '/test-200px-150x0-c-default.jpg 150w, ' . $this->get_upload_url() . '/test-200px-1403x0-c-default.jpg 1403w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="width:200px;" alt=""';
+		$expected = ' srcset="' . $this->get_upload_url() . '/test-200px-150x0-c-default.jpg 150w, ' . $this->get_upload_url() . '/test-200px-1403x0-c-default.jpg 1403w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" width="200" height="133" loading="lazy" alt=""';
 
 		$this->assertEquals( $expected, $result );
 	}
@@ -113,7 +113,7 @@ class TestUpscale extends TimmyUnitTestCase {
 		] );
 		$result     = get_timber_image_responsive( $attachment, 'upscale-allow-true-style-attr-false' );
 
-		$expected = ' srcset="' . $this->get_upload_url() . '/test-200px-150x0-c-default.jpg 150w, ' . $this->get_upload_url() . '/test-200px-1405x0-c-default.jpg 1405w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt=""';
+		$expected = ' srcset="' . $this->get_upload_url() . '/test-200px-150x0-c-default.jpg 150w, ' . $this->get_upload_url() . '/test-200px-1405x0-c-default.jpg 1405w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" width="200" height="133" loading="lazy" alt=""';
 
 		$this->assertEquals( $expected, $result );
 	}
@@ -124,7 +124,7 @@ class TestUpscale extends TimmyUnitTestCase {
 		] );
 		$result = get_timber_image_responsive( $attachment, 'deprecated-oversize' );
 
-		$expected = ' srcset="' . $this->get_upload_url() . '/test-200px-150x0-c-default.jpg 150w, ' . $this->get_upload_url() . '/test-200px-1404x0-c-default.jpg 1404w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="width:200px;" alt=""';
+		$expected = ' srcset="' . $this->get_upload_url() . '/test-200px-150x0-c-default.jpg 150w, ' . $this->get_upload_url() . '/test-200px-1404x0-c-default.jpg 1404w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" width="200" height="133" loading="lazy" alt=""';
 
 		$this->assertEquals( $expected, $result );
 	}

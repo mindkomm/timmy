@@ -11,7 +11,7 @@ You can use the following functions to get your images into your template:
 ## Responsive images
 
 * [get_timber_image_responsive()](#get_timber_image_responsive) – Returns the srcset, size, alt and title attributes for an image.
-* [get_timber_image_responsive_src()](#get_timber_image_responsive_src) – Returns the srcset and sizes for an image. This is practically the same as *get_timber_image_responsive*, just without alt and title tags.
+* [get_timber_image_responsive_src()](#get_timber_image_responsive_src) – Returns the srcset and sizes for an image. This is practically the same as *get_timber_image_responsive*, just without the alt tag.
 * [get_timber_image_responsive_acf()](#get_timber_image_responsive_acf) – Takes the field name of an ACF image as the input and returns the same output as *get_timber_image_responsive()*.
 
 ## Image texts
@@ -111,7 +111,7 @@ Returns the srcset, size, alt and title attributes for a TimberImage. If this fu
 
 ## get_timber_image_responsive_src
 
-Returns the srcset and sizes for a TimberImage. This is practically the same as `get_timber_image_responsive`, just without alt and title tags.
+Returns the srcset and sizes for a TimberImage. This is practically the same as `get_timber_image_responsive`, just without the alt tag.
 
 ---
 

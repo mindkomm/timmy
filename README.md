@@ -55,8 +55,8 @@ Timber already comes with a set of really nice features for handling images. Esp
 ### Helps you with image HTML output
 
 * **Responsive images**. For each image size, you can define additional sizes that will be used for the responsive image srcset.
-
-* **Accessibility**. Timmy automatically pulls image descriptions and alternative texts for `alt` and `title` tags.
+* **Lazy loading markup**. Adds lazy loading markup to your image.
+* **Accessibility**. Timmy automatically pulls image alt texts and adds them to your image.
 
 ### Reasonable image generation
 

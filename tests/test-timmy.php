@@ -29,7 +29,7 @@ class TestTimmy extends TimmyUnitTestCase {
 			$context
 		);
 		$expected = sprintf(
-			' data-srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" alt=""',
+			' data-srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" width="1400" height="933" loading="lazy" alt=""',
 			$this->get_upload_url()
 		);
 
@@ -41,7 +41,7 @@ class TestTimmy extends TimmyUnitTestCase {
 			$context
 		);
 		$expected = sprintf(
-			' data-srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" data-src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" alt=""',
+			' data-srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" data-src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" width="1400" height="933" loading="lazy" alt=""',
 			$this->get_upload_url()
 		);
 
@@ -53,7 +53,7 @@ class TestTimmy extends TimmyUnitTestCase {
 			$context
 		);
 		$expected = sprintf(
-			' data-srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" data-src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-sizes="100vw" alt=""',
+			' data-srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" data-src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-sizes="100vw" width="1400" height="933" loading="lazy" alt=""',
 			$this->get_upload_url()
 		);
 
@@ -71,7 +71,7 @@ class TestTimmy extends TimmyUnitTestCase {
 		$attachment = $this->create_image();
 		$result     = get_timber_image_responsive_src( $attachment, 'one-size' );
 
-		$expected = ' src="' . $this->get_upload_url() . '/test-768x0-c-default.jpg"';
+		$expected = ' src="' . $this->get_upload_url() . '/test-768x0-c-default.jpg" width="768" height="512" loading="lazy"';
 
 		$this->assertEquals( $expected, $result );
 	}
@@ -90,7 +90,7 @@ class TestTimmy extends TimmyUnitTestCase {
 		] );
 
 		$expected = sprintf(
-			' srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" alt=""',
+			' srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" width="1400" height="933" loading="lazy" alt=""',
 			$this->get_upload_url()
 		);
 
