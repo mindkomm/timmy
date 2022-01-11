@@ -48,5 +48,10 @@
   ],
   "scripts": {
     "install-tests": "bash bin/install-wp-tests.sh timmy-tests root \"\" localhost latest"
+  },
+  "config": {
+    "allow-plugins": {
+      "composer/installers": true
+    }
   }
 }

@@ -230,7 +230,7 @@ endif;
 /**
  * Gets the image alt text.
  *
- * @since 1.0.0
+ * @since 0.15.0
  *
  * @param int|Timber\Image $timber_image Image ID or instance of TimberImage.
  *
@@ -249,7 +249,7 @@ function get_timber_image_alt( $timber_image ) {
 /**
  * Gets the image caption.
  *
- * @since 1.0.0
+ * @since 0.15.0
  *
  * @param int|Timber\Image $timber_image Image ID or instance of TimberImage.
  *
@@ -268,7 +268,7 @@ function get_timber_image_caption( $timber_image ) {
 /**
  * Gets the image description.
  *
- * @since 1.0.0
+ * @since 0.15.0
  *
  * @param int|Timber\Image $timber_image Image ID or instance of TimberImage.
  *
