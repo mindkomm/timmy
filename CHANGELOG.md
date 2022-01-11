@@ -3,6 +3,7 @@
 ## 0.15.0
 
 - Fixed a bug when Timmy tries to resize files that it shouldn’t, like video files.
+- Increased minimum supported PHP version to 7.4.
 - Added `get_timber_image_width()` function.
 - Added `get_timber_image_height()` function.
 - Fixed issue when Timmy created upscaled image files even though it shouldn’t.
