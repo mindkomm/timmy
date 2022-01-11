@@ -6,7 +6,7 @@ use Timber\ImageHelper;
  * Class TestAcf
  */
 class TestAcf extends TimmyUnitTestCase {
-	function setUp() {
+	function set_up() {
 		require_once __DIR__ . '/assets/acf-image-field.php';
 	}
 

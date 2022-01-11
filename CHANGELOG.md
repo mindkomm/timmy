@@ -9,6 +9,7 @@
     }
     ```
 - Fixed a bug when Timmy tries to resize files that it shouldn’t, like video files.
+- Updated testing suite.
 
 ## 0.14.8 - 2021-07-28
 
