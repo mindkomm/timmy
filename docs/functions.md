@@ -7,6 +7,8 @@ You can use the following functions to get your images into your template:
 * [get_timber_image()](#get_timber_image) – Returns the src attribute together with optional alt and title attributes for an image.
 * [get_timber_image_src()](#get_timber_image_src) – Returns the src for an image.
 * [get_timber_image_srcset()](#get_timber_image_srcset) – Returns the srcset attribute based on the `srcset` entry in the image configuration for an image size.
+* [get_timber_image_width()](#get_timber_image_width) - Returns the width of an image size.
+* [get_timber_image_height()](#get_timber_image_height) - Returns the height of an image size.
 
 ## Responsive images
 
@@ -85,6 +87,46 @@ Returns the srcset attribute based on the `srcset` entry in the image configurat
 
 ```twig
 <img srcset="{{ post.thumbnail|get_timber_image_srcset('teaser') }}">
+```
+
+---
+
+## get_timber_image_width
+
+`get_timber_image_width( int $post_id|TimberImage $timber_image, string|array $size )`
+
+Returns the image width for an image size. If you use the [lazy loading functionality](https://github.com/mindkomm/timmy/blob/master/docs/lazy-loading.md), this is added automatically.
+
+**Usage in WordPress templates**
+
+```php
+<img width="<?php get_timber_image_width( get_post_thumbnail_id(), 'header' ); ?>">
+```
+
+**Usage in Twig**
+
+```twig
+<img width="{{ post.thumbnail|get_timber_image_width('header') }}">
+```
+
+---
+
+## get_timber_image_height
+
+`get_timber_image_height( int $post_id|TimberImage $timber_image, string|array $size )`
+
+Returns the image height for an image size. If you use the [lazy loading functionality](https://github.com/mindkomm/timmy/blob/master/docs/lazy-loading.md), this is added automatically.
+
+**Usage in WordPress templates**
+
+```php
+<img height="<?php get_timber_image_height( get_post_thumbnail_id(), 'header' ); ?>">
+```
+
+**Usage in Twig**
+
+```twig
+<img height="{{ post.thumbnail|get_timber_image_height('header') }}">
 ```
 
 ---

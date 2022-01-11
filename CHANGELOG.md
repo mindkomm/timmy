@@ -3,6 +3,8 @@
 ## 0.15.0
 
 - Fixed a bug when Timmy tries to resize files that it shouldn’t, like video files.
+- Added `get_timber_image_width()` function.
+- Added `get_timber_image_height()` function.
 - Fixed issue when Timmy created upscaled image files even though it shouldn’t.
 - Changed oversize configuration option naming from `oversize` to `upscale`. You can still use `oversize`, but it will be deprecated in the future.
 

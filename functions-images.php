@@ -601,6 +601,50 @@ if ( ! function_exists( 'get_timber_image_responsive_acf' ) ) :
 	}
 endif;
 
+/**
+ * Gets the image width for a size.
+ *
+ * @since 0.15.0
+ *
+ * @param int|Timber\Image $timber_image Image ID or instance of TimberImage.
+ * @param string|array     $size         Size key.
+ *
+ * @return false|int False on error or image width.
+ */
+function get_timber_image_width( $timber_image, $size ) {
+	$timber_image = Timmy::get_timber_image( $timber_image );
+
+	if ( ! $timber_image || empty( $timber_image->sizes[ $size ] )) {
+		return false;
+	}
+
+	$real_size = $timber_image->sizes[ $size ];
+
+	return (int) $real_size['width'];
+}
+
+/**
+ * Gets the image height for a size.
+ *
+ * @since 0.15.0
+ *
+ * @param int|Timber\Image $timber_image Image ID or instance of TimberImage.
+ * @param string|array     $size         Size key.
+ *
+ * @return false|int False on error or image height.
+ */
+function get_timber_image_height( $timber_image, $size ) {
+	$timber_image = Timmy::get_timber_image( $timber_image );
+
+	if ( ! $timber_image || empty( $timber_image->sizes[ $size ] )) {
+		return false;
+	}
+
+	$real_size = $timber_image->sizes[ $size ];
+
+	return (int) $real_size['height'];
+}
+
 if ( ! function_exists( 'get_post_thumbnail' ) ) :
 	/**
 	 * Get Post Thumbnail source together with alt and title attributes.

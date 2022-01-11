@@ -273,4 +273,18 @@ class TestFunctions extends TimmyUnitTestCase {
 
 		$this->assertEquals( $expected, $result );
 	}
+
+	public function test_get_timber_image_width() {
+		$attachment = $this->create_image();
+		$result     = get_timber_image_width( $attachment, 'large' );
+
+		$this->assertEquals( 1400, $result );
+	}
+
+	public function test_get_timber_image_height() {
+		$attachment = $this->create_image();
+		$result     = get_timber_image_height( $attachment, 'large' );
+
+		$this->assertEquals( 933, $result );
+	}
 }
