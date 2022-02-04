@@ -128,4 +128,38 @@ class TestUpscale extends TimmyUnitTestCase {
 
 		$this->assertEquals( $expected, $result );
 	}
+
+	public function test_wp_get_attachment_image_src_upscale() {
+		$attachment = $this->create_image( [
+			'file' => 'test-200px.jpg',
+		] );
+		$image      = wp_get_attachment_image_src( $attachment->ID, 'medium' );
+
+		$url    = $image[0];
+		$width  = $image[1];
+		$height = $image[2];
+
+		$expected_url = $this->get_upload_url() . '/test-200px.jpg';
+
+		$this->assertEquals( $expected_url, $url );
+		$this->assertEquals( 200, $width );
+		$this->assertEquals( 133, $height );
+	}
+
+	public function test_wp_get_attachment_image_src_upscale_allow_true() {
+		$attachment = $this->create_image( [
+			'file' => 'test-200px.jpg',
+		] );
+		$image      = wp_get_attachment_image_src( $attachment->ID, 'upscale-allow-true' );
+
+		$url    = $image[0];
+		$width  = $image[1];
+		$height = $image[2];
+
+		$expected_url = $this->get_upload_url() . '/test-200px-1403x0-c-default.jpg';
+
+		$this->assertEquals( $expected_url, $url );
+		$this->assertEquals( 1403, $width );
+		$this->assertEquals( 933, $height );
+	}
 }

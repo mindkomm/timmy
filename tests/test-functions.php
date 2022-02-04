@@ -287,4 +287,25 @@ class TestFunctions extends TimmyUnitTestCase {
 
 		$this->assertEquals( 933, $result );
 	}
+
+	/**
+	 * When wp_get_attachment_image_src() is called on a Timmy image size, it should return the
+	 * correct size.
+	 *
+	 * @return void
+	 */
+	public function test_wp_get_attachment_image_src() {
+		$attachment = $this->create_image();
+		$image      = wp_get_attachment_image_src( $attachment->ID, 'medium' );
+
+		$url    = $image[0];
+		$width  = $image[1];
+		$height = $image[2];
+
+		$expected_url = $this->get_upload_url() . '/test-600x0-c-default.jpg';
+
+		$this->assertEquals( $expected_url, $url );
+		$this->assertEquals( 600, $width );
+		$this->assertEquals( 400, $height );
+	}
 }
