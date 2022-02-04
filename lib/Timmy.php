@@ -649,7 +649,7 @@ class Timmy {
 	 * @return string The src of the image.
 	 */
 	public static function resize( $img_size, $file_src, $width, $height, $crop, $force ) {
-		// Check if image should be converted to JPG first.
+		// Check if image should be converted to JPG.
 		if ( self::should_convert_to_jpg( $img_size, $file_src ) ) {
 			// Sort out background color which will show instead of transparency.
 			$bgcolor  = is_string( $img_size['tojpg'] ) ? $img_size['tojpg'] : '#FFFFFF';
@@ -661,10 +661,26 @@ class Timmy {
 			&& $width > 0 && $height > 0
 		) {
 			$color = is_string( $img_size['letterbox'] ) ? $img_size['letterbox'] : '#000000';
-			return Timber\ImageHelper::letterbox( $file_src, $width, $height, $color );
+			$file_src = Timber\ImageHelper::letterbox( $file_src, $width, $height, $color );
 		} else {
-			return Timber\ImageHelper::resize( $file_src, $width, $height, $crop, $force );
+			$file_src = Timber\ImageHelper::resize( $file_src, $width, $height, $crop, $force );
 		}
+
+		// Check if image should be converted to webp.
+		if ( self::should_convert_to_webp( $img_size, $file_src ) ) {
+			$args = [
+				'quality' => 80,
+				'force'   => false,
+			];
+
+			if ( is_array( $img_size['towebp'] ) ) {
+				$args = wp_parse_args( $img_size['towebp'], $args );
+			}
+
+			$file_src = Timber\ImageHelper::img_to_webp( $file_src, $args['quality'], $args['force'] );
+		}
+
+		return $file_src;
 	}
 
 	/**
@@ -683,6 +699,20 @@ class Timmy {
 	public static function should_convert_to_jpg( $img_size, $file_src ) {
 		if ( isset( $img_size['tojpg'] )
 			&& $img_size['tojpg']
+			&& 'application/pdf' !== wp_check_filetype(
+				$file_src,
+				Helper::get_mime_types()
+            )['type']
+		) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public static function should_convert_to_webp( $img_size, $file_src ) {
+		if ( isset( $img_size['towebp'] )
+			&& $img_size['towebp']
 			&& 'application/pdf' !== wp_check_filetype(
 				$file_src,
 				Helper::get_mime_types()

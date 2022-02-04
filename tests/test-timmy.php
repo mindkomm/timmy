@@ -154,4 +154,24 @@ class TestTimmy extends TimmyUnitTestCase {
 
 		$this->assertArrayNotHasKey( 'sizes', $meta );
 	}
+
+	public function test_webp() {
+		$attachment = $this->create_image();
+
+		$image     = wp_get_attachment_image_src( $attachment->ID, 'webp' );
+		$file_path = $this->get_upload_path() . '/test-1400x0-c-default.webp';
+
+		$this->assertEquals( $image[0], $this->get_upload_url() . '/test-1400x0-c-default.webp' );
+		$this->assertFileExists( $file_path );
+	}
+
+	public function test_webp_quality() {
+		$attachment = $this->create_image();
+
+		$image     = wp_get_attachment_image_src( $attachment->ID, 'webp-quality-100' );
+		$file_path = $this->get_upload_path() . '/test-1400x0-c-default.webp';
+
+		$this->assertEquals( $image[0], $this->get_upload_url() . '/test-1400x0-c-default.webp' );
+		$this->assertFileExists( $file_path );
+	}
 }

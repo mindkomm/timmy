@@ -26,7 +26,6 @@ add_filter( 'timmy/sizes', function( $sizes ) {
 		'medium'                              => [
 			'resize' => [ 600 ],
 		],
-		// For better compatibility with other plugins, define the 'large' image size.
 		'large'                               => [
 			'resize' => [ 1400 ],
 			'srcset' => [ [ 560 ] ],
@@ -36,6 +35,16 @@ add_filter( 'timmy/sizes', function( $sizes ) {
 			'resize' => [ 1400 ],
 			'srcset' => [ [ 560 ], '1x', '1.5x' ],
 			'sizes'  => '100vw',
+		],
+		'webp'                                => [
+			'resize' => [ 1400 ],
+			'towebp' => true,
+		],
+		'webp-quality-100' => [
+			'resize' => [ 1400 ],
+			'towebp' => [
+				'quality' => 100,
+			],
 		],
 		'header-wide'                         => [
 			'resize'                => [ 1400 ],
