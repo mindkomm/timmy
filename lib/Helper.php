@@ -112,8 +112,8 @@ class Helper {
 	/**
 	 * Gets width and height dimensions by considering the upscale parameters.
 	 *
-	 * @param int $width Current width.
-	 * @param int $height Current height.
+	 * @param int   $width  Current width.
+	 * @param int   $height Current height.
 	 * @param array $args
 	 *
 	 * @return array|int[]
@@ -157,16 +157,82 @@ class Helper {
 	}
 
 	/**
-	 * Get width and height for an image size.
+	 * Get width and height for an image size based on the image configuration.
 	 *
 	 * @param array $img_size Image size configuration array.
+	 *
 	 * @return array Width and height.
 	 */
 	public static function get_dimensions_for_size( $img_size ) {
-		$width  = absint( $img_size['resize'][0] );
-		$height = isset( $img_size['resize'][1] ) ? absint( $img_size['resize'][1] ) : 0;
+		return array( self::get_width_for_size( $img_size ), self::get_height_for_size( $img_size ) );
+	}
 
-		return array( $width, $height );
+	/**
+	 * Get width for an image size based on the image configuration.
+	 *
+	 * @since 0.15.0
+	 * @param array $img_size Image size configuration array.
+	 *
+	 * @return float|int
+	 */
+	public static function get_width_for_size( $img_size ) {
+		return abs( (int) $img_size['resize'][0] );
+	}
+
+	/**
+	 * Get height for an image size based on the image configuration.
+	 *
+	 * @since 0.15.0
+	 * @param array $img_size Image size configuration array.
+	 *
+	 * @return float|int
+	 */
+	public static function get_height_for_size( $img_size ) {
+		return isset( $img_size['resize'][1] )
+			? abs( (int) $img_size['resize'][1] )
+			: 0;
+	}
+
+	/**
+	 * Gets a new height calculated from a width and the original dimensions.
+	 *
+	 * @since 0.15.0
+	 *
+	 * @param int $width           Known width.
+	 * @param int $original_width  Original width.
+	 * @param int $original_height Original height.
+	 *
+	 * @return int
+	 */
+	public static function get_height_from_width( $width, $original_width, $original_height ) {
+		return (int) round( $width * ( $original_height / $original_width ) );
+	}
+
+	/**
+	 * Calculates correct height based on a width and the original dimensions.
+	 *
+	 * @since 0.15.0
+	 *
+	 * @param int $height          Height to check.
+	 * @param int $width           Known width.
+	 * @param int $original_width  Original width.
+	 * @param int $original_height Original height.
+	 *
+	 * @return int|mixed
+	 */
+	public static function maybe_fix_height( $height, $width, $original_width, $original_height ) {
+		/**
+		 * Calculate the correct image height if it wasn’t set before.
+		 *
+		 * Attention: If we would pass in the image height to the resize function itself, then we
+		 * would end up with different file names. This would cause the same image sizes to be
+		 * generated again, just with a different file name.
+		 */
+		if ( $height < 1 ) {
+			$height = Helper::get_height_from_width( $width, $original_width, $original_height );
+		}
+
+		return $height;
 	}
 
 	/**
@@ -242,7 +308,7 @@ class Helper {
 	}
 
 	/**
-	 * Get crop value from a resize parameter.
+	 * Gets crop value from a resize parameter.
 	 *
 	 * @param array $img_size Image size configuration array.
 	 *
@@ -253,7 +319,7 @@ class Helper {
 	}
 
 	/**
-	 * Get force value from a resize parameter.
+	 * Gets force value from a resize parameter.
 	 *
 	 * @param array $img_size Image size configuration array.
 	 *
@@ -264,7 +330,7 @@ class Helper {
 	}
 
 	/**
-	 * Returns the HTML for an array of HTML tag attributes.
+	 * Gets the HTML for an array of HTML tag attributes.
 	 *
 	 * @since 0.14.0
 	 *

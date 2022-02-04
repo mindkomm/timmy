@@ -538,12 +538,12 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 			}
 		}
 
-		// Get real image dimension.
-		$real_size = $timber_image->sizes[ $size ];
-
 		if ( $args['attr_width'] ) {
+			// Get real image width.
+			$width_b = get_timber_image_width( $timber_image, $size );
+
 			$width = min(
-				$real_size['width'] > 0 ? $real_size['width'] : $width,
+				$width_b > 0 ? $width_b : $width,
 				$max_width
 			);
 
@@ -553,8 +553,11 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 		}
 
 		if ( $args['attr_height'] ) {
+			// Get real image height.
+			$height_b = get_timber_image_height( $timber_image, $size );
+
 			$height = min(
-				$real_size['height'] > 0 ? $real_size['height'] : $height,
+				$height_b > 0 ? $height_b : $height,
 				$max_height
 			);
 
@@ -607,20 +610,40 @@ endif;
  * @since 0.15.0
  *
  * @param int|Timber\Image $timber_image Image ID or instance of TimberImage.
- * @param string|array     $size         Size key.
+ * @param string|array     $size         Size key or size configuration array.
  *
  * @return false|int False on error or image width.
  */
 function get_timber_image_width( $timber_image, $size ) {
 	$timber_image = Timmy::get_timber_image( $timber_image );
 
-	if ( ! $timber_image || empty( $timber_image->sizes[ $size ] )) {
+	if ( ! $timber_image ) {
 		return false;
 	}
 
-	$real_size = $timber_image->sizes[ $size ];
+	/**
+	 * Get meta data not filtered by Timmy.
+	 *
+	 * @todo: Add a PR to Timber repository that saves the width and the height of an image in the
+	 *      metadata. Timber already calls wp_get_attachment_metadata, but discards the width and
+	 *      height it uses.
+	 */
+	$meta_data = wp_get_attachment_metadata( $timber_image->ID, true );
 
-	return (int) $real_size['width'];
+	$max_width  = $meta_data['width'];
+	$max_height = $meta_data['height'];
+
+	$size = Helper::get_image_size( $size );
+
+	list( $width, $height ) = Helper::get_dimensions_for_size( $size );
+	list( $width ) = Helper::get_dimensions_upscale( $width, $height, [
+		'upscale'    => Helper::get_upscale_for_size( $size ),
+		'resize'     => $size['resize'],
+		'max_width'  => $max_width,
+		'max_height' => $max_height,
+	] );
+
+	return $width;
 }
 
 /**
@@ -636,13 +659,29 @@ function get_timber_image_width( $timber_image, $size ) {
 function get_timber_image_height( $timber_image, $size ) {
 	$timber_image = Timmy::get_timber_image( $timber_image );
 
-	if ( ! $timber_image || empty( $timber_image->sizes[ $size ] )) {
+	if ( ! $timber_image ) {
 		return false;
 	}
 
-	$real_size = $timber_image->sizes[ $size ];
+	// Get meta data not filtered by Timmy.
+	$meta_data  = wp_get_attachment_metadata( $timber_image->ID, true );
+	$max_width  = $meta_data['width'];
+	$max_height = $meta_data['height'];
 
-	return (int) $real_size['height'];
+	$size = Helper::get_image_size( $size );
+
+	list( $width, $height ) = Helper::get_dimensions_for_size( $size );
+
+	$height = Helper::maybe_fix_height( $height, $width, $max_width, $max_height );
+
+	list( , $height ) = Helper::get_dimensions_upscale( $width, $height, [
+		'upscale'    => Helper::get_upscale_for_size( $size ),
+		'resize'     => $size['resize'],
+		'max_width'  => $max_width,
+		'max_height' => $max_height,
+	] );
+
+	return $height;
 }
 
 if ( ! function_exists( 'get_post_thumbnail' ) ) :

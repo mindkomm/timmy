@@ -498,6 +498,8 @@ class Timmy {
 
 		// Bail out if no resize is needed.
 		if ( $width === $max_width ) {
+			$height = Helper::maybe_fix_height( $height, $width, $max_width, $max_height );
+
 			return [ $file_src, $width, $height, false ];
 		}
 
@@ -512,6 +514,8 @@ class Timmy {
 			$width  = $size[0];
 			$height = $size[1];
 		}
+
+		$height = Helper::maybe_fix_height( $height, $width, $max_width, $max_height );
 
 		/**
 		 * For the return, we also send in a fourth parameter, which stands for is_intermediate.
