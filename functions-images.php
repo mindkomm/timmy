@@ -372,7 +372,7 @@ function get_timber_picture_responsive( $timber_image, $size ) {
 		'type'   => $mime_type,
 		'sizes'  => $attributes['sizes'] ?? [],
 		'srcset' => get_timber_image_srcset( $timber_image, array_merge( $size, [
-			'towebp' => ! $towebp,
+			'is_webp_fallback' => $towebp,
 		] ) ),
 	];
 

@@ -667,7 +667,9 @@ class Timmy {
 		}
 
 		// Check if image should be converted to webp.
-		if ( self::should_convert_to_webp( $img_size, $file_src ) ) {
+		if ( ! isset( $img_size['is_webp_fallback'] )
+			&& self::should_convert_to_webp( $img_size, $file_src )
+		) {
 			$args = [
 				'quality' => 80,
 				'force'   => false,
