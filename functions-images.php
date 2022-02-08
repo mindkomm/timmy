@@ -183,9 +183,9 @@ endif;
 /**
  * Gets value for loading attribute.
  *
- * @param $loading
- *
  * @since 0.15.0
+ *
+ * @param $loading
  *
  * @return false|string
  */
@@ -284,6 +284,25 @@ function get_timber_image_description( $timber_image ) {
 	return $timber_image->post_content;
 }
 
+/**
+ * Gets the mime type for a Timber image.
+ *
+ * @since 1.0.0
+ *
+ * @param int|\Timber\Image $timber_image Instance of Timber\Image or Attachment ID.
+ *
+ * @return false
+ */
+function get_timber_image_mime_type( $timber_image ) {
+	$timber_image = Timmy::get_timber_image( $timber_image );
+
+	if ( ! $timber_image ) {
+		return false;
+	}
+
+	return $timber_image->post_mime_type;
+}
+
 if ( ! function_exists( 'get_timber_image_attributes_responsive' ) ) :
 	/**
 	 * Gets all image attributes for a responsive TimberImage.
@@ -321,6 +340,89 @@ if ( ! function_exists( 'get_timber_image_attributes_responsive' ) ) :
 		);
 	}
 endif;
+
+/**
+ * Gets the picture markup used for modern image formats using a fallback source.
+ * @since 0.15.0
+ *
+ * @param int|\Timber\Image $timber_image Instance of Timber\Image or Attachment ID.
+ * @param string|array      $size         Timmy image size.
+ *
+ * @return false|string
+ */
+function get_timber_picture_responsive( $timber_image, $size ) {
+	$timber_image = Timmy::get_timber_image( $timber_image );
+
+	if ( ! $timber_image ) {
+		return false;
+	}
+
+	$size   = Helper::get_image_size( $size );
+	$towebp = ! empty( $size['towebp'] );
+
+	$mime_type = false;
+
+	if ( $towebp ) {
+		$mime_type = isset( $size['tojpg'] ) && $size['tojpg']
+			? 'image/jpeg'
+			: get_timber_image_mime_type( $timber_image );
+	}
+
+	$attributes = [
+		'type'   => $mime_type,
+		'sizes'  => $attributes['sizes'] ?? [],
+		'srcset' => get_timber_image_srcset( $timber_image, array_merge( $size, [
+			'towebp' => ! $towebp,
+		] ) ),
+	];
+
+	$html = '<source' . Helper::get_attribute_html( $attributes ) . '>' . PHP_EOL;
+
+	if ( $towebp ) {
+		$source_attributes = [
+			'type'   => 'image/webp',
+			'sizes'  => $attributes['sizes'] ?? [],
+			'srcset' => get_timber_image_srcset( $timber_image, $size ),
+		];
+
+		$html .= '<source' . Helper::get_attribute_html( $source_attributes ) . '>' . PHP_EOL;
+	}
+
+	// Add fallback.
+	$html .= get_timber_picture_fallback_image( $timber_image, $size );
+
+	return $html;
+}
+
+/**
+ * Gets the fallback image for a picture image
+ *
+ * @since 1.0.0
+ *
+ * @param int|\Timber\Image $timber_image Instance of Timber\Image or Attachment ID.
+ * @param string|array      $size         Timmy image size.
+ *
+ * @return false|string
+ */
+function get_timber_picture_fallback_image( $timber_image, $size ) {
+	$timber_image = Timmy::get_timber_image( $timber_image );
+
+	if ( ! $timber_image ) {
+		return false;
+	}
+
+	$size = Helper::get_image_size( $size );
+
+	$fallback_attributes = [
+		'src'     => get_timber_image_src( $timber_image, array_merge( $size, [
+			'towebp' => false,
+		] ) ),
+		'alt'     => get_timber_image_alt( $timber_image ) ?: '',
+		'loading' => $attributes['loading'] ?? false,
+	];
+
+	return '<img' . Helper::get_attribute_html( $fallback_attributes ) . '>';
+}
 
 if ( ! function_exists( 'get_timber_image_responsive' ) ) :
 	/**
@@ -389,8 +491,8 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 			'return_format' => 'string',
 		);
 
-		$args = wp_parse_args( $args, $default_args );
-		$attributes  = array();
+		$args       = wp_parse_args( $args, $default_args );
+		$attributes = array();
 
 		/**
 		 * Directly return full source when full source or an SVG image is requested.
@@ -510,7 +612,7 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 				 * For backwards compatibility.
 				 *
 				 * @deprecated since 0.10.0
-				 * @todo Remove in 1.x
+				 * @todo       Remove in 1.x
 				 */
 				$attributes[ $sizes_name ] = $img_size['size'];
 			}
@@ -586,8 +688,8 @@ if ( ! function_exists( 'get_timber_image_responsive_acf' ) ) :
 	/**
 	 * Get a responsive image based on an ACF field.
 	 *
-	 * @param  string $name ACF Field Name.
-	 * @param  string $size Size key of the image to return.
+	 * @param string $name ACF Field Name.
+	 * @param string $size Size key of the image to return.
 	 *
 	 * @return string|bool Image srcset, sizes, alt and title attributes. False if image can’t be
 	 *                     found.
@@ -688,8 +790,8 @@ if ( ! function_exists( 'get_post_thumbnail' ) ) :
 	/**
 	 * Get Post Thumbnail source together with alt and title attributes.
 	 *
-	 * @param  int    $post_id The post id to get the thumbnail from.
-	 * @param  string $size    Size key of the image to return.
+	 * @param int    $post_id The post id to get the thumbnail from.
+	 * @param string $size    Size key of the image to return.
 	 *
 	 * @return string|bool Image src together with alt and title attributes. False if no image can’t
 	 *                     be found.
@@ -722,8 +824,8 @@ if ( ! function_exists( 'get_post_thumbnail_src' ) ) :
 	/**
 	 * Get Post Thumbnail image source at given size.
 	 *
-	 * @param  int    $post_id The post id to get the thumbnail from.
-	 * @param  string $size    Size key of the image to return.
+	 * @param int    $post_id The post id to get the thumbnail from.
+	 * @param string $size    Size key of the image to return.
 	 *
 	 * @return string|bool Image src. False if not an image.
 	 */

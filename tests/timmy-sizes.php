@@ -38,13 +38,28 @@ add_filter( 'timmy/sizes', function( $sizes ) {
 		],
 		'webp'                                => [
 			'resize' => [ 1400 ],
+			'srcset' => [ [ 560 ] ],
+			'sizes'  => '100vw',
 			'towebp' => true,
 		],
-		'webp-quality-100' => [
+		'webp-quality-100'                    => [
 			'resize' => [ 1400 ],
 			'towebp' => [
 				'quality' => 100,
 			],
+		],
+		'picture'                             => [
+			'type'   => 'picture',
+			'resize' => [ 1400 ],
+			'srcset' => [ [ 560 ] ],
+			'sizes'  => '100vw',
+		],
+		'picture-webp'                             => [
+			'type'   => 'picture',
+			'resize' => [ 1400 ],
+			'srcset' => [ [ 560 ] ],
+			'sizes'  => '100vw',
+			'towebp' => true,
 		],
 		'header-wide'                         => [
 			'resize'                => [ 1400 ],

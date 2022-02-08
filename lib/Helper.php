@@ -346,6 +346,10 @@ class Helper {
 		}
 
 		foreach ( $attributes as $key => $attribute ) {
+			if ( '' !== $attribute && empty( $attribute ) ) {
+				continue;
+			}
+
 			$html .= ' ' . esc_attr( $key ) . '="' . esc_attr( $attribute ) . '"';
 		}
 
