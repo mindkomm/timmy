@@ -492,30 +492,7 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 		);
 
 		$args       = wp_parse_args( $args, $default_args );
-		$attributes = array();
-
-		/**
-		 * Directly return full source when full source or an SVG image is requested.
-		 *
-		 * The full size may be a scaled version of the image. To always request the original
-		 * version, 'original' has to be used as the size.
-		 */
-		if ( in_array( $size, [ 'full', 'original' ], true )
-			|| 'image/svg+xml' === $timber_image->post_mime_type
-		) {
-			if ( 'original' === $size ) {
-				$attributes['src'] = Helper::get_original_attachment_url( $timber_image->ID );
-			} else {
-				// Deliberately get the attachment URL, which can be a 'scaled' version of an image.
-				$attributes['src'] = wp_get_attachment_url( $timber_image->ID );
-			}
-
-			if ( 'string' === $args['return_format'] ) {
-				return Helper::get_attribute_html( $attributes );
-			}
-
-			return $attributes;
-		}
+		$attributes = [];
 
 		$img_size = Helper::get_image_size( $size );
 
@@ -523,158 +500,73 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 			return false;
 		}
 
-		list(
-			$file_src,
-			$width,
-			$height,
-			$crop,
-			$force,
-			$max_width,
-			$max_height,
-			$upscale,
-		) = Timmy::get_image_params( $timber_image, $img_size );
+		$image = new \Timmy\Image( $timber_image, $img_size );
 
-		// Get default size for image.
-		$default_size = Timmy::resize( $img_size, $file_src, $width, $height, $crop, $force );
+		$image->set_args( $args );
 
-		$srcset_name = $args['lazy_srcset'] ? 'data-srcset' : 'srcset';
-		$src_name    = $args['lazy_src'] ? 'data-src' : 'src';
-		$sizes_name  = $args['lazy_sizes'] ? 'data-sizes' : 'sizes';
-
+		/**
+		 * Directly return full source when full source or an SVG image is requested.
+		 *
+		 * The full size may be a scaled version of the image. To always request the original
+		 * version, 'original' has to be used as the size.
+		 */
+		if ( in_array( $size, [ 'full', 'original' ], true ) || $image->is_svg() ) {
+			if ( 'original' === $size ) {
+				$attributes['src'] = Helper::get_original_attachment_url( $timber_image->ID );
+			} else {
+				// Deliberately get the attachment URL, which can be a 'scaled' version of an image.
+				$attributes['src'] = wp_get_attachment_url( $timber_image->ID );
+			}
+		} else {
 		$srcset = get_timber_image_srcset( $timber_image, $img_size );
 
 		if ( $srcset ) {
-			$attributes[ $srcset_name ] = $srcset;
-
-			/**
-			 * Filters whether a default src attribute should be added as a fallback.
-			 *
-			 * If this filter returns `true` (the default), then a base64 string will be used as a
-			 * fallback to prevent double downloading images in older browsers. If this filter
-			 * returns `false`, then no src attribute will be added to the image. Use the
-			 * `timmy/src_default` filter to define what should be used as the src attribute’s
-			 * value.
-			 *
-			 * @param bool $use_src_default Whether to apply the fallback. Default true.
-			 */
-			$use_src_default = apply_filters( 'timmy/use_src_default', true );
-
-			if ( $use_src_default ) {
-				// Default fallback src.
-				$src_default = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
-
-				/**
-				 * Filters the src default.
-				 *
-				 * @param string $src_default Src default. Default
-				 *                            `data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7`.
-				 * @param array  $attributes  {
-				 *     An array of helpful attributes in the filter.
-				 *
-				 *     @type string        $default_src  The default src for the image.
-				 *     @type \Timber\Image $timber_image Timber image instance.
-				 *     @type string        $size         The requested image size.
-				 *     @type array         $img_size     The image size configuration.
-				 *     @type array         $attributes   Attributes for the image markup.
-				 * }
-				 */
-				$src_default = apply_filters(
-					'timmy/src_default',
-					$src_default,
-					[
-						'default_src'  => $default_size,
-						'timber_image' => $timber_image,
-						'size'         => $size,
-						'img_size'     => $img_size,
-						'attributes'   => $attributes,
-					]
-				);
-
-				/**
-				 * Add fallback for src attribute to provide valid image markup and prevent double
-				 * downloads in older browsers.
-				 *
-				 * @link http://scottjehl.github.io/picturefill/#support
-				 */
-				$attributes[ $src_name ] = $src_default;
-			}
-
-			/**
-			 * Check for 'sizes' option in image configuration.
-			 * Before v0.10.0, this was just `size`'.
-			 *
-			 * @since 0.10.0
-			 */
-			if ( isset( $img_size['sizes'] ) ) {
-				$attributes[ $sizes_name ] = $img_size['sizes'];
-			} elseif ( isset( $img_size['size'] ) ) {
-				/**
-				 * For backwards compatibility.
-				 *
-				 * @deprecated since 0.10.0
-				 * @todo       Remove in 1.x
-				 */
-				$attributes[ $sizes_name ] = $img_size['size'];
-			}
+				$attributes['srcset'] = $srcset;
+				$attributes['src']    = $image->src_default();
+				$attributes['sizes']  = get_timber_image_sizes( $img_size );
 		} else {
-			$attributes[ $src_name ] = $default_size;
-		}
+				$crop  = Helper::get_crop_for_size( $img_size );
+				$force = Helper::get_force_for_size( $img_size );
 
-		/**
-		 * Set width or height in px as a style attribute to act as max-width and max-height
-		 * and prevent the image to be displayed bigger than it is.
-		 *
-		 * Using a style attribute is better than using width and height attributes, because width
-		 * and height attributes are presentational, which means that any CSS will have higher
-		 * specificity. If you automatically stretch images to the full width using "width: 100%",
-		 * there’s no way you can prevent these images from growing bigger than they should. With
-		 * a style attributes, that works.
-		 *
-		 * @since 0.10.0
-		 */
-		if ( $upscale['style_attr'] ) {
-			if ( 'width' === $upscale['style_attr'] && ! $args['attr_width'] ) {
-				$attributes['style'] = 'width:' . $max_width . 'px;';
-			} elseif ( 'height' === $upscale['style_attr'] && ! $args['attr_height'] ) {
-				$attributes['style'] = 'height:' . $max_height . 'px;';
+				// Get default size for image.
+				$attributes['src'] =  Timmy::resize( $img_size, $image->src(), $image->width(), $image->height(), $crop, $force );
 			}
+
+			$attributes['style'] = $image->style();
 		}
 
 		if ( $args['attr_width'] ) {
-			// Get real image width.
-			$width_b = get_timber_image_width( $timber_image, $size );
-
-			$width = min(
-				$width_b > 0 ? $width_b : $width,
-				$max_width
-			);
-
-			if ( $width > 0 ) {
-				$attributes['width'] = $width;
-			}
+			$attributes['width'] = $image->width();
 		}
 
 		if ( $args['attr_height'] ) {
-			// Get real image height.
-			$height_b = get_timber_image_height( $timber_image, $size );
-
-			$height = min(
-				$height_b > 0 ? $height_b : $height,
-				$max_height
-			);
-
-			// Add height only if bigger > 0.
-			if ( $height > 0 ) {
-				$attributes['height'] = $height;
-			}
+			$attributes['height'] = $image->height();
 		}
 
 		// Lazy-loading.
-		$loading = get_timber_image_loading( $args['loading'] );
+		$attributes['loading'] = $image->loading();
 
-		if ( $loading ) {
-			$attributes['loading'] = $loading;
+		/**
+		 * Maybe rename attributes with "data-" prefixes.
+		 */
+
+		if ( $args['lazy_srcset'] && ! empty( $attributes['srcset'] ) ) {
+			$attributes['data-srcset'] = $attributes['srcset'];
+			unset( $attributes['srcset'] );
 		}
+
+		if ( $args['lazy_src'] && ! empty( $attributes['src'] ) ) {
+			$attributes['data-src'] = $attributes['src'];
+			unset( $attributes['src'] );
+		}
+
+		if ( $args['lazy_sizes'] && ! empty( $attributes['sizes'] ) ) {
+			$attributes['data-sizes'] = $attributes['sizes'];
+			unset( $attributes['sizes'] );
+		}
+
+		// Remove any falsy attributes.
+		$attributes = array_filter( $attributes );
 
 		if ( 'array' === $args['return_format'] ) {
 			return $attributes;

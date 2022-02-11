@@ -22,7 +22,7 @@ class TestFilters extends TimmyUnitTestCase {
 
 	public function test_src_default() {
 		$callback = function( $src_default, $attributes ) {
-			return $attributes['default_src'];
+			return 'alternative_src_default';
 		};
 
 		add_filter( 'timmy/src_default', $callback, 10, 2 );
@@ -31,7 +31,7 @@ class TestFilters extends TimmyUnitTestCase {
 		$result     = get_timber_image_responsive( $attachment, 'large' );
 
 		$expected = sprintf(
-			' srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" src="%1$s/test-1400x0-c-default.jpg" sizes="100vw" width="1400" height="933" loading="lazy" alt=""',
+			' srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" src="alternative_src_default" sizes="100vw" width="1400" height="933" loading="lazy" alt=""',
 			$this->get_upload_url()
 		);
 

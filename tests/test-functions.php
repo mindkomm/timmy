@@ -133,7 +133,7 @@ class TestFunctions extends TimmyUnitTestCase {
 		] );
 
 		$expected = sprintf(
-			' data-srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" data-src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-sizes="100vw" width="1400" height="933" loading="lazy"',
+			' width="1400" height="933" loading="lazy" data-srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" data-src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-sizes="100vw"',
 			$this->get_upload_url()
 		);
 
