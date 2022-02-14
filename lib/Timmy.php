@@ -712,7 +712,7 @@ class Timmy {
 			&& self::should_convert_to_webp( $img_size, $file_src )
 		) {
 			$args = [
-				'quality' => 80,
+				'quality' => 100,
 				'force'   => false,
 			];
 
