@@ -1,0 +1,12 @@
+includes:
+    - vendor/szepeviktor/phpstan-wordpress/extension.neon
+parameters:
+    level: 1
+    paths:
+        - lib/
+        - functions-images.php
+    scanDirectories:
+        - wp-content/plugins/advanced-custom-fields
+    ignoreErrors:
+        # Uses func_get_args()
+        - '#^Function apply_filters(_ref_array)? invoked with [34567] parameters, 2 required\.$#'
