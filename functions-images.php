@@ -226,7 +226,6 @@ function get_timber_picture_responsive( $timber_image, $size, $args = [] ) {
 			'type'    => 'image/webp',
 			'sizes'   => $attributes['sizes'] ?? [],
 			'srcset'  => get_timber_image_srcset( $timber_image, $size ),
-			'loading' => $image->loading(),
 		];
 
 		$html .= '<source' . Helper::get_attribute_html( $source_attributes ) . '>' . PHP_EOL;
