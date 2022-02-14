@@ -277,7 +277,7 @@ class TestFunctions extends TimmyUnitTestCase {
 	public function test_get_timber_image_width() {
 		$attachment = $this->create_image();
 
-		$image  = new \Timmy\Image( $attachment, 'large' );
+		$image  = Timmy\Timmy::get_image( $attachment, 'large' );
 		$result = $image->width();
 
 		$this->assertEquals( 1400, $result );
@@ -286,7 +286,7 @@ class TestFunctions extends TimmyUnitTestCase {
 	public function test_get_timber_image_height() {
 		$attachment = $this->create_image();
 
-		$image  = new \Timmy\Image( $attachment, 'large' );
+		$image  = Timmy\Timmy::get_image( $attachment, 'large' );
 		$result = $image->height();
 
 		$this->assertEquals( 933, $result );

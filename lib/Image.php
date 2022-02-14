@@ -2,8 +2,6 @@
 
 namespace Timmy;
 
-use Timber\Image as TimberImage;
-
 /**
  * Class Image
  *
@@ -11,7 +9,16 @@ use Timber\Image as TimberImage;
  */
 class Image {
 	/**
+	 * Image ID.
+	 *
+	 * @var int
+	 */
+	protected $id;
+
+	/**
 	 * Instance of Timber Image.
+	 *
+	 * @todo Get rid of this.
 	 *
 	 * @var mixed|\Timber\Image
 	 */
@@ -45,29 +52,35 @@ class Image {
 
 	protected $upscale;
 
+	protected function __construct() {}
+
 	/**
-	 * @param      $timber_image
-	 * @param string|array $size
+	 * @param \Timber\Image $timber_image Timber Image.
+	 * @param array         $size         Image size configuration.
+	 *
+	 * @param \Timmy\Image
 	 */
-	public function __construct( $timber_image, $size = null ) {
-		if ( is_numeric( $timber_image ) ) {
-			$timber_image = new TimberImage( $timber_image );
-		} elseif ( is_array( $timber_image ) && isset( $timber_image['ID'] ) ) {
-			// Convert an ACF image array into a Timber image.
-			$timber_image = new TimberImage( $timber_image['ID'] );
-		}
+	public static function build( \Timber\Image $timber_image, array $size = null ) {
+		$image = new static;
 
-		$this->timber_image = $timber_image;
-		$this->size = Helper::get_image_size( $size );
+		$image->id = $timber_image->ID;
+		$image->timber_image = $timber_image;
+		$image->size = $size;
 
-		if ( ! empty( $this->size['key'] ) ) {
-			$this->size_key = $this->size['key'];
-		}
+		$image->resize_crop  = Helper::get_crop_for_size( $image->size );
+		$image->resize_force = Helper::get_force_for_size( $image->size );
 
-		$this->resize_crop  = Helper::get_crop_for_size( $this->size );
-		$this->resize_force = Helper::get_force_for_size( $this->size );
+		$image->upscale = Helper::get_upscale_for_size( $image->size );
 
-		$this->upscale = Helper::get_upscale_for_size( $this->size );
+		return $image;
+	}
+
+	public function set_size_key( $key ) {
+		$this->size_key = $key;
+	}
+
+	public function size() {
+		return $this->size;
 	}
 
 	public function timber_image() {
@@ -80,7 +93,7 @@ class Image {
 				$this->full_src,
 				$this->max_width,
 				$this->max_height
-			) = wp_get_attachment_image_src( $this->timber_image->ID, 'full' );
+			) = wp_get_attachment_image_src( $this->id, 'full' );
 		}
 	}
 
@@ -93,7 +106,7 @@ class Image {
 			 *      metadata. Timber already calls wp_get_attachment_metadata(), but discards the width and
 			 *      height.
 			 */
-			$this->meta = wp_get_attachment_metadata( $this->timber_image->ID, true );
+			$this->meta = wp_get_attachment_metadata( $this->id, true );
 		}
 	}
 
@@ -124,9 +137,9 @@ class Image {
 		 */
 		if ( 'full' === $this->size_key || $this->is_svg() ) {
 			// Deliberately return the attachment URL, which can be a 'scaled' version of an image.
-			return wp_get_attachment_url( $this->timber_image->ID );
+			return wp_get_attachment_url( $this->id );
 		} elseif ( 'original' === $this->size_key ) {
-			return Helper::get_original_attachment_url( $this->timber_image->ID );
+			return Helper::get_original_attachment_url( $this->id );
 		}
 
 		// Resize the image for that size.
@@ -402,7 +415,10 @@ class Image {
 
 		$allowed_lazy_values = [ 'lazy', 'eager', 'auto' ];
 
-		if ( $this->args['loading'] && in_array( $this->args['loading'], $allowed_lazy_values, true ) ) {
+		if (
+			! empty( $this->args['loading'] )
+			&& in_array( $this->args['loading'], $allowed_lazy_values, true )
+		) {
 			return $this->args['loading'];
 		}
 
@@ -448,10 +464,10 @@ class Image {
 		 */
 		if ( in_array( $this->size_key, [ 'full', 'original' ], true ) || $this->is_svg() ) {
 			if ( 'original' === $this->size_key ) {
-				$attributes['src'] = Helper::get_original_attachment_url( $this->timber_image->ID );
+				$attributes['src'] = Helper::get_original_attachment_url( $this->id );
 			} else {
 				// Deliberately get the attachment URL, which can be a 'scaled' version of an image.
-				$attributes['src'] = wp_get_attachment_url( $this->timber_image->ID );
+				$attributes['src'] = wp_get_attachment_url( $this->id );
 			}
 		} else {
 			$srcset = $this->srcset();

@@ -83,6 +83,48 @@ class Timmy {
 	}
 
 	/**
+	 * Gets a Timmy image.
+	 *
+	 * @param \Timber\Image $timber_image
+	 * @param string|array  $size
+	 *
+	 * @return \Timmy\Image
+	 */
+	public static function get_image( $timber_image, $size ) {
+		if ( is_numeric( $timber_image ) ) {
+			$timber_image = new Timber\Image( $timber_image );
+		} elseif ( is_array( $timber_image ) && isset( $timber_image['ID'] ) ) {
+			// Convert an ACF image array into a Timber image.
+			$timber_image = new Timber\Image( $timber_image['ID'] );
+		}
+
+		if ( ! $timber_image instanceof Timber\Image
+			|| ! isset( $timber_image->post_type )
+			|| 'attachment' !== $timber_image->post_type ) {
+			return null;
+		}
+
+		$class      = apply_filters( 'timmy/image/class', Image::class );
+		$size_array = $size;
+
+		if ( is_string( $size ) ) {
+			if ( in_array( $size, [ 'full', 'original' ], true ) ) {
+				$size_array = [];
+			} else {
+				$size_array = Helper::get_image_size( $size );
+			}
+		}
+
+		$image = $class::build( $timber_image, $size_array );
+
+		if ( is_string( $size ) ) {
+			$image->set_size_key( $size );
+		}
+
+		return $image;
+	}
+
+	/**
 	 * Set filters to use Timmy filters and functions in Twig.
 	 *
 	 * @param Twig_Environment $twig The Twig Environment instance.

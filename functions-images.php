@@ -19,13 +19,11 @@ if ( ! function_exists( 'get_timber_image' ) ) :
 	 * @return string|bool Src, alt and title attributes. False if image can’t be found.
 	 */
 	function get_timber_image( $timber_image, $size ) {
-		$timber_image = Timmy::get_timber_image( $timber_image );
+		$image = Timmy::get_image( $timber_image, $size );
 
-		if ( ! $timber_image ) {
+		if ( ! $image ) {
 			return false;
 		}
-
-		$image = new \Timmy\Image( $timber_image, $size );
 
 		$src = $image->src();
 
@@ -49,13 +47,11 @@ if ( ! function_exists( 'get_timber_image_src' ) ) :
 	 * @return string|bool Image src. False if image can’t be found.
 	 */
 	function get_timber_image_src( $timber_image, $size ) {
-		$timber_image = Timmy::get_timber_image( $timber_image );
+		$image = Timmy::get_image( $timber_image, $size );
 
-		if ( ! $timber_image ) {
+		if ( ! $image ) {
 			return false;
 		}
-
-		$image = new \Timmy\Image( $timber_image, $size );
 
 		return $image->src();
 	}
@@ -70,13 +66,11 @@ if ( ! function_exists( 'get_timber_image_srcset' ) ) :
 	 * @return string|bool Image src. False if image can’t be found or no srcset is available.
 	 */
 	function get_timber_image_srcset( $timber_image, $size ) {
-		$timber_image = Timmy::get_timber_image( $timber_image );
+		$image = Timmy::get_image( $timber_image, $size );
 
-		if ( ! $timber_image ) {
+		if ( ! $image ) {
 			return false;
 		}
-
-		$image = new \Timmy\Image( $timber_image, $size );
 
 		return $image->srcset();
 	}
@@ -179,13 +173,11 @@ if ( ! function_exists( 'get_timber_image_attributes_responsive' ) ) :
 	 * @return bool|array An associative array of HTML attributes. False if image can’t be found.
 	 */
 	function get_timber_image_attributes_responsive( $timber_image, $size, $args = array() ) {
-		$timber_image = Timmy::get_timber_image( $timber_image );
+		$image = Timmy::get_image( $timber_image, $size );
 
-		if ( ! $timber_image ) {
+		if ( ! $image ) {
 			return false;
 		}
-
-		$image = new \Timmy\Image( $timber_image, $size );
 
 		// Return attributes as array.
 		$args = wp_parse_args( $args, [
@@ -213,15 +205,14 @@ endif;
  * @return false|string
  */
 function get_timber_picture_responsive( $timber_image, $size, $args = [] ) {
-	$timber_image = Timmy::get_timber_image( $timber_image );
+	$image = Timmy::get_image( $timber_image, $size );
 
-	if ( ! $timber_image ) {
+	if ( ! $image ) {
 		return false;
 	}
 
-	$image = new \Timmy\Image( $timber_image, $size );
-
-	$towebp = ! empty( $size['towebp'] );
+	$size = $image->size();
+	$towebp = ! empty( $size['towebp'] ) && function_exists( 'imagewebp' );
 
 	$mime_type = false;
 
@@ -234,7 +225,7 @@ function get_timber_picture_responsive( $timber_image, $size, $args = [] ) {
 	$attributes = [
 		'type'   => $mime_type,
 		'sizes'  => $attributes['sizes'] ?? [],
-		'srcset' => get_timber_image_srcset( $timber_image, array_merge( $size, [
+		'srcset' => get_timber_image_srcset( $timber_image, array_merge( $image->size(), [
 			'is_webp_fallback' => $towebp,
 		] ) ),
 	];
@@ -362,7 +353,11 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 			return false;
 		}
 
-		$image = new \Timmy\Image( $timber_image, $img_size );
+		$image = Timmy::get_image( $timber_image, $size );
+
+		if ( ! $image ) {
+			return false;
+		}
 
 		$image->set_args( $args );
 
