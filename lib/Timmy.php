@@ -753,6 +753,16 @@ class Timmy {
 		return false;
 	}
 
+	/**
+	 * Checks whether an image should be converted to webp.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array  $img_size Configuration values for an image size.
+	 * @param string $file_src The src of the original image.
+	 *
+	 * @return bool
+	 */
 	public static function should_convert_to_webp( $img_size, $file_src ) {
 		if ( isset( $img_size['towebp'] )
 			&& $img_size['towebp']
@@ -772,7 +782,7 @@ class Timmy {
 	 *
 	 * When 0 is passed to Timber as a width, it calculates the image ratio based on the height of
 	 * the image. We have to account for that, when we use the responsive image, because in the
-	 * srcset, there cant be a value like "image.jpg 0w". So we have to calculate the width based
+	 * srcset, there can’t be a value like "image.jpg 0w". So we have to calculate the width based
 	 * on the values we have.
 	 *
 	 * @since 0.9.3
