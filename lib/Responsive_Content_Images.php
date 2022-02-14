@@ -245,7 +245,7 @@ class Responsive_Content_Images {
 	 * Updates image tag with responsive srcset and sizes attributes.
 	 *
 	 * @param string $image HTML image tag.
-	 * @param int    $data  Image data.
+	 * @param array  $data  Image data.
 	 *
 	 * @return string Reponsive image markup
 	 */
@@ -315,13 +315,15 @@ class Responsive_Content_Images {
 		// Remove title attribute.
 		$image = preg_replace( '/ title="([^"]*)"/', '', $image );
 
+		$non_empty_alt = preg_match( '/ alt="([^"]*)"/', $image, $alt_match );
+
 		/**
 		 * Handle alt attribute.
 		 *
 		 * If a non-empty alt attribute is found for an image, use that one and leave it there,
 		 * otherwise fall back to the default Timmy alt text.
 		 */
-		if ( preg_match( '/ alt="([^"]*)"/', $image, $alt_match ) && ! empty( $alt_match[1] ) ) {
+		if ( $non_empty_alt && ! empty( $alt_match[1] ) ) {
 			unset( $attributes['alt'] );
 		} else {
 			$image = preg_replace( '/ alt="([^"]*)"/', '', $image );

@@ -236,8 +236,8 @@ class Helper {
 	/**
 	 * Get width and height for a srcset size.
 	 *
-	 * @param array     $resize      Resize configuration array.
-	 * @param array|int $srcset_size Srcset definition.
+	 * @param array            $resize      Resize configuration array.
+	 * @param array|string|int $srcset_size Srcset definition.
 	 *
 	 * @return array Width and height.
 	 */

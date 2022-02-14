@@ -154,10 +154,12 @@ function get_timber_image_description( $timber_image ) {
  *
  * @since 0.14.0
  *
- * @param int|Timber\Image $timber_image Instance of TimberImage.
- * @param string           $size         Size key of the image to return the attributes for.
- * @param array            $args         Optional. Array of options. See
- *                                       get_timber_image_responsive() for possible options.
+ * @param int|Timber\Image|\Timmy\Image $timber_image Instance of TimberImage.
+ * @param string                        $size         Size key of the image to return the
+ *                                                    attributes for.
+ * @param array                         $args         Optional. Array of options. See
+ *                                                    get_timber_image_responsive() for possible
+ *                                                    options.
  *
  * @return bool|array An associative array of HTML attributes. False if image can’t be found.
  */
@@ -276,11 +278,17 @@ function get_timber_picture_fallback_image( $timber_image, $size ) {
  *                                       get_timber_image_responsive_src() for a list of args
  *                                       that can be used.
  *
- * @return string|bool Image srcset, sizes, alt and title attributes. False if image can’t be
+ * @return string|false Image srcset, sizes, alt and title attributes. False if image can’t be
  *                     found.
  */
 function get_timber_image_responsive( $timber_image, $size, $args = array() ) {
-	return Helper::get_attribute_html( get_timber_image_attributes_responsive( $timber_image, $size, $args ) );
+	$image = Timmy::get_image( $timber_image, $size );
+
+	if ( ! $image ) {
+		return false;
+	}
+
+	return Helper::get_attribute_html( get_timber_image_attributes_responsive( $image, $size, $args ) );
 }
 
 /**

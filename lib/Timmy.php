@@ -89,9 +89,14 @@ class Timmy {
 	 * @param mixed        $attachment Attachment ID.
 	 * @param string|array  $size
 	 *
-	 * @return \Timmy\Image
+	 * @return null|\Timmy\Image
 	 */
 	public static function get_image( $attachment, $size ) {
+		// Already an image.
+		if ( $attachment instanceof Image ) {
+			return $attachment;
+		}
+
 		if ( $attachment instanceof WP_Post || $attachment instanceof Timber\Image ) {
 			$attachment = $attachment->ID;
 		} elseif ( is_array( $attachment ) && isset( $attachment['ID'] ) ) {
@@ -378,7 +383,7 @@ class Timmy {
 	 * @param array|string $size          Size of image. Image size or array of width and height
 	 *                                    values (in that order).
 	 *
-	 * @return false|array Array containing the image URL, width, height, and boolean for whether
+	 * @return bool|array Array containing the image URL, width, height, and boolean for whether
 	 *                     the image is an intermediate size. False on failure.
 	 */
 	public function filter_image_downsize( $return, $attachment_id, $size ) {
@@ -493,7 +498,7 @@ class Timmy {
 		if ( in_array( $size, array( 'original', 'full' ), true ) ) {
 			$meta_data = wp_get_attachment_metadata( $attachment_id, true );
 
-			if ( isset( $meta_data['width'] ) && isset( $meta_data['height'] ) ) {
+			if ( ! empty( $meta_data['width'] ) && ! empty( $meta_data['height'] ) ) {
 				return array(
 					$file_src,
 					$meta_data['width'],
@@ -608,7 +613,7 @@ class Timmy {
 
 		// Check if non-empty TimberImage was found before returning it.
 		if ( ! $timber_image instanceof Timber\Image
-			|| ! isset( $timber_image->post_type )
+			|| empty( $timber_image->post_type )
 			|| 'attachment' !== $timber_image->post_type
 		) {
 			return false;
@@ -633,7 +638,7 @@ class Timmy {
 			$file_src,
 			$max_width,
 			$max_height
-		) = wp_get_attachment_image_src( $timber_image->ID, 'full' );
+		) = wp_get_attachment_image_src( (int) $timber_image->ID, 'full' );
 
 		$upscale = Helper::get_upscale_for_size( $img_size );
 		$resize  = $img_size['resize'];
@@ -642,6 +647,7 @@ class Timmy {
 		list( $width, $height ) = Helper::get_dimensions_for_size( $img_size );
 
 		// Update upscale style_attr parameter.
+		// @todo Don’t forget to put this at the right place.
 		if ( $upscale['style_attr'] ) {
 			if ( $width > $max_width ) {
 				// Restrict to width.
@@ -1114,7 +1120,8 @@ class Timmy {
 	 * This is similar to wp_attachment_is_image(), except that it also ignores GIF images.
 	 *
 	 * @since 0.14.9
-	 * @param string $attachment_id An attachment ID.
+	 *
+	 * @param int $attachment_id An attachment ID.
 	 *
 	 * @return bool
 	 */
