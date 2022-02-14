@@ -27,6 +27,19 @@ new Timmy\Timmy();
 Timmy\Timmy::init();
 ```
 
+#### Changed how Responsive Content Images should be initialized
+
+**🚫 Before**
+```php
+new Timmy\Responsive_Content_Images()
+```
+
+**✅ After**
+
+```php
+Timmy\Timmy::responsive_content_images();
+```
+
 - Changed additional parameters that are passed to the `timber/src_default` filter. There is no longer an array of additional `$attributes` to this filter, but only an instance of `Timmy\Image`.
 - Removed `get_post_thumbnail()` and `get_post_thumbnail_src()` functions, because they are not namespace as the other functions and are practically the same as `get_timber_image()` and `get_timber_image_src()`.
 

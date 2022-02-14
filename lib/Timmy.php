@@ -46,6 +46,37 @@ class Timmy {
 	}
 
 	/**
+	 * Initializes the responsive content image feature.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param array $args {
+	 *     Optional. An array of arguments for the Responsive Content Image handler.
+	 *
+	 *     @type array|string $map_sizes An associative array of size keys used in the content and
+	 *                                   Timmy sizes to replace them with. E.g., when a large image
+	 *                                   is used in the content, you could use `'large' => 'content`
+	 *                                   to use the 'content' size from your image configuration
+	 *                                   instead of the large size. If you use a string, all sizes
+	 *                                   will be mapped to the size you pass in the string.
+	 *     @type array $content_filters  An array of filters that are added where reponsive content
+	 *                                   image filtering is applied. By default, it’s only applied
+	 *                                   to `the_content`. You can add other filters here, like
+	 *                                   `acf_the_content` or choose to not add `the_content` as a
+	 *                                   filter. If you want `the_content` to work, you need to add
+	 *                                   it yourself when defining this argument.
+	 * }
+	 *
+	 * @return \Timmy\Responsive_Content_Images
+	 */
+	public static function responsive_content_images( array $args = [] ) {
+		$responsive_content_images = Responsive_Content_Images::instance( $args );
+		$responsive_content_images->init();
+
+		return $responsive_content_images;
+	}
+
+	/**
 	 * Setup Timmy
 	 */
 	public function after_setup_theme() {

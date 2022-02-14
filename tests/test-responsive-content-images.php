@@ -1,6 +1,7 @@
 <?php
 
 use Timmy\Responsive_Content_Images;
+use Timmy\Timmy;
 
 /**
  * Class TestResponsiveContentImages
@@ -8,7 +9,7 @@ use Timmy\Responsive_Content_Images;
 class TestResponsiveContentImages extends TimmyUnitTestCase {
 	public function test_classic_image() {
 		$image = $this->create_image();
-		$rci   = new Responsive_Content_Images();
+		$rci   = Timmy::responsive_content_images();
 
 		$content = sprintf(
 			'<p><img class="alignnone size-responsive-content-image wp-image-%2$s" src="%1$s/test-400x0-c-default.jpg" alt="" width="400" /></p>',
@@ -28,7 +29,7 @@ class TestResponsiveContentImages extends TimmyUnitTestCase {
 
 	public function test_block_image() {
 		$image = $this->create_image();
-		$rci   = new Responsive_Content_Images();
+		$rci   = Timmy::responsive_content_images();
 
 		$content = trim( do_blocks( sprintf( '<!-- wp:image {"id":40,"sizeSlug":"responsive-content-image"} -->
 <figure class="wp-block-image size-responsive-content-image"><img src="%1$s/dog-400x0-c-default.jpg" alt="" class="wp-image-%2$s"/></figure>
@@ -49,7 +50,7 @@ class TestResponsiveContentImages extends TimmyUnitTestCase {
 
 	public function test_combined_classic_and_block_images() {
 		$image = $this->create_image();
-		$rci   = new Responsive_Content_Images();
+		$rci   = Timmy::responsive_content_images();
 
 		$content = sprintf(
 			'<p><img class="alignnone size-responsive-content-image wp-image-%2$s" src="%1$s/test-400x0-c-default.jpg" alt="" width="400" /></p>
@@ -78,7 +79,7 @@ class TestResponsiveContentImages extends TimmyUnitTestCase {
 
 	function test_block_image_with_figcaption() {
 		$image = $this->create_image();
-		$rci   = new Responsive_Content_Images();
+		$rci   = Timmy::responsive_content_images();
 
 		$content = sprintf( '<!-- wp:image {"id":40,"sizeSlug":"responsive-content-image"} -->
 <figure class="wp-block-image size-responsive-content-image"><img src="%1$s/dog-400x0-c-default.jpg" alt="" class="wp-image-%2$s"/><figcaption>Image with a caption and a break<br>at 100%</figcaption></figure>
@@ -101,7 +102,7 @@ class TestResponsiveContentImages extends TimmyUnitTestCase {
 
 	function test_block_image_resized_at_75_percent() {
 		$image = $this->create_image();
-		$rci   = new Responsive_Content_Images();
+		$rci   = Timmy::responsive_content_images();
 
 		$content = sprintf( '<!-- wp:image {"id":40,"width":300,"height":200,"sizeSlug":"responsive-content-image"} -->
 <figure class="wp-block-image size-responsive-content-image is-resized"><img src="%1$s/dog-400x0-c-default.jpg" alt="" class="wp-image-%2$s" width="300" height="200"/><figcaption>Image with a caption and a break<br>at 100%</figcaption></figure>
@@ -124,7 +125,7 @@ class TestResponsiveContentImages extends TimmyUnitTestCase {
 
 	function test_block_image_with_alt_text() {
 		$image = $this->create_image();
-		$rci   = new Responsive_Content_Images();
+		$rci   = Timmy::responsive_content_images();
 
 		$content = sprintf( '<!-- wp:image {"id":40,"sizeSlug":"responsive-content-image"} -->
 <figure class="wp-block-image size-responsive-content-image"><img src="%1$s/dog-400x0-c-default.jpg" alt="A dog wrapped in a blanket" class="wp-image-%2$s"/></figure>
@@ -150,7 +151,7 @@ class TestResponsiveContentImages extends TimmyUnitTestCase {
 	 */
 	function test_block_image_pr_37() {
 		$image = $this->create_image();
-		$rci   = new Responsive_Content_Images();
+		$rci   = Timmy::responsive_content_images();
 
 		$content = sprintf(
 			'\n<figure class="wp-block-image size-large"><a href="https://foo"><img src="%1$s/dog-400x0-c-default.jpg" alt="" class="wp-image-%2$s"/></a></figure>\n',
@@ -174,7 +175,7 @@ class TestResponsiveContentImages extends TimmyUnitTestCase {
 	 */
 	function test_block_image_with_other_classes() {
 		$image = $this->create_image();
-		$rci   = new Responsive_Content_Images();
+		$rci   = Timmy::responsive_content_images();
 
 		$content = sprintf(
 			'\n<figure class="wp-block-image alignfull size-large"><a href="https://example.org"><img src="%1$s/dog-400x0-c-default.jpg" alt="" class="wp-image-%2$s"/></a></figure>\n',
@@ -198,7 +199,7 @@ class TestResponsiveContentImages extends TimmyUnitTestCase {
 	 */
 	function test_block_image_with_even_more_classes() {
 		$image = $this->create_image();
-		$rci   = new Responsive_Content_Images();
+		$rci   = Timmy::responsive_content_images();
 
 		$content = sprintf(
 			'\n<figure class="wp-block-image alignfull is-style-special size-large and-another"><a href="https://example.org"><img src="%1$s/dog-400x0-c-default.jpg" alt="" class="wp-image-%2$s"/></a></figure>\n',
@@ -234,7 +235,7 @@ class TestResponsiveContentImages extends TimmyUnitTestCase {
 		add_filter( 'timmy/sizes', $filter );
 
 		$image = $this->create_image();
-		$rci   = new Responsive_Content_Images();
+		$rci   = Timmy::responsive_content_images();
 
 		$content = sprintf(
 			'\n<figure class="wp-block-image alignfull size-gallery/full_screen.and-other"><a href="https://example.org"><img src="%1$s/dog-400x0-c-default.jpg" alt="" class="wp-image-%2$s"/></a></figure>\n',

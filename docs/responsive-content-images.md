@@ -19,7 +19,7 @@ Timmy can make images added to the WYSIWYG editor responsive.
 Enable the functionality in your theme by instantiating the feature in your **functions.php**:
 
 ```php
-new Timmy\Responsive_Content_Images(); 
+Timmy\Timmy::responsive_content_images();
 ```
 
 ## Mapping image sizes
@@ -31,7 +31,7 @@ If you wanted to change the output size for the `small` image size, you could ad
 Through the `map_sizes` option that you can pass to the `Timmy\Responsive_Content_Images()` constructor, you tell Timmy which image size it should use to generate the HTML markup. In the following example, all images added in the editor would be displayed with the `content` size:
 
 ```php
-new Timmy\Responsive_Content_Images( [
+Timmy\Timmy::responsive_content_images( [
     'map_sizes' => 'content',
 ] );
 ```
@@ -39,7 +39,7 @@ new Timmy\Responsive_Content_Images( [
 The `map_sizes` option also accepts an array with values, if you want to map different sizes:
 
 ```php
-new Timmy\Responsive_Content_Images( [
+Timmy\Timmy::responsive_content_images( [
     'map_sizes' => [
         'large'     => 'content',
         'thumbnail' => 'content-small'
@@ -56,7 +56,7 @@ There are times where you might want to have better control over that. By using 
 One example for this is `acf_the_content`, which is used for [ACF WYSIWYG fields](https://www.advancedcustomfields.com/resources/wysiwyg-editor/).
 
 ```php
-new Timmy\Responsive_Content_Images( [
+Timmy\Timmy::responsive_content_images( [
 	'content_filters' => [
 		'acf_the_content' => 11,
 	],
@@ -68,7 +68,7 @@ Use an associative array where the key is the filter name and the value is the p
 As soon as you use the `content_filters` argument, no filters will be applied by default. This means that if you want to use the `the_content` filter alongside the filters you add yourself, you need to add it again manually.
 
 ```php
-new Timmy\Responsive_Content_Images( [
+Timmy\Timmy::responsive_content_images( [
 	'content_filters' => [
         'the_content'     => 10,
 		'acf_the_content' => 11,

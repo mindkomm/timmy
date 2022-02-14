@@ -13,35 +13,29 @@ class Responsive_Content_Images {
 	 */
 	protected $args;
 
+	final protected function __construct() {}
+
 	/**
-	 * Responsive_Content_Images constructor.
+	 * Set args.
 	 *
-	 * @param array $args {
-	 *     Optional. An array of arguments for the Responsive Content Image handler.
+	 * @since 1.0.0
+	 * @see Timmy::responsive_content_images()
 	 *
-	 *     @type array|string $map_sizes An associative array of size keys used in the content and
-	 *                                   Timmy sizes to replace them with. E.g., when a large image
-	 *                                   is used in the content, you could use `'large' => 'content`
-	 *                                   to use the 'content' size from your image configuration
-	 *                                   instead of the large size. If you use a string, all sizes
-	 *                                   will be mapped to the size you pass in the string.
-	 *     @type array $content_filters  An array of filters that are added where reponsive content
-	 *                                   image filtering is applied. By default, it’s only applied
-	 *                                   to `the_content`. You can add other filters here, like
-	 *                                   `acf_the_content` or choose to not add `the_content` as a
-	 *                                   filter. If you want `the_content` to work, you need to add
-	 *                                   it yourself when defining this argument.
-	 * }
+	 * @param array $args Optional. An array of arguments for the Responsive Content Image handler.
+	 *
+	 * @return \Timmy\Responsive_Content_Images
 	 */
-	public function __construct( $args = [] ) {
-		$this->args = wp_parse_args( $args, [
+	public static function instance( array $args = [] ) {
+		$self = new self;
+
+		$self->args = wp_parse_args( $args, [
 			'map_sizes'       => [],
 			'content_filters' => [
 				'the_content' => 10,
 			],
 		] );
 
-		$this->init();
+		return $self;
 	}
 
 	/**
