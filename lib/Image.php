@@ -582,7 +582,7 @@ class Image {
 		$post = get_post( $this->id );
 
 		if ( $post && ! empty( $post->post_content ) ) {
-			return apply_filters( 'the_content', $post->post_content );
+			return $post->post_content;
 		}
 
 		return null;
