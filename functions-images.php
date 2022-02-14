@@ -223,9 +223,9 @@ function get_timber_picture_responsive( $timber_image, $size, $args = [] ) {
 
 	if ( $towebp ) {
 		$source_attributes = [
-			'type'   => 'image/webp',
-			'sizes'  => $attributes['sizes'] ?? [],
-			'srcset' => get_timber_image_srcset( $timber_image, $size ),
+			'type'    => 'image/webp',
+			'sizes'   => $attributes['sizes'] ?? [],
+			'srcset'  => get_timber_image_srcset( $timber_image, $size ),
 			'loading' => $image->loading(),
 		];
 
@@ -298,9 +298,9 @@ function get_timber_image_responsive( $timber_image, $size, $args = array() ) {
  *      Optional. Array of options.
  *
  *      @type bool   $attr_width    Whether to add a width attribute to an image, if needed.
- *                                  Default false.
+ *                                  Default true.
  *      @type bool   $attr_height   Whether to add a height attribute to an image, if needed.
- *                                  Default false.
+ *                                  Default true.
  *      @type bool   $lazy_srcset   Whether the srcset attribute should be prepended with
  *                                  "data-". Default false.
  *      @type bool   $lazy_src      Whether the src attribute should be prepended with "data-".
@@ -311,37 +311,17 @@ function get_timber_image_responsive( $timber_image, $size, $args = array() ) {
  * @return string|bool|array Image srcset and sizes attributes. False if image can’t be found.
  */
 function get_timber_image_responsive_src( $timber_image, $size, $args = array() ) {
-	/**
-	 * Default arguments for image markup.
-	 *
-	 * @since 0.12.0
-	 */
-	$default_args = array(
-		'attr_width'    => true,
-		'attr_height'   => true,
-		'lazy_srcset'   => false,
-		'lazy_src'      => false,
-		'lazy_sizes'    => false,
-		'loading'       => 'lazy',
-		'return_format' => 'string',
-	);
-
-	$args     = wp_parse_args( $args, $default_args );
-	$img_size = Helper::get_image_size( $size );
-
-	if ( ! $img_size ) {
-		return false;
-	}
-
 	$image = Timmy::get_image( $timber_image, $size );
 
 	if ( ! $image ) {
 		return false;
 	}
 
-	$image->set_args( $args );
+	$args = wp_parse_args( $args, [
+		'return_format' => 'string',
+	] );
 
-	$attributes = $image->responsive_attributes();
+	$attributes = $image->responsive_attributes( $args );
 
 	if ( 'array' === $args['return_format'] ) {
 		return $attributes;

@@ -411,18 +411,23 @@ class Image {
 		return 0;
 	}
 
-	public function loading() {
+	/**
+	 * Gets value for loading attributes.
+	 *
+	 * @param string $value Optional. The value that is validated against a list of allowed values.
+	 *                      Default 'lazy'.
+	 *
+	 * @return false|string
+	 */
+	public function loading( string $value = 'lazy' ) {
 		if ( ! wp_lazy_loading_enabled( 'img', 'timmy' ) ) {
 			return false;
 		}
 
 		$allowed_lazy_values = [ 'lazy', 'eager', 'auto' ];
 
-		if (
-			! empty( $this->args['loading'] )
-			&& in_array( $this->args['loading'], $allowed_lazy_values, true )
-		) {
-			return $this->args['loading'];
+		if ( ! empty( $value ) && in_array( $value, $allowed_lazy_values, true ) ) {
+			return $value;
 		}
 
 		return false;
@@ -432,23 +437,25 @@ class Image {
 		 return $this->upscale;
 	}
 
+	/**
+	 * Gets image style attribute.
+	 *
+	 * Sets width or height in px as a style attribute to act as max-width and max-height
+	 * and prevent the image to be displayed bigger than it is.
+	 *
+	 * Using a style attribute is better than using width and height attributes, because width and
+	 * height attributes are presentational, which means that any CSS will have higher specificity.
+	 * If you automatically stretch images to the full width using "width: 100%", there’s no way you
+	 * can prevent these images from growing bigger than they should. With a style attributes, that
+	 * works.
+	 *
+	 * @since 0.10.0
+	 */
 	public function style() {
-		/**
-		 * Set width or height in px as a style attribute to act as max-width and max-height
-		 * and prevent the image to be displayed bigger than it is.
-		 *
-		 * Using a style attribute is better than using width and height attributes, because width
-		 * and height attributes are presentational, which means that any CSS will have higher
-		 * specificity. If you automatically stretch images to the full width using "width: 100%",
-		 * there’s no way you can prevent these images from growing bigger than they should. With
-		 * a style attributes, that works.
-		 *
-		 * @since 0.10.0
-		 */
 		if ( $this->upscale['style_attr'] ) {
-			if ( 'width' === $this->upscale['style_attr'] && ! $this->args['attr_width'] ) {
+			if ( 'width' === $this->upscale['style_attr'] ) {
 				return 'width:' . $this->max_width . 'px;';
-			} elseif ( 'height' === $this->upscale['style_attr'] && ! $this->args['attr_height'] ) {
+			} elseif ( 'height' === $this->upscale['style_attr'] ) {
 				return 'height:' . $this->max_height . 'px;';
 			}
 		}
@@ -456,7 +463,23 @@ class Image {
 		return false;
 	}
 
-	public function responsive_attributes() {
+	public function responsive_attributes( $args ) {
+		/**
+		 * Default arguments for image markup.
+		 *
+		 * @since 0.12.0
+		 */
+		$default_args = [
+			'attr_width'    => true,
+			'attr_height'   => true,
+			'lazy_srcset'   => false,
+			'lazy_src'      => false,
+			'lazy_sizes'    => false,
+			'loading'       => 'lazy',
+		];
+
+		$args = wp_parse_args( $args, $default_args );
+
 		$attributes = [];
 
 		/**
@@ -498,32 +521,34 @@ class Image {
 			$attributes['style'] = $this->style();
 		}
 
-		if ( $this->args['attr_width'] ) {
+		if ( $args['attr_width'] ) {
 			$attributes['width'] = $this->width();
+			$attributes['style'] = false;
 		}
 
-		if ( $this->args['attr_height'] ) {
+		if ( $args['attr_height'] ) {
 			$attributes['height'] = $this->height();
+			$attributes['style'] = false;
 		}
 
 		// Lazy-loading.
-		$attributes['loading'] = $this->loading();
+		$attributes['loading'] = $this->loading( $args['loading'] );
 
 		/**
 		 * Maybe rename attributes with "data-" prefixes.
 		 */
 
-		if ( $this->args['lazy_srcset'] && ! empty( $attributes['srcset'] ) ) {
+		if ( $args['lazy_srcset'] && ! empty( $attributes['srcset'] ) ) {
 			$attributes['data-srcset'] = $attributes['srcset'];
 			unset( $attributes['srcset'] );
 		}
 
-		if ( $this->args['lazy_src'] && ! empty( $attributes['src'] ) ) {
+		if ( $args['lazy_src'] && ! empty( $attributes['src'] ) ) {
 			$attributes['data-src'] = $attributes['src'];
 			unset( $attributes['src'] );
 		}
 
-		if ( $this->args['lazy_sizes'] && ! empty( $attributes['sizes'] ) ) {
+		if ( $args['lazy_sizes'] && ! empty( $attributes['sizes'] ) ) {
 			$attributes['data-sizes'] = $attributes['sizes'];
 			unset( $attributes['sizes'] );
 		}
@@ -540,10 +565,6 @@ class Image {
 
 	public function resize_force() {
 		return $this->resize_force;
-	}
-
-	public function set_args( $args ) {
-		$this->args = $args;
 	}
 
 	/**
