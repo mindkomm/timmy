@@ -51,7 +51,7 @@ class Image {
 	 * @param int   $image_id Attachment image id.
 	 * @param array $size     Image size configuration.
 	 *
-	 * @param \Timmy\Image
+	 * @return \Timmy\Image
 	 */
 	public static function build( int $image_id, array $size = null ) {
 		$image = new static;
@@ -150,9 +150,6 @@ class Image {
 	 *
 	 * @link http://scottjehl.github.io/picturefill/#support
 	 *
-	 * @param int|\Timber\Image $timber_image Instance of Timber\Image or attachment ID.
-	 * @param string|array      $size         Size key or array of the image to return.
-	 *
 	 * @return string|bool Image src. False if image can’t be found or no srcset is available.
 	 */
 	public function src_default() {
@@ -178,8 +175,8 @@ class Image {
 		/**
 		 * Filters the src default.
 		 *
-		 * @param string $src_default Src default. Default
-		 *                            `data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7`.
+		 * @param string       $src_default Src default. Default
+		 *                                  `data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7`.
 		 * @param \Timmy\Image $image       Timmy image instance.
 		 */
 		$src_default = apply_filters( 'timmy/src_default', $src_default, $this );

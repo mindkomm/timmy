@@ -1086,8 +1086,6 @@ class Timmy {
 	 *
 	 * @param bool     $return     Whether to ignore an image size.
 	 * @param \WP_Post $attachment Attachment post.
-	 * @param string   $size       Requested image size.
-	 * @param string   $file_src   File src.
 	 *
 	 * @return bool
 	 */
