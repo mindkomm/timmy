@@ -22,23 +22,25 @@ class Timmy {
 	public $image_sizes_for_ui = array();
 
 	/**
-	 * Timmy constructor.
+	 * Timmy can’t be instantiated directly.
 	 */
-	public function __construct() {
-		if ( class_exists( 'Timber\ImageHelper' ) ) {
-			$this->init();
-		}
-	}
+	final protected function __construct() {}
 
 	/**
 	 * Hook into WordPress
 	 */
-	public function init() {
+	public static function init() {
+		if ( ! class_exists( 'Timber\ImageHelper' ) ) {
+			return;
+		}
+
+		$self = new self;
+
 		// Wait for theme to initialize to make sure that we can access all image sizes.
-		add_action( 'after_setup_theme', array( $this, 'after_setup_theme' ) );
+		add_action( 'after_setup_theme', [ $self, 'after_setup_theme' ] );
 
 		// Add filters and functions to integrate Timmy into Timber and Twig.
-		add_filter( 'timber/twig', array( $this, 'filter_twig' ) );
+		add_filter( 'timber/twig', [ $self, 'filter_twig' ] );
 
 		add_filter( 'timmy/resize/ignore', array( __CLASS__, 'ignore_unallowed_files' ), 10, 2 );
 	}

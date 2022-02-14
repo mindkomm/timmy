@@ -33,14 +33,15 @@ composer require mindkomm/timmy
 Require the autoload file at the top of your **functions.php**:
 
 ```php
-require_once( __DIR__ . '/vendor/autoload.php' );
+require_once __DIR__ . '/vendor/autoload.php';
 ```
 
 Now initialize Timmy right after Timber:
 
 ```php
 new Timber\Timber();
-new Timmy\Timmy();
+
+Timmy\Timmy::init()
 ```
 
 ## 2. Prepare Media Settings
