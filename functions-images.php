@@ -93,7 +93,7 @@ function get_timber_image_texts( $timber_image ) {
 /**
  * Gets the image alt text.
  *
- * @since 0.15.0
+ * @since 1.0.0
  *
  * @param int|Timber\Image $timber_image Image ID or instance of TimberImage.
  *
@@ -112,7 +112,7 @@ function get_timber_image_alt( $timber_image ) {
 /**
  * Gets the image caption.
  *
- * @since 0.15.0
+ * @since 1.0.0
  *
  * @param int|Timber\Image $timber_image Image ID or instance of TimberImage.
  *
@@ -131,7 +131,7 @@ function get_timber_image_caption( $timber_image ) {
 /**
  * Gets the image description.
  *
- * @since 0.15.0
+ * @since 1.0.0
  *
  * @param int|Timber\Image $timber_image Image ID or instance of TimberImage.
  *
@@ -185,7 +185,8 @@ function get_timber_image_attributes_responsive( $timber_image, $size, $args = a
 
 /**
  * Gets the picture markup used for modern image formats using a fallback source.
- * @since 0.15.0
+ *
+ * @since 1.0.0
  *
  * @param int|\Timber\Image $timber_image Instance of Timber\Image or Attachment ID.
  * @param string|array      $size         Timmy image size.

@@ -4,7 +4,7 @@ You can use the following functions to get your images into your template:
 
 ## Basic functions
 
-* [get_timber_image()](#get_timber_image) – Returns the src attribute together with optional alt and title attributes for an image.
+* [get_timber_image()](#get_timber_image) – Returns the src attribute together with the alt attribute for an image.
 * [get_timber_image_src()](#get_timber_image_src) – Returns the src for an image.
 * [get_timber_image_srcset()](#get_timber_image_srcset) – Returns the srcset attribute based on the `srcset` entry in the image configuration for an image size.
 * [get_timber_image_width()](#get_timber_image_width) - Returns the width of an image size.
@@ -12,7 +12,7 @@ You can use the following functions to get your images into your template:
 
 ## Responsive images
 
-* [get_timber_image_responsive()](#get_timber_image_responsive) – Returns the srcset, size, alt and title attributes for an image.
+* [get_timber_image_responsive()](#get_timber_image_responsive) – Returns the srcset, size and alt attributes for an image.
 * [get_timber_image_responsive_src()](#get_timber_image_responsive_src) – Returns the srcset and sizes for an image. This is practically the same as *get_timber_image_responsive*, just without the alt tag.
 * [get_timber_image_responsive_acf()](#get_timber_image_responsive_acf) – Takes the field name of an ACF image as the input and returns the same output as *get_timber_image_responsive()*.
 
@@ -29,9 +29,9 @@ You can use the following functions to get your images into your template:
 
 ## get_timber_image
 
-`get_timber_image( int $post_id|TimberImage $timberImage, string|array $size )`
+`get_timber_image( int $post_id|\Timber\Image $timber_image, string|array $size )`
 
-Returns the src attribute together with optional alt and title attributes for a TimberImage.
+Returns the src attribute together with the alt attribute for an image.
 
 #### Usage in WordPress templates
 
@@ -41,7 +41,7 @@ Returns the src attribute together with optional alt and title attributes for a 
 
 #### Usage in Twig
 
-For Twig, this function is used as a filter on the TimberImage appended with a `|`.
+For Twig, this function is used as a filter on the image appended with a `|`.
 
 ```twig
 <img{{ post.thumbnail|get_timber_image('custom-4-crop') }}>
@@ -51,9 +51,9 @@ For Twig, this function is used as a filter on the TimberImage appended with a `
 
 ## get_timber_image_src
 
-`get_timber_image_src( int $post_id|TimberImage $timber_image, string|array $size )`
+`get_timber_image_src( int $post_id|\Timber\Image $timber_image, string|array $size )`
 
-Returns the src for a TimberImage.
+Returns the src for an image.
 
 #### Usage in WordPress templates
 
@@ -71,7 +71,7 @@ Returns the src for a TimberImage.
 
 ## get_timber_image_srcset
 
-`get_timber_image_srcset( int $post_id|TimberImage $timber_image, string|array $size )`
+`get_timber_image_srcset( int $post_id|\Timber\Image $timber_image, string|array $size )`
 
 Returns the srcset attribute based on the `srcset` entry in the image configuration for an image size.
 
@@ -91,7 +91,7 @@ Returns the srcset attribute based on the `srcset` entry in the image configurat
 
 ## get_timber_image_width
 
-`get_timber_image_width( int $post_id|TimberImage $timber_image, string|array $size )`
+`get_timber_image_width( int $post_id|\Timber\Image $timber_image, string|array $size )`
 
 Returns the image width for an image size. If you use the [lazy loading functionality](https://github.com/mindkomm/timmy/blob/master/docs/lazy-loading.md), this is added automatically.
 
@@ -111,7 +111,7 @@ Returns the image width for an image size. If you use the [lazy loading function
 
 ## get_timber_image_height
 
-`get_timber_image_height( int $post_id|TimberImage $timber_image, string|array $size )`
+`get_timber_image_height( int $post_id|\Timber\Image $timber_image, string|array $size )`
 
 Returns the image height for an image size. If you use the [lazy loading functionality](https://github.com/mindkomm/timmy/blob/master/docs/lazy-loading.md), this is added automatically.
 
@@ -131,9 +131,9 @@ Returns the image height for an image size. If you use the [lazy loading functio
 
 ## get_timber_image_responsive
 
-`get_timber_image_responsive( int $post_id|TimberImage $timber_image, string|array $size )`
+`get_timber_image_responsive( int $post_id|\Timber\Image $timber_image, string|array $size )`
 
-Returns the srcset, size, alt and title attributes for a TimberImage. If this function is used with a SVG image, the single src will be returned instead of srcset.
+Returns the srcset, size and alt attributes for an image. If this function is used with an SVG image, the single src will be returned instead of srcset.
 
 #### Usage in WordPress templates
 
@@ -151,7 +151,7 @@ Returns the srcset, size, alt and title attributes for a TimberImage. If this fu
 
 ## get_timber_image_responsive_src
 
-Returns the srcset and sizes for a TimberImage. This is practically the same as `get_timber_image_responsive`, just without the alt tag.
+Returns the srcset and sizes for an image. This is practically the same as `get_timber_image_responsive`, just without the alt tag.
 
 ---
 
