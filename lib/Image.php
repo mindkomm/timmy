@@ -180,25 +180,9 @@ class Image {
 		 *
 		 * @param string $src_default Src default. Default
 		 *                            `data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7`.
-		 * @param array  $attributes  {
-		 *     An array of helpful attributes in the filter.
-		 *
-		 *     @type string        $default_src  The default src for the image.
-		 *     @type \Timber\Image $timber_image Timber image instance.
-		 *     @type string        $size         The requested image size.
-		 *     @type array         $img_size     The image size configuration.
-		 *     @type array         $attributes   Attributes for the image markup.
-		 * }
+		 * @param \Timmy\Image $image       Timmy image instance.
 		 */
-		$src_default = apply_filters(
-			'timmy/src_default',
-			$src_default,
-			[
-				'image'    => $this,
-				'size'     => $this->size_key,
-				'img_size' => $this->size,
-			]
-		);
+		$src_default = apply_filters( 'timmy/src_default', $src_default, $this );
 
 		return $src_default;
 	}

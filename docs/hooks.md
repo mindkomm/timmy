@@ -131,25 +131,15 @@ Filters the src default.
 **Parameters**
 
 - **$src_default**  
-	*(string)* Src default. Default `data:image/gif;base64,R0lGODlhAQABAAAAADs=`.
-- **$attributes**  
-    *(array)* An array of helpful attributes in the filter.  
-    - **$default_src**  
-        *(string)* The default src for the image.
-    - **$timber_image**  
-        *(\Timber\Image)* Timber image instance.
-    - **$size**  
-        *(string)* The requested image size.
-    - **$img_size**  
-        *(array)* The image size configuration.
-    - **$attributes**  
-        *(array)* Attributes for the image markup.
+    *(string)* Src default. Default `data:image/gif;base64,R0lGODlhAQABAAAAADs=`.
+- **$image**  
+    *(Timmy\Image)* Timmy image instance.
 
 **Example**
 
 ```php
 // Use the default src URL as a fallback.
-add_filter( 'timmy/src_default', function( $src_default, $attributes ) {
+add_filter( 'timmy/src_default', function( $src_default, $image ) {
     return $attributes['default_src'];
 }, 10, 2 );
 ```
