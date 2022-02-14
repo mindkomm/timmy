@@ -93,13 +93,13 @@ class Timmy {
 	 */
 	public static function get_image( $attachment, $size ) {
 		if ( $attachment instanceof WP_Post || $attachment instanceof Timber\Image ) {
-			$id = $attachment->ID;
+			$attachment = $attachment->ID;
 		} elseif ( is_array( $attachment ) && isset( $attachment['ID'] ) ) {
 			// Get ID from ACF image array.
-			$id = (int) $attachment['ID'];
+			$attachment = (int) $attachment['ID'];
 		}
 
-		if ( 'attachment' !== get_post_type( $id ) ) {
+		if ( 'attachment' !== get_post_type( $attachment ) ) {
 			return null;
 		}
 
@@ -114,7 +114,7 @@ class Timmy {
 			}
 		}
 
-		$image = $class::build( $id, $size_array );
+		$image = $class::build( $attachment, $size_array );
 
 		if ( is_string( $size ) ) {
 			$image->set_size_key( $size );

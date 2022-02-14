@@ -14,9 +14,10 @@ if ( ! function_exists( 'get_timber_image' ) ) :
 	/**
 	 * Returns the src attr together with optional alt and title attributes for a TimberImage.
 	 *
-	 * @param  int|Timber\Image $timber_image Instance of TimberImage or Attachment ID.
-	 * @param  string|array     $size         The size which you want to access.
-	 * @return string|bool Src, alt and title attributes. False if image can’t be found.
+	 * @param int|Timber\Image $timber_image Instance of TimberImage or Attachment ID.
+	 * @param string|array     $size         The size which you want to access.
+	 *
+	 * @return string|bool Src and alt attributes. False if image can’t be found.
 	 */
 	function get_timber_image( $timber_image, $size ) {
 		$image = Timmy::get_image( $timber_image, $size );
@@ -78,7 +79,7 @@ endif;
 
 if ( ! function_exists( 'get_timber_image_texts' ) ) :
 	/**
-	 * Get the image attributes (alt and title) for a TimberImage.
+	 * Get the image attributes (alt and title) for an image.
 	 *
 	 * This will always include the alt tag. For accessibility, the alt tag needs to be included
 	 * even if it is empty.
@@ -90,13 +91,13 @@ if ( ! function_exists( 'get_timber_image_texts' ) ) :
 	 * @return array|false An array with alt and title attributes. False if image can’t be found.
 	 */
 	function get_timber_image_texts( $timber_image ) {
-		$timber_image = Timmy::get_timber_image( $timber_image );
+		$image = Timmy::get_image( $timber_image, [] );
 
-		if ( ! $timber_image ) {
+		if ( ! $image ) {
 			return false;
 		}
 
-		return [ 'alt' => $timber_image->alt() ];
+		return [ 'alt' => $image->alt() ];
 	}
 endif;
 
@@ -110,13 +111,13 @@ endif;
  * @return false|string False on error or image alt text on success.
  */
 function get_timber_image_alt( $timber_image ) {
-	$timber_image = Timmy::get_timber_image( $timber_image );
+	$image = Timmy::get_image( $timber_image, [] );
 
-	if ( ! $timber_image ) {
+	if ( ! $image ) {
 		return false;
 	}
 
-	return $timber_image->alt();
+	return $image->alt();
 }
 
 /**
@@ -129,13 +130,13 @@ function get_timber_image_alt( $timber_image ) {
  * @return false|string False on error or caption on success.
  */
 function get_timber_image_caption( $timber_image ) {
-	$timber_image = Timmy::get_timber_image( $timber_image );
+	$image = Timmy::get_image( $timber_image, [] );
 
-	if ( ! $timber_image ) {
+	if ( ! $image ) {
 		return false;
 	}
 
-	return $timber_image->caption;
+	return $image->caption();
 }
 
 /**
@@ -148,13 +149,13 @@ function get_timber_image_caption( $timber_image ) {
  * @return false|string False on error or image description on success.
  */
 function get_timber_image_description( $timber_image ) {
-	$timber_image = Timmy::get_timber_image( $timber_image );
+	$image = Timmy::get_image( $timber_image, [] );
 
-	if ( ! $timber_image ) {
+	if ( ! $image ) {
 		return false;
 	}
 
-	return $timber_image->post_content;
+	return $image->description();
 }
 
 if ( ! function_exists( 'get_timber_image_attributes_responsive' ) ) :
@@ -325,12 +326,6 @@ if ( ! function_exists( 'get_timber_image_responsive_src' ) ) :
 	 * @return string|bool|array Image srcset and sizes attributes. False if image can’t be found.
 	 */
 	function get_timber_image_responsive_src( $timber_image, $size, $args = array() ) {
-		$timber_image = Timmy::get_timber_image( $timber_image );
-
-		if ( ! $timber_image ) {
-			return false;
-		}
-
 		/**
 		 * Default arguments for image markup.
 		 *
@@ -484,25 +479,21 @@ if ( ! function_exists( 'get_post_thumbnail' ) ) :
 	 *                     be found.
 	 */
 	function get_post_thumbnail( $post_id, $size = 'post-thumbnail' ) {
-		$thumbnail_src = get_post_thumbnail_src( $post_id, $size );
+		$attachment_id = get_post_thumbnail_id( $post_id );
 
-		if ( ! $thumbnail_src ) {
+		if ( empty( $attachment_id ) ) {
 			return false;
 		}
 
-		$thumb_id   = get_post_thumbnail_id( $post_id );
-		$attachment = get_post( $thumb_id );
+		$image         = Timmy::get_image( $attachment_id, $size );
 
-		// Alt attributes are saved as post meta
-		$alt = get_post_meta( $thumb_id, '_wp_attachment_image_alt', true );
-
-		// We take the image description for the title
-		$title = $attachment->post_content;
+		if ( ! $image ) {
+			return false;
+		}
 
 		return Helper::get_attribute_html( [
-			'src'   => $thumbnail_src,
-			'alt'   => $alt,
-			'title' => $title,
+			'src'   => $image->src(),
+			'alt'   => $image->alt(),
 		] );
 	}
 endif;
@@ -517,16 +508,20 @@ if ( ! function_exists( 'get_post_thumbnail_src' ) ) :
 	 * @return string|bool Image src. False if not an image.
 	 */
 	function get_post_thumbnail_src( $post_id, $size = 'post-thumbnail' ) {
-		$post_thumbnail_id = get_post_thumbnail_id( $post_id );
+		$attachment_id = get_post_thumbnail_id( $post_id );
 
-		if ( empty( $post_thumbnail_id ) ) {
+		if ( empty( $attachment_id ) ) {
 			return false;
 		}
 
-		$post_thumbnail = wp_get_attachment_image_src( $post_thumbnail_id, $size );
+		$image = Timmy::get_image( $attachment_id, $size );
+
+		if ( ! $image ) {
+			return false;
+		}
 
 		// Return the image src url
-		return $post_thumbnail[0];
+		return $image->src();
 	}
 endif;
 
