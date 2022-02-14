@@ -6,6 +6,7 @@ use Timber;
 use Timber\Twig_Filter;
 use Timber\Twig_Function;
 use Twig_Environment;
+use WP_Post;
 
 /**
  * Class Timmy
@@ -85,22 +86,20 @@ class Timmy {
 	/**
 	 * Gets a Timmy image.
 	 *
-	 * @param \Timber\Image $timber_image
+	 * @param mixed        $attachment Attachment ID.
 	 * @param string|array  $size
 	 *
 	 * @return \Timmy\Image
 	 */
-	public static function get_image( $timber_image, $size ) {
-		if ( is_numeric( $timber_image ) ) {
-			$timber_image = new Timber\Image( $timber_image );
-		} elseif ( is_array( $timber_image ) && isset( $timber_image['ID'] ) ) {
-			// Convert an ACF image array into a Timber image.
-			$timber_image = new Timber\Image( $timber_image['ID'] );
+	public static function get_image( $attachment, $size ) {
+		if ( $attachment instanceof WP_Post || $attachment instanceof Timber\Image ) {
+			$id = $attachment->ID;
+		} elseif ( is_array( $attachment ) && isset( $attachment['ID'] ) ) {
+			// Get ID from ACF image array.
+			$id = (int) $attachment['ID'];
 		}
 
-		if ( ! $timber_image instanceof Timber\Image
-			|| ! isset( $timber_image->post_type )
-			|| 'attachment' !== $timber_image->post_type ) {
+		if ( 'attachment' !== get_post_type( $id ) ) {
 			return null;
 		}
 
@@ -115,7 +114,7 @@ class Timmy {
 			}
 		}
 
-		$image = $class::build( $timber_image, $size_array );
+		$image = $class::build( $id, $size_array );
 
 		if ( is_string( $size ) ) {
 			$image->set_size_key( $size );

@@ -13,16 +13,7 @@ class Image {
 	 *
 	 * @var int
 	 */
-	protected $id;
-
-	/**
-	 * Instance of Timber Image.
-	 *
-	 * @todo Get rid of this.
-	 *
-	 * @var mixed|\Timber\Image
-	 */
-	protected $timber_image;
+	public $id;
 
 	/**
 	 * Image size configuration array.
@@ -55,22 +46,22 @@ class Image {
 	protected function __construct() {}
 
 	/**
-	 * @param \Timber\Image $timber_image Timber Image.
-	 * @param array         $size         Image size configuration.
+	 * Creates an image.
+	 *
+	 * @param int   $image_id Attachment image id.
+	 * @param array $size     Image size configuration.
 	 *
 	 * @param \Timmy\Image
 	 */
-	public static function build( \Timber\Image $timber_image, array $size = null ) {
+	public static function build( int $image_id, array $size = null ) {
 		$image = new static;
 
-		$image->id = $timber_image->ID;
-		$image->timber_image = $timber_image;
+		$image->id   = $image_id;
 		$image->size = $size;
 
 		$image->resize_crop  = Helper::get_crop_for_size( $image->size );
 		$image->resize_force = Helper::get_force_for_size( $image->size );
-
-		$image->upscale = Helper::get_upscale_for_size( $image->size );
+		$image->upscale      = Helper::get_upscale_for_size( $image->size );
 
 		return $image;
 	}
@@ -81,10 +72,6 @@ class Image {
 
 	public function size() {
 		return $this->size;
-	}
-
-	public function timber_image() {
-		return $this->timber_image;
 	}
 
 	protected function load_attachment_image_src() {
@@ -207,9 +194,9 @@ class Image {
 			'timmy/src_default',
 			$src_default,
 			[
-				'timber_image' => $this->timber_image,
-				'size'         => $this->size_key,
-				'img_size'     => $this->size,
+				'image'    => $this,
+				'size'     => $this->size_key,
+				'img_size' => $this->size,
 			]
 		);
 
@@ -321,7 +308,7 @@ class Image {
 			 * because we will use this number as an array key and for defining the srcset size in
 			 * pixel values.
 			 */
-			return (int) round( $this->timber_image->aspect() * $height );
+			return (int) round( $this->aspect_ratio() * $height );
 		}
 
 		return (int) $width;
@@ -406,6 +393,22 @@ class Image {
 		] );
 
 		return $height;
+	}
+
+	/**
+	 * Gets the aspect ratio for an image size.
+	 *
+	 * @return float|int
+	 */
+	public function aspect_ratio() {
+		$width  = (int) $this->width();
+		$height = (int) $this->height();
+
+		if ( $height > 0 ) {
+			return $width / $height;
+		}
+
+		return 0;
 	}
 
 	public function loading() {
@@ -548,38 +551,59 @@ class Image {
 	 *
 	 * @return string False on error or image alt text on success.
 	 */
-	public function alt( ) {
-		return $this->timber_image->alt();
+	public function alt() {
+		$alt = get_post_meta( $this->id, '_wp_attachment_image_alt', true );
+		$alt = trim( strip_tags( $alt ) );
+
+		return $alt;
 	}
 
 	/**
 	 * Gets the image caption.
 	 *
-	 * @return string False on error or caption on success.
+	 * @return string|null Null on error or caption on success.
 	 */
 	public function caption() {
-		return $this->timber_image->caption;
+		$post = get_post( $this->id );
+
+		if ( $post && ! empty( $post->post_excerpt ) ) {
+			return $post->post_excerpt;
+		}
+
+		return null;
 	}
 
 	/**
 	 * Gets the image description.
 	 *
-	 * @return string False on error or image description on success.
+	 * @return string|null Null on error or image description on success.
 	 */
 	public function description() {
-		return $this->timber_image->post_content;
+		$post = get_post( $this->id );
+
+		if ( $post && ! empty( $post->post_content ) ) {
+			return apply_filters( 'the_content', $post->post_content );
+		}
+
+		return null;
 	}
 
 	/**
 	 * Gets the mime type for a Timber image.
 	 *
-	 * @return string
+	 * @return string|null
 	 */
 	public function mime_type() {
-		return $this->timber_image->post_mime_type;
+		$post = get_post( $this->id );
+
+		if ( $post && ! empty( $post->post_mime_type ) ) {
+			return $post->post_mime_type;
+		}
+
+		return null;
 	}
 
 	public function is_svg() {
-		return 'image/svg+xml' === $this->timber_image->post_mime_type;
+		return 'image/svg+xml' === $this->mime_type();
 	}
 }
