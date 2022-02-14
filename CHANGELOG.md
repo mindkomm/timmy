@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.15.0
+## 1.0.0
 
 - Fixed a bug when Timmy tries to resize files that it shouldn’t, like video files.
 - Increased minimum supported PHP version to 7.4.
@@ -10,6 +10,10 @@
 - Changed oversize configuration option naming from `oversize` to `upscale`. You can still use `oversize`, but it will be deprecated in the future.
 - Removed the `title` attribute from the `<img>` attributes, which was added by default with an image’s description. That approach was too opinionated and might only make sense in some use cases. If you still want to somehow use the image description, you can use the `get_timber_image_description()` function.
 - Improved hints about [controlling image sizes for Yoast](https://github.com/mindkomm/timmy/blob/master/docs/faq.md#how-can-i-control-the-image-size-generated-by-yoast).
+
+### Breaking changes
+
+- Removed `get_post_thumbnail()` and `get_post_thumbnail_src()` functions, because they are not namespace as the other functions and are practically the same as `get_timber_image()` and `get_timber_image_src()`.
 
 ## 0.14.8 - 2021-07-28
 

@@ -370,59 +370,6 @@ function get_timber_image_responsive_acf( $name, $size ) {
 }
 
 /**
- * Get Post Thumbnail source together with alt and title attributes.
- *
- * @param int    $post_id The post id to get the thumbnail from.
- * @param string $size    Size key of the image to return.
- *
- * @return string|bool Image src together with alt and title attributes. False if no image can’t
- *                     be found.
- */
-function get_post_thumbnail( $post_id, $size = 'post-thumbnail' ) {
-	$attachment_id = get_post_thumbnail_id( $post_id );
-
-	if ( empty( $attachment_id ) ) {
-		return false;
-	}
-
-	$image = Timmy::get_image( $attachment_id, $size );
-
-	if ( ! $image ) {
-		return false;
-	}
-
-	return Helper::get_attribute_html( [
-		'src'   => $image->src(),
-		'alt'   => $image->alt(),
-	] );
-}
-
-/**
- * Get Post Thumbnail image source at given size.
- *
- * @param int    $post_id The post id to get the thumbnail from.
- * @param string $size    Size key of the image to return.
- *
- * @return string|bool Image src. False if not an image.
- */
-function get_post_thumbnail_src( $post_id, $size = 'post-thumbnail' ) {
-	$attachment_id = get_post_thumbnail_id( $post_id );
-
-	if ( empty( $attachment_id ) ) {
-		return false;
-	}
-
-	$image = Timmy::get_image( $attachment_id, $size );
-
-	if ( ! $image ) {
-		return false;
-	}
-
-	// Return the image src url
-	return $image->src();
-}
-
-/**
  * Prepares the srcset markup for lazy-loading.
  *
  * Updates attributes with a data-prefix. E.g. updates `srcset` with `data-srcset`.

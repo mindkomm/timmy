@@ -24,8 +24,6 @@ You can use the following functions to get your images into your template:
 
 ## Additional helpers
 
-* [get_post_thumbnail()](#get_post_thumbnail) – Returns the src, alt and title attributes for a post thumbnail at a given size.
-* [get_post_thumbnail_src()](#get_post_thumbnail_src) – Returns the src for a post thumbnail. This is practically the same as *get_post_thumbnail*, just without alt and title tags.
 * [make_timber_image_lazy()](#make_timber_image_lazy) - Prepares the srcset markup for lazy-loading. Replaces `srcset=""` with `data-srcset=""`.
 ---
 
@@ -237,32 +235,6 @@ Returns the description for an image.
 ```twig
 {{ get_timber_image_description(post.thumbnail) }}
 ```
-
----
-
-## get_post_thumbnail
-
-`get_post_thumbnail( int $post_id, string|array $size = 'post-thumbnail' )`
-
-Returns the src, alt and title attributes for a post thumbnail at a given size.
-
-#### Usage in WordPress templates
-
-```php
-<img<?php echo get_post_thumbnail( get_post_thumbnail_id(), 'custom-6' ); ?>>
-```
-
-#### Usage in Twig
-
-In Twig combined with Timber you will already have the post thumbnail through `post.thumbnail`. No need to wrap it in another function.
-
----
-
-## get_post_thumbnail_src
-
-`get_post_thumbnail_src( int $post_id, string|array $size = 'post-thumbnail' )`
-
-Returns the src for a post thumbnail. This is practically the same as `get_post_thumbnail`, just without alt and title tags.
 
 ---
 
