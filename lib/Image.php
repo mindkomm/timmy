@@ -18,14 +18,20 @@ class Image {
 	protected $timber_image;
 
 	/**
-	 * Image size.
+	 * Image size configuration array.
 	 *
-	 * @var
+	 * @var array
 	 */
 	protected $size;
 
+	/**
+	 * Image size configuration key.
+	 *
+	 * @var string
+	 */
+	protected $size_key;
 
-	protected $src;
+	protected $full_src;
 
 	protected $meta;
 
@@ -33,10 +39,15 @@ class Image {
 
 	protected $max_height;
 
+	protected $resize_crop;
+
+	protected $resize_force;
+
 	protected $upscale;
 
 	/**
-	 * @param $timber_image
+	 * @param      $timber_image
+	 * @param string|array $size
 	 */
 	public function __construct( $timber_image, $size = null ) {
 		if ( is_numeric( $timber_image ) ) {
@@ -49,6 +60,13 @@ class Image {
 		$this->timber_image = $timber_image;
 		$this->size = Helper::get_image_size( $size );
 
+		if ( ! empty( $this->size['key'] ) ) {
+			$this->size_key = $this->size['key'];
+		}
+
+		$this->resize_crop  = Helper::get_crop_for_size( $this->size );
+		$this->resize_force = Helper::get_force_for_size( $this->size );
+
 		$this->upscale = Helper::get_upscale_for_size( $this->size );
 	}
 
@@ -57,9 +75,9 @@ class Image {
 	}
 
 	protected function load_attachment_image_src() {
-		if ( empty( $this->src ) ) {
+		if ( empty( $this->full_src ) ) {
 			list(
-				$this->src,
+				$this->full_src,
 				$this->max_width,
 				$this->max_height
 			) = wp_get_attachment_image_src( $this->timber_image->ID, 'full' );
@@ -69,7 +87,7 @@ class Image {
 	protected function load_attachment_meta_data() {
 		if ( empty( $this->meta ) ) {
 			/**
-			 * Gets meta data not filtered by Timmy.
+			 * Gets metadata not filtered by Timmy.
 			 *
 			 * @todo: Add a PR to Timber repository that saves the width and the height of an image in the
 			 *      metadata. Timber already calls wp_get_attachment_metadata(), but discards the width and
@@ -80,14 +98,50 @@ class Image {
 	}
 
 	/**
-	 * Gets full file src.
+	 * Gets full image src.
 	 *
 	 * @return string
 	 */
-	public function src() {
+	public function full_src() {
 		$this->load_attachment_image_src();
 
-		return $this->src;
+		return $this->full_src;
+	}
+
+	/**
+	 * Gets the src (url) for the image.
+	 *
+	 * @return string Image src.
+	 */
+	public function src() {
+		// @todo Test with false image or wrong image size key.
+
+		/**
+		 * Directly return full source when full source or an SVG image is requested.
+		 *
+		 * The full size may be a scaled version of the image. To always request the original
+		 * version, 'original' has to be used as the size.
+		 */
+		if ( 'full' === $this->size_key || $this->is_svg() ) {
+			// Deliberately return the attachment URL, which can be a 'scaled' version of an image.
+			return wp_get_attachment_url( $this->timber_image->ID );
+		} elseif ( 'original' === $this->size_key ) {
+			return Helper::get_original_attachment_url( $this->timber_image->ID );
+		}
+
+		// Resize the image for that size.
+		return Timmy::resize(
+			$this->size,
+			$this->full_src(),
+			$this->width(),
+			/**
+			 * Always use height from size configuration, because otherwise we would get images with
+			 * different filenames, causing a lot of images to be regenerated.
+			 */
+			Helper::get_height_for_size( $this->size ),
+			$this->resize_crop,
+			$this->resize_force
+		);
 	}
 
 	/**
@@ -140,13 +194,153 @@ class Image {
 			'timmy/src_default',
 			$src_default,
 			[
-				'timber_image' => $timber_image,
-				'size'         => $size,
-				'img_size'     => $img_size,
+				'timber_image' => $this->timber_image,
+				'size'         => $this->size_key,
+				'img_size'     => $this->size,
 			]
 		);
 
 		return $src_default;
+	}
+
+	public function srcset() {
+		$return  = false;
+		$width   = $this->width();
+		/**
+		 * Always use height from size configuration, because otherwise we would get images with
+		 * different filenames, causing a lot of images to be regenerated.
+		 */
+		$height = Helper::get_height_for_size( $this->size );
+		$srcset  = [];
+
+		list( , $height ) = Helper::get_dimensions_upscale( $width, $height, [
+			'upscale'    => $this->upscale,
+			'resize'     => $this->size['resize'],
+			'max_width'  => $this->max_width(),
+			'max_height' => $this->max_height(),
+		] );
+
+		// Get default size for image.
+		$default_size = Timmy::resize(
+			$this->size,
+			$this->full_src(),
+			$width,
+			$height,
+			$this->resize_crop,
+			$this->resize_force
+		);
+
+		// Get proper width descriptor to handle width values of 0.
+		$width_descriptor = $this->srcset_width_descriptor( $width, $height );
+
+		// Add the image source with the width as the descriptor so that they can be sorted later.
+		$srcset[ $width_descriptor ] = $default_size . " {$width_descriptor}w";
+
+		// Add additional image sizes to srcset.
+		if ( isset( $this->size['srcset'] ) ) {
+			foreach ( $this->size['srcset'] as $srcset_src ) {
+				list(
+					$width_intermediate,
+					$height_intermediate
+				) = Helper::get_dimensions_for_srcset_size( $this->size['resize'], $srcset_src );
+
+				// Bail out if the current size’s width is bigger than available width.
+				if ( ! $this->upscale['allow']
+					&& ( $width_intermediate > $this->max_width()
+						|| ( 0 === $width_intermediate && $height_intermediate > $this->max_height() )
+					)
+				) {
+					continue;
+				}
+
+				$width_descriptor = $this->srcset_width_descriptor( $width_intermediate, $height_intermediate );
+
+				// Check for x-notation in srcset, e.g. '2x'.
+				$suffix = is_string( $srcset_src ) && 'x' === substr( $srcset_src, -1, 1 )
+					? " {$srcset_src}"
+					: " {$width_descriptor}w";
+
+				// For the new source, we use the same $crop and $force values as the default image.
+				$srcset[ $width_descriptor ] = Timmy::resize(
+					$this->size,
+					$this->full_src(),
+					$width_intermediate,
+					$height_intermediate,
+					$this->resize_crop,
+					$this->resize_force
+				) . $suffix;
+			}
+		}
+
+		/**
+		 * Only add responsive srcset and sizes attributes if there are any present.
+		 *
+		 * If there’s only one srcset src, it’s always the default size. In that case, we just add
+		 * it as a src.
+		 */
+		if ( count( $srcset ) > 1 ) {
+			// Sort entries from smallest to highest
+			ksort( $srcset );
+
+			$return = implode( ', ', $srcset );
+		}
+
+		return $return;
+	}
+
+	/**
+	 * Gets the width descriptor for a srcset image resource.
+	 *
+	 * When 0 is passed to Timber as a width, it calculates the image ratio based on the height of
+	 * the image. We have to account for that, when we use the responsive image, because in the
+	 * srcset, there can’t be a value like "image.jpg 0w". So we have to calculate the width based
+	 * on the values we have.
+	 *
+	 * @param int $width  The value of the resize parameter for width.
+	 * @param int $height The value of the resize parameter for height.
+	 *
+	 * @return int The width at which the image will be displayed.
+	 */
+	protected function srcset_width_descriptor( $width, $height ) {
+		if ( 0 === (int) $width ) {
+			/**
+			 * Calculate image width based on image ratio and height. We need a rounded value
+			 * because we will use this number as an array key and for defining the srcset size in
+			 * pixel values.
+			 */
+			return (int) round( $this->timber_image->aspect() * $height );
+		}
+
+		return (int) $width;
+	}
+
+	/**
+	 * Gets 'sizes' configuration from the image size.
+	 *
+	 * @return false|mixed
+	 */
+	public function sizes() {
+		/**
+		 * Check for 'sizes' option in image configuration.
+		 * Before v0.10.0, this was just `size`'.
+		 *
+		 * @since 0.10.0
+		 */
+		if ( isset( $this->size['sizes'] ) ) {
+			return $this->size['sizes'];
+		} elseif ( isset( $this->size['size'] ) ) {
+			Helper::notice( 'Timmy: The "size" key is deprecated and will be removed in a future version of Timmy. You should use "sizes" instead of "size" in your image configuration.' );
+
+			/**
+			 * For backwards compatibility.
+			 *
+			 * @deprecated since 1.0.0
+			 * @todo       Remove in 2.0.0
+			 */
+			return $this->size['size'];
+		}
+
+		return false;
 	}
 
 	public function max_width() {
@@ -177,7 +371,7 @@ class Image {
 	public function width() {
 		list( $width, $height ) = Helper::get_dimensions_for_size( $this->size );
 		list( $width ) = Helper::get_dimensions_upscale( $width, $height, [
-			'upscale'    => Helper::get_upscale_for_size( $this->size ),
+			'upscale'    => $this->upscale,
 			'resize'     => $this->size['resize'],
 			'max_width'  => $this->max_width(),
 			'max_height' => $this->max_height(),
@@ -192,7 +386,7 @@ class Image {
 		$height = Helper::maybe_fix_height( $height, $width, $this->max_width(), $this->max_height() );
 
 		list( , $height ) = Helper::get_dimensions_upscale( $width, $height, [
-			'upscale'    => Helper::get_upscale_for_size( $this->size ),
+			'upscale'    => $this->upscale,
 			'resize'     => $this->size['resize'],
 			'max_width'  => $this->max_width(),
 			'max_height' => $this->max_height(),
@@ -243,8 +437,130 @@ class Image {
 		return false;
 	}
 
+	public function responsive_attributes() {
+		$attributes = [];
+
+		/**
+		 * Directly return full source when full source or an SVG image is requested.
+		 *
+		 * The full size may be a scaled version of the image. To always request the original
+		 * version, 'original' has to be used as the size.
+		 */
+		if ( in_array( $this->size_key, [ 'full', 'original' ], true ) || $this->is_svg() ) {
+			if ( 'original' === $this->size_key ) {
+				$attributes['src'] = Helper::get_original_attachment_url( $this->timber_image->ID );
+			} else {
+				// Deliberately get the attachment URL, which can be a 'scaled' version of an image.
+				$attributes['src'] = wp_get_attachment_url( $this->timber_image->ID );
+			}
+		} else {
+			$srcset = $this->srcset();
+
+			if ( $srcset ) {
+				$attributes['srcset'] = $srcset;
+				$attributes['src']    = $this->src_default();
+				$attributes['sizes']  = $this->sizes();
+			} else {
+				// Get default size for image.
+				$attributes['src'] =  Timmy::resize(
+					$this->size,
+					$this->full_src(),
+					$this->width(),
+					/**
+					 * Always use height from size configuration, because otherwise we would get images with
+					 * different filenames, causing a lot of images to be regenerated.
+					 */
+					Helper::get_height_for_size( $this->size ),
+					$this->resize_crop(),
+					$this->resize_force()
+				);
+			}
+
+			$attributes['style'] = $this->style();
+		}
+
+		if ( $this->args['attr_width'] ) {
+			$attributes['width'] = $this->width();
+		}
+
+		if ( $this->args['attr_height'] ) {
+			$attributes['height'] = $this->height();
+		}
+
+		// Lazy-loading.
+		$attributes['loading'] = $this->loading();
+
+		/**
+		 * Maybe rename attributes with "data-" prefixes.
+		 */
+
+		if ( $this->args['lazy_srcset'] && ! empty( $attributes['srcset'] ) ) {
+			$attributes['data-srcset'] = $attributes['srcset'];
+			unset( $attributes['srcset'] );
+		}
+
+		if ( $this->args['lazy_src'] && ! empty( $attributes['src'] ) ) {
+			$attributes['data-src'] = $attributes['src'];
+			unset( $attributes['src'] );
+		}
+
+		if ( $this->args['lazy_sizes'] && ! empty( $attributes['sizes'] ) ) {
+			$attributes['data-sizes'] = $attributes['sizes'];
+			unset( $attributes['sizes'] );
+		}
+
+		// Remove any falsy attributes.
+		$attributes = array_filter( $attributes );
+
+		return $attributes;
+	}
+
+	public function resize_crop() {
+		return $this->resize_crop;
+	}
+
+	public function resize_force() {
+		return $this->resize_force;
+	}
+
 	public function set_args( $args ) {
 		$this->args = $args;
+	}
+
+	/**
+	 * Gets the image alt text.
+	 *
+	 * @return string False on error or image alt text on success.
+	 */
+	public function alt( ) {
+		return $this->timber_image->alt();
+	}
+
+	/**
+	 * Gets the image caption.
+	 *
+	 * @return string False on error or caption on success.
+	 */
+	public function caption() {
+		return $this->timber_image->caption;
+	}
+
+	/**
+	 * Gets the image description.
+	 *
+	 * @return string False on error or image description on success.
+	 */
+	public function description() {
+		return $this->timber_image->post_content;
+	}
+
+	/**
+	 * Gets the mime type for a Timber image.
+	 *
+	 * @return string
+	 */
+	public function mime_type() {
+		return $this->timber_image->post_mime_type;
 	}
 
 	public function is_svg() {

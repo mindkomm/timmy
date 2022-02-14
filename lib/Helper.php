@@ -142,9 +142,7 @@ class Helper {
 		 */
 		if ( $width > $max_width ) {
 			// Calculate new height based on new width.
-			if ( isset( $resize[1] ) ) {
 				$height = (int) round( $max_width * ( $height / $width ) );
-			}
 
 			// Overwrite $width to use a max width.
 			$width = $max_width;
