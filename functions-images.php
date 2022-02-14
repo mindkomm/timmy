@@ -213,7 +213,7 @@ function get_timber_picture_responsive( $timber_image, $size, $args = [] ) {
 
 	$attributes = [
 		'type'   => $mime_type,
-		'sizes'  => $attributes['sizes'] ?? [],
+		'sizes'  => $image->sizes(),
 		'srcset' => get_timber_image_srcset( $timber_image, array_merge( $image->size(), [
 			'is_webp_fallback' => $towebp,
 		] ) ),
@@ -224,7 +224,7 @@ function get_timber_picture_responsive( $timber_image, $size, $args = [] ) {
 	if ( $towebp ) {
 		$source_attributes = [
 			'type'    => 'image/webp',
-			'sizes'   => $attributes['sizes'] ?? [],
+			'sizes'   => $image->sizes(),
 			'srcset'  => get_timber_image_srcset( $timber_image, $size ),
 		];
 
@@ -248,9 +248,9 @@ function get_timber_picture_responsive( $timber_image, $size, $args = [] ) {
  * @return false|string
  */
 function get_timber_picture_fallback_image( $timber_image, $size ) {
-	$timber_image = Timmy::get_timber_image( $timber_image );
+	$image = Timmy::get_image( $timber_image, $size );
 
-	if ( ! $timber_image ) {
+	if ( ! $image ) {
 		return false;
 	}
 
@@ -261,7 +261,7 @@ function get_timber_picture_fallback_image( $timber_image, $size ) {
 			'towebp' => false,
 		] ) ),
 		'alt'     => get_timber_image_alt( $timber_image ) ?: '',
-		'loading' => $attributes['loading'] ?? false,
+		'loading' => $image->loading(),
 	];
 
 	return '<img' . Helper::get_attribute_html( $fallback_attributes ) . '>';

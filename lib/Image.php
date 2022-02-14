@@ -43,7 +43,7 @@ class Image {
 
 	protected $upscale;
 
-	protected function __construct() {}
+	final protected function __construct() {}
 
 	/**
 	 * Creates an image.
