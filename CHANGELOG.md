@@ -10,6 +10,7 @@
 - Changed oversize configuration option naming from `oversize` to `upscale`. You can still use `oversize`, but it will be deprecated in the future.
 - Removed the `title` attribute from the `<img>` attributes, which was added by default with an image’s description. That approach was too opinionated and might only make sense in some use cases. If you still want to somehow use the image description, you can use the `get_timber_image_description()` function.
 - Improved hints about [controlling image sizes for Yoast](https://github.com/mindkomm/timmy/blob/master/docs/faq.md#how-can-i-control-the-image-size-generated-by-yoast).
+- Removed deprecated `get_image_attr_html()`, `get_timber_image_attr()` and `get_acf_image_attr()` functions.
 
 ### Breaking changes
 

@@ -18,8 +18,7 @@
       "Timmy\\": "lib/"
     },
     "files": [
-      "functions-images.php",
-      "functions-deprecated.php"
+      "functions-images.php"
     ]
   },
   "keywords": [
