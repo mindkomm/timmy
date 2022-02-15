@@ -2,10 +2,19 @@
 
 ## 1.0.0
 
-- Fixed a bug when Timmy tries to resize files that it shouldn’t, like video files.
 - Increased minimum supported PHP version to 7.4.
-- Added `get_timber_image_width()` function.
-- Added `get_timber_image_height()` function.
+- Added support for lazy loading with `loading` attribute.
+- Added `width` and `height` attributes for images by default.
+- Added support for WebP images.
+- Added support for getting Timmy image sizes with `wp_get_attachment_image_src()`.
+- Added `get_timber_image_alt()` function.
+- Added `get_timber_image_caption()` function.
+- Added `get_timber_image_description()` function.
+- Added `get_timber_image_loading()` function.
+- Added `get_timber_picture_responsive()` function.
+- Added `get_timber_picture_fallback_image()` function.
+- Added `get_timber_image_mime_type` function.
+- Fixed a bug when Timmy tried to resize files that it shouldn’t (video files for example).
 - Fixed issue when Timmy created upscaled image files even though it shouldn’t.
 - Changed oversize configuration option naming from `oversize` to `upscale`. You can still use `oversize`, but it will be deprecated in the future.
 - Removed the `title` attribute from the `<img>` attributes, which was added by default with an image’s description. That approach was too opinionated and might only make sense in some use cases. If you still want to somehow use the image description, you can use the `get_timber_image_description()` function.
@@ -40,7 +49,10 @@ new Timmy\Responsive_Content_Images()
 Timmy\Timmy::responsive_content_images();
 ```
 
+#### Other breaking changes
+
 - Changed additional parameters that are passed to the `timber/src_default` filter. There is no longer an array of additional `$attributes` to this filter, but only an instance of `Timmy\Image`.
+- Removed function pluggability. This means that you can’t overwrite any Timber functions anymore. If you want a similar functionality, you can copy the functions. They have way less logic in them than before, because a lot of the logic moved to the `Timmy\Image` class.
 - Removed `get_post_thumbnail()` and `get_post_thumbnail_src()` functions, because they are not namespace as the other functions and are practically the same as `get_timber_image()` and `get_timber_image_src()`.
 
 ## 0.14.8 - 2021-07-28
