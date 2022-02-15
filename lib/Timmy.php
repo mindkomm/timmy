@@ -177,6 +177,8 @@ class Timmy {
 
 		$twig->addFilter( new Twig_Filter( 'lazy', 'make_timber_image_lazy' ) );
 
+		$twig->addFunction( new Twig_Function( 'get_timmy_image', [ '\Timmy\Timmy', 'get_image' ] ) );
+
 		$twig->addFunction( new Twig_Function( 'get_timber_image_responsive_acf', 'get_timber_image_responsive_acf' ) );
 
 		// Image texts.
