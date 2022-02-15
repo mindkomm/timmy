@@ -202,41 +202,7 @@ function get_timber_picture_responsive( $timber_image, $size, $args = [] ) {
 		return false;
 	}
 
-	$size = $image->size();
-	$towebp = ! empty( $size['towebp'] ) && function_exists( 'imagewebp' );
-
-	$mime_type = false;
-
-	if ( $towebp ) {
-		$mime_type = isset( $size['tojpg'] ) && $size['tojpg']
-			? 'image/jpeg'
-			: $image->mime_type();
-	}
-
-	$attributes = [
-		'type'   => $mime_type,
-		'sizes'  => $image->sizes(),
-		'srcset' => get_timber_image_srcset( $timber_image, array_merge( $image->size(), [
-			'is_webp_fallback' => $towebp,
-		] ) ),
-	];
-
-	$html = '<source' . Helper::get_attribute_html( $attributes ) . '>' . PHP_EOL;
-
-	if ( $towebp ) {
-		$source_attributes = [
-			'type'    => 'image/webp',
-			'sizes'   => $image->sizes(),
-			'srcset'  => get_timber_image_srcset( $timber_image, $size ),
-		];
-
-		$html .= '<source' . Helper::get_attribute_html( $source_attributes ) . '>' . PHP_EOL;
-	}
-
-	// Add fallback.
-	$html .= get_timber_picture_fallback_image( $timber_image, $size );
-
-	return $html;
+	return $image->picture_responsive();
 }
 
 /**
@@ -256,17 +222,7 @@ function get_timber_picture_fallback_image( $timber_image, $size ) {
 		return false;
 	}
 
-	$size = Helper::get_image_size( $size );
-
-	$fallback_attributes = [
-		'src'     => get_timber_image_src( $timber_image, array_merge( $size, [
-			'towebp' => false,
-		] ) ),
-		'alt'     => get_timber_image_alt( $timber_image ) ?: '',
-		'loading' => $image->loading(),
-	];
-
-	return '<img' . Helper::get_attribute_html( $fallback_attributes ) . '>';
+	return $image->picture_fallback_image();
 }
 
 /**

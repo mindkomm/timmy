@@ -153,6 +153,49 @@ class Image {
 
 		return $src;
 	}
+
+	public function picture_responsive() {
+		$to_webp   = ! empty( $this->size['towebp'] );
+		$mime_type = false;
+
+		if ( $to_webp ) {
+			$mime_type = isset( $this->size['tojpg'] ) && $this->size['tojpg']
+				? 'image/jpeg'
+				: $this->mime_type();
+		}
+
+		$attributes = [
+			'type'   => $mime_type,
+			'sizes'  => $this->sizes(),
+			'srcset' => $this->srcset( [ 'to_webp' => false ] ),
+		];
+
+		$html = '<source' . Helper::get_attribute_html( $attributes ) . '>' . PHP_EOL;
+
+		if ( $to_webp ) {
+			$source_attributes = [
+				'type'    => 'image/webp',
+				'sizes'   => $this->sizes(),
+				'srcset'  => $this->srcset( [ 'to_webp' => true ] ),
+			];
+
+			$html .= '<source' . Helper::get_attribute_html( $source_attributes ) . '>' . PHP_EOL;
+		}
+
+		// Add fallback.
+		$html .= $this->picture_fallback_image();
+
+		return $html;
+	}
+
+	public function picture_fallback_image() {
+		$fallback_attributes = [
+			'src'     => $this->src( [ 'to_webp' => false ] ),
+			'alt'     => $this->alt(),
+			'loading' => $this->loading(),
+		];
+
+		return '<img' . Helper::get_attribute_html( $fallback_attributes ) . '>';
 	}
 
 	/**
