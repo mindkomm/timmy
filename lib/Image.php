@@ -113,8 +113,12 @@ class Image {
 	 *
 	 * @return string Image src.
 	 */
-	public function src() {
+	public function src( $args = [] ) {
 		// @todo Test with false image or wrong image size key.
+
+		$args = wp_parse_args( $args, [
+			'to_webp' => $this->is_webp(),
+		] );
 
 		/**
 		 * Directly return full source when full source or an SVG image is requested.
@@ -130,7 +134,7 @@ class Image {
 		}
 
 		// Resize the image for that size.
-		return Timmy::resize(
+		$src = Timmy::resize(
 			$this->size,
 			$this->full_src(),
 			$this->width(),
@@ -142,6 +146,13 @@ class Image {
 			$this->resize_crop,
 			$this->resize_force
 		);
+
+		if ( $args['to_webp'] ) {
+			$src = Timmy::to_webp( $src, $this->size );
+		}
+
+		return $src;
+	}
 	}
 
 	/**
@@ -184,7 +195,11 @@ class Image {
 		return $src_default;
 	}
 
-	public function srcset() {
+	public function srcset( $args = [] ) {
+		$args = wp_parse_args( $args, [
+			'to_webp' => $this->is_webp(),
+		] );
+
 		$return  = false;
 		$width   = $this->width();
 		/**
@@ -210,6 +225,10 @@ class Image {
 			$this->resize_crop,
 			$this->resize_force
 		);
+
+		if ( $args['to_webp'] ) {
+			$default_size = Timmy::to_webp( $default_size, $this->size );
+		}
 
 		// Get proper width descriptor to handle width values of 0.
 		$width_descriptor = $this->srcset_width_descriptor( $width, $height );
@@ -242,14 +261,20 @@ class Image {
 					: " {$width_descriptor}w";
 
 				// For the new source, we use the same $crop and $force values as the default image.
-				$srcset[ $width_descriptor ] = Timmy::resize(
+				$src = Timmy::resize(
 					$this->size,
 					$this->full_src(),
 					$width_intermediate,
 					$height_intermediate,
 					$this->resize_crop,
 					$this->resize_force
-				) . $suffix;
+				);
+
+				if ( $args['to_webp'] ) {
+					$src = Timmy::to_webp( $src, $this->size );
+				}
+
+				$srcset[ $width_descriptor ] = $src . $suffix;
 			}
 		}
 
@@ -603,6 +628,13 @@ class Image {
 		}
 
 		return null;
+	}
+
+	public function is_webp() {
+		return isset( $this->size['towebp'] )
+			&& $this->size['towebp']
+			&& ! $this->is_svg()
+			&& ! $this->is_pdf();
 	}
 
 	public function is_svg() {

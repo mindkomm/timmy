@@ -588,6 +588,11 @@ class Timmy {
 		// Resize the image for that size.
 		$src = self::resize( $img_size, $file_src, $width, $height, $crop, $force );
 
+		// Maybe convert to webp.
+		if ( self::should_convert_to_webp( $file_src, $img_size ) ) {
+			$src = self::to_webp( $src, $img_size );
+		}
+
 		// When the input size is an array of width and height.
 		if ( is_array( $size ) ) {
 			$width  = $size[0];
@@ -746,23 +751,20 @@ class Timmy {
 			$file_src = Timber\ImageHelper::resize( $file_src, $width, $height, $crop, $force );
 		}
 
-		// Check if image should be converted to webp.
-		if ( ! isset( $img_size['is_webp_fallback'] )
-			&& self::should_convert_to_webp( $img_size, $file_src )
-		) {
+		return $file_src;
+	}
+
+	public static function to_webp( $file_src, $size ) {
 			$args = [
 				'quality' => 100,
 				'force'   => false,
 			];
 
-			if ( is_array( $img_size['towebp'] ) ) {
-				$args = wp_parse_args( $img_size['towebp'], $args );
+		if ( isset( $size['towebp'] ) && is_array( $size['towebp'] ) ) {
+			$args = wp_parse_args( $size['towebp'], $args );
 			}
 
-			$file_src = Timber\ImageHelper::img_to_webp( $file_src, $args['quality'], $args['force'] );
-		}
-
-		return $file_src;
+		return Timber\ImageHelper::img_to_webp( $file_src, $args['quality'], $args['force'] );
 	}
 
 	/**
@@ -797,12 +799,12 @@ class Timmy {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param array  $img_size Configuration values for an image size.
 	 * @param string $file_src The src of the original image.
+	 * @param array  $img_size Configuration values for an image size.
 	 *
 	 * @return bool
 	 */
-	public static function should_convert_to_webp( $img_size, $file_src ) {
+	public static function should_convert_to_webp( $file_src, $img_size ) {
 		if ( isset( $img_size['towebp'] )
 			&& $img_size['towebp']
 			&& 'application/pdf' !== wp_check_filetype(
@@ -991,7 +993,12 @@ class Timmy {
 			}
 
 			// For the new source, we use the same $crop and $force values as the default image.
-			self::resize( $img_size, $file_src, $width, $height, $crop, $force );
+			$src = self::resize( $img_size, $file_src, $width, $height, $crop, $force );
+
+			// Maybe convert to webp.
+			if ( self::should_convert_to_webp( $file_src, $img_size ) ) {
+				self::to_webp( $src, $img_size );
+			}
 		}
 	}
 
