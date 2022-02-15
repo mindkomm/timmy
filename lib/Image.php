@@ -155,7 +155,7 @@ class Image {
 	}
 
 	public function picture_responsive() {
-		$to_webp   = ! empty( $this->size['towebp'] );
+		$to_webp   = ! empty( $this->size['webp'] );
 		$mime_type = false;
 
 		if ( $to_webp ) {
@@ -690,8 +690,8 @@ class Image {
 	}
 
 	public function is_webp() {
-		return isset( $this->size['towebp'] )
-			&& $this->size['towebp']
+		return isset( $this->size['webp'] )
+			&& $this->size['webp']
 			&& ! $this->is_svg()
 			&& ! $this->is_pdf();
 	}

@@ -762,8 +762,8 @@ class Timmy {
 				'force'   => false,
 			];
 
-		if ( isset( $size['towebp'] ) && is_array( $size['towebp'] ) ) {
-			$args = wp_parse_args( $size['towebp'], $args );
+		if ( isset( $size['webp'] ) && is_array( $size['webp'] ) ) {
+			$args = wp_parse_args( $size['webp'], $args );
 			}
 
 		return Timber\ImageHelper::img_to_webp( $file_src, $args['quality'], $args['force'] );
@@ -807,8 +807,8 @@ class Timmy {
 	 * @return bool
 	 */
 	public static function should_convert_to_webp( $file_src, $img_size ) {
-		if ( isset( $img_size['towebp'] )
-			&& $img_size['towebp']
+		if ( isset( $img_size['webp'] )
+			&& $img_size['webp']
 			&& 'application/pdf' !== wp_check_filetype(
 				$file_src,
 				Helper::get_mime_types()
