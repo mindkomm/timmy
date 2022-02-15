@@ -119,7 +119,7 @@ class Timmy {
 	 * Gets a Timmy image.
 	 *
 	 * @param mixed        $attachment Attachment ID.
-	 * @param string|array  $size
+	 * @param string|array $size
 	 *
 	 * @return null|\Timmy\Image
 	 */
@@ -173,6 +173,7 @@ class Timmy {
 		$twig->addFilter( new Twig_Filter( 'get_timber_image_srcset', 'get_timber_image_srcset' ) );
 		$twig->addFilter( new Twig_Filter( 'get_timber_image_responsive', 'get_timber_image_responsive' ) );
 		$twig->addFilter( new Twig_Filter( 'get_timber_image_responsive_src', 'get_timber_image_responsive_src' ) );
+		$twig->addFilter( new Twig_Filter( 'get_timber_picture_responsive', 'get_timber_picture_responsive' ) );
 
 		$twig->addFilter( new Twig_Filter( 'lazy', 'make_timber_image_lazy' ) );
 
@@ -416,7 +417,7 @@ class Timmy {
 	 *                                    values (in that order).
 	 *
 	 * @return bool|array Array containing the image URL, width, height, and boolean for whether
-	 *                     the image is an intermediate size. False on failure.
+	 *                    the image is an intermediate size. False on failure.
 	 */
 	public function filter_image_downsize( $return, $attachment_id, $size ) {
 		// Timber needs the file src as a URL. Also checks if ID belongs to an attachment.
