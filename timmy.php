@@ -1,10 +1,10 @@
 <?php
 /**
  * Plugin Name: Timmy
- * Plugin URI: https://github.com/MINDKomm/timmy/
- * Description: Advanced image handling for Timber.
- * Version: 0.14.1
- * Author: Lukas Gächter
+ * Plugin URI: https://github.com/mindkomm/timmy/
+ * Description: Advanced image handling for Timber images.
+ * Version: 1.0.0
+ * Author: MIND
  * Author URI: https://www.mind.ch
  */
 require_once 'functions-images.php';
