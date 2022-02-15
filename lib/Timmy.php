@@ -5,7 +5,6 @@ namespace Timmy;
 use Timber;
 use Timber\Twig_Filter;
 use Timber\Twig_Function;
-use Twig_Environment;
 use WP_Post;
 
 /**
@@ -164,9 +163,9 @@ class Timmy {
 	/**
 	 * Set filters to use Timmy filters and functions in Twig.
 	 *
-	 * @param Twig_Environment $twig The Twig Environment instance.
+	 * @param \Twig\Environment $twig The Twig Environment instance.
 	 *
-	 * @return Twig_Environment $twig
+	 * @return \Twig\Environment $twig
 	 */
 	public function filter_twig( $twig ) {
 		$twig->addFilter( new Twig_Filter( 'get_timber_image', 'get_timber_image' ) );
