@@ -164,20 +164,32 @@ class Image {
 				: $this->mime_type();
 		}
 
-		$attributes = [
-			'type'   => $mime_type,
-			'sizes'  => $this->sizes(),
-			'srcset' => $this->srcset( [ 'to_webp' => false ] ),
+		$source_attributes = [
+			'type' => $mime_type
 		];
 
-		$html = '<source' . Helper::get_attribute_html( $attributes ) . '>' . PHP_EOL;
+		$source_attributes = array_merge( $source_attributes, $this->responsive_attributes( [
+			'attr_width'  => false,
+			'attr_height' => false,
+			'src_default' => false,
+			'loading'     => false,
+			'to_webp'     => false,
+		] ) );
+
+		$html = '<source' . Helper::get_attribute_html( $source_attributes ) . '>' . PHP_EOL;
 
 		if ( $to_webp ) {
 			$source_attributes = [
-				'type'    => 'image/webp',
-				'sizes'   => $this->sizes(),
-				'srcset'  => $this->srcset( [ 'to_webp' => true ] ),
+				'type' => 'image/webp'
 			];
+
+			$source_attributes = array_merge( $source_attributes, $this->responsive_attributes( [
+				'attr_width'  => false,
+				'attr_height' => false,
+				'src_default' => false,
+				'loading'     => false,
+				'to_webp'     => true,
+			] ) );
 
 			$html .= '<source' . Helper::get_attribute_html( $source_attributes ) . '>' . PHP_EOL;
 		}
@@ -191,6 +203,8 @@ class Image {
 	public function picture_fallback_image() {
 		$fallback_attributes = [
 			'src'     => $this->src( [ 'to_webp' => false ] ),
+			'width'   => $this->width(),
+			'height'  => $this->height(),
 			'alt'     => $this->alt(),
 			'loading' => $this->loading(),
 		];
@@ -512,7 +526,15 @@ class Image {
 		return false;
 	}
 
-	public function responsive_attributes( $args ) {
+	/**
+	 * Gets the responsive attributes for an image.
+	 *
+	 * @param array $args Arguments to customize the output. For a list of arguments, see
+	 *                    {@see get_timber_image_responsive_src()}.
+	 *
+	 * @return array
+	 */
+	public function responsive_attributes( $args = [] ) {
 		/**
 		 * Default arguments for image markup.
 		 *
@@ -525,6 +547,8 @@ class Image {
 			'lazy_src'      => false,
 			'lazy_sizes'    => false,
 			'loading'       => 'lazy',
+			'to_webp'     => $this->is_webp(),
+			'src_default' => true,
 		];
 
 		$args = wp_parse_args( $args, $default_args );
@@ -545,26 +569,18 @@ class Image {
 				$attributes['src'] = wp_get_attachment_url( $this->id );
 			}
 		} else {
-			$srcset = $this->srcset();
+			$srcset = $this->srcset( [ 'to_webp' => $args['to_webp'] ] );
 
 			if ( $srcset ) {
 				$attributes['srcset'] = $srcset;
+
+				if ( $args['src_default'] ) {
 				$attributes['src']    = $this->src_default();
+				}
+
 				$attributes['sizes']  = $this->sizes();
 			} else {
-				// Get default size for image.
-				$attributes['src'] =  Timmy::resize(
-					$this->size,
-					$this->full_src(),
-					$this->width(),
-					/**
-					 * Always use height from size configuration, because otherwise we would get images with
-					 * different filenames, causing a lot of images to be regenerated.
-					 */
-					Helper::get_height_for_size( $this->size ),
-					$this->resize_crop(),
-					$this->resize_force()
-				);
+				$attributes['src'] = $this->src( [ 'to_webp' => $args['to_webp'] ] );
 			}
 
 			$attributes['style'] = $this->style();

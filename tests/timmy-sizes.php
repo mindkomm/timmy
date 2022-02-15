@@ -54,12 +54,18 @@ add_filter( 'timmy/sizes', function( $sizes ) {
 			'srcset' => [ [ 560 ] ],
 			'sizes'  => '100vw',
 		],
-		'picture-webp'                             => [
+		'picture-webp'                        => [
 			'type'   => 'picture',
 			'resize' => [ 1400 ],
 			'srcset' => [ [ 560 ] ],
 			'sizes'  => '100vw',
 			'towebp' => true,
+		],
+		'picture-webp-with-small-image'       => [
+			'resize'     => [ 1400 ],
+			'srcset'     => [ [ 560 ] ],
+			'show_in_ui' => false,
+			'towebp'     => true,
 		],
 		'header-wide'                         => [
 			'resize'                => [ 1400 ],
