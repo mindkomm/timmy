@@ -480,12 +480,12 @@ class Image {
 				return false;
 			}
 		} else {
-		list( $width ) = Helper::get_dimensions_upscale( $width, $height, [
-			'upscale'    => $this->upscale,
-			'resize'     => $this->size['resize'],
-			'max_width'  => $this->max_width(),
-			'max_height' => $this->max_height(),
-		] );
+			list( $width ) = Helper::get_dimensions_upscale( $width, $height, [
+				'upscale'    => $this->upscale,
+				'resize'     => $this->size['resize'],
+				'max_width'  => $this->max_width(),
+				'max_height' => $this->max_height(),
+			] );
 		}
 
 		return $width;
@@ -506,12 +506,12 @@ class Image {
 			}
 		} else {
 			$height = Helper::maybe_fix_height( $height, $width, $this->max_width(), $this->max_height() );
-		list( , $height ) = Helper::get_dimensions_upscale( $width, $height, [
-			'upscale'    => $this->upscale,
-			'resize'     => $this->size['resize'],
-			'max_width'  => $this->max_width(),
-			'max_height' => $this->max_height(),
-		] );
+			list( , $height ) = Helper::get_dimensions_upscale( $width, $height, [
+				'upscale'    => $this->upscale,
+				'resize'     => $this->size['resize'],
+				'max_width'  => $this->max_width(),
+				'max_height' => $this->max_height(),
+			] );
 		}
 
 		return $height;
@@ -531,6 +531,51 @@ class Image {
 		}
 
 		return 0;
+	}
+
+	/**
+	 * Checks whether an image is a portrait image.
+	 *
+	 * @return bool
+	 */
+	public function is_landscape() {
+		return $this->aspect_ratio() > 1;
+	}
+
+	/**
+	 * Checks whether an image is a portrait image.
+	 *
+	 * @return bool
+	 */
+	public function is_portrait() {
+		return $this->aspect_ratio() < 1;
+	}
+
+	/**
+	 * Checks whether an image is exactly square.
+	 *
+	 * @return bool
+	 */
+	public function is_square() {
+		return $this->aspect_ratio() === 1;
+	}
+
+	/**
+	 * Checks whether an image is pretty much a square image with an allowed
+	 * deviation of +- 2%.
+	 *
+	 * @return bool
+	 */
+	public function is_squarish( $deviation = 0.02 ) {
+		// Prevent division by 0.
+		if ( $this->height() === 0 ) {
+			return false;
+		}
+
+		$aspect = $this->aspect_ratio();
+
+		// Check for squareness with a 2% deviation.
+		return $aspect > ( 1 - $deviation ) && $aspect < ( 1 + $deviation );
 	}
 
 	/**
@@ -600,12 +645,12 @@ class Image {
 		 * @since 0.12.0
 		 */
 		$default_args = [
-			'attr_width'    => true,
-			'attr_height'   => true,
-			'lazy_srcset'   => false,
-			'lazy_src'      => false,
-			'lazy_sizes'    => false,
-			'loading'       => 'lazy',
+			'attr_width'  => true,
+			'attr_height' => true,
+			'lazy_srcset' => false,
+			'lazy_src'    => false,
+			'lazy_sizes'  => false,
+			'loading'     => 'lazy',
 			'to_webp'     => $this->is_webp(),
 			'src_default' => true,
 		];
@@ -634,10 +679,10 @@ class Image {
 				$attributes['srcset'] = $srcset;
 
 				if ( $args['src_default'] ) {
-				$attributes['src']    = $this->src_default();
+					$attributes['src'] = $this->src_default();
 				}
 
-				$attributes['sizes']  = $this->sizes();
+				$attributes['sizes'] = $this->sizes();
 			} else {
 				$attributes['src'] = $this->src( [ 'to_webp' => $args['to_webp'] ] );
 			}
@@ -652,7 +697,7 @@ class Image {
 
 		if ( $args['attr_height'] ) {
 			$attributes['height'] = $this->height();
-			$attributes['style'] = false;
+			$attributes['style']  = false;
 		}
 
 		// Lazy-loading.
@@ -761,6 +806,11 @@ class Image {
 		return null;
 	}
 
+	/**
+	 * Checks whether an image will be converted to WebP.
+	 *
+	 * @return bool
+	 */
 	public function is_webp() {
 		return isset( $this->size['webp'] )
 			&& $this->size['webp']
@@ -768,7 +818,30 @@ class Image {
 			&& ! $this->is_pdf();
 	}
 
+	/**
+	 * Checks whether an image is an SVG image.
+	 *
+	 * @return bool
+	 */
 	public function is_svg() {
 		return 'image/svg+xml' === $this->mime_type();
+	}
+
+	/**
+	 * Checks whether an image is a GIF.
+	 *
+	 * @return bool
+	 */
+	public function is_gif() {
+		return 'image/gif' === $this->mime_type();
+	}
+
+	/**
+	 * Checks whether an image is a PDF.
+	 *
+	 * @return bool
+	 */
+	public function is_pdf() {
+		return 'application/pdf' === $this->mime_type();
 	}
 }
