@@ -3,6 +3,7 @@
 ## 1.0.0
 
 - Increased minimum supported PHP version to 7.4.
+- Increased required Timber version to 1.9.
 - Added support for lazy loading with `loading` attribute.
 - Added `width` and `height` attributes for images by default.
 - Added support for WebP images.
