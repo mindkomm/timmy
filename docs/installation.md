@@ -17,7 +17,7 @@ You can either install both Timmy and Timber as plugins or use Composer.
 
 ### Install as Plugin
 
-1. Install [Timber Library Plugin](https://wordpress.org/plugins/timber-library/). You don’t have to necessarily go full Timber with your theme. You can use Timber and Timmy to only handle your images in your theme.
+1. Install the [Timber Library plugin](https://wordpress.org/plugins/timber-library/). You don’t have to necessarily go full Timber with your theme. You can use Timber and Timmy to only handle your images in your theme.
 
 2. Then [download and install the latest version of Timmy](<https://github.com/MINDKomm/Timmy/releases/latest>). (Timmy currently can’t be found in the official WordPress plugin directory. Maybe it will be soon.)
 

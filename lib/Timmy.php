@@ -757,14 +757,14 @@ class Timmy {
 	}
 
 	public static function to_webp( $file_src, $size ) {
-			$args = [
-				'quality' => 100,
-				'force'   => false,
-			];
+		$args = [
+			'quality' => 100,
+			'force'   => false,
+		];
 
 		if ( isset( $size['webp'] ) && is_array( $size['webp'] ) ) {
 			$args = wp_parse_args( $size['webp'], $args );
-			}
+		}
 
 		return Timber\ImageHelper::img_to_webp( $file_src, $args['quality'], $args['force'] );
 	}
@@ -828,6 +828,7 @@ class Timmy {
 	 * srcset, there can’t be a value like "image.jpg 0w". So we have to calculate the width based
 	 * on the values we have.
 	 *
+	 * @todo Deprecate this.
 	 * @since 0.9.3
 	 *
 	 * @param  int          $width        The value of the resize parameter for width.

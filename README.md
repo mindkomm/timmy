@@ -29,6 +29,9 @@ alt="Your alt text"
 - [Responsive Content Images](./docs/responsive-content-images.md)
 - [Hooks (Filters)](./docs/hooks.md)
 - [Lazy Loading](./docs/lazy-loading.md)
+- [WebP images and Picture](./docs/picture.md)
+- [API](./docs/api.md)
+- [Extending Timmy](./docs/extending-timmy.md)
 - [Performance and Best Practices](./docs/best-practices.md)
 - [FAQ](./docs/faq.md)
 

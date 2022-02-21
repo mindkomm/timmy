@@ -10,7 +10,6 @@
 - Added `get_timber_image_alt()` function.
 - Added `get_timber_image_caption()` function.
 - Added `get_timber_image_description()` function.
-- Added `get_timber_image_loading()` function.
 - Added `get_timber_picture_responsive()` function.
 - Added `get_timber_picture_fallback_image()` function.
 - Added better support for SVG images.
@@ -20,6 +19,11 @@
 - Removed the `title` attribute from the `<img>` attributes, which was added by default with an image’s description. That approach was too opinionated and might only make sense in some use cases. If you still want to somehow use the image description, you can use the `get_timber_image_description()` function.
 - Improved hints about [controlling image sizes for Yoast](https://github.com/mindkomm/timmy/blob/master/docs/faq.md#how-can-i-control-the-image-size-generated-by-yoast).
 - Removed deprecated `get_image_attr_html()`, `get_timber_image_attr()` and `get_acf_image_attr()` functions.
+
+### New API behind the scenes
+
+- Added a new `Timmy\Image` class that is used to generate the markup for an image. Most of the functionality that was in the `get_timber_*()` functions before now lives in that class.
+- Added a `Timmy\Timmy::get_image()` function to get a `Timmy\Image` in a way that allows developers to extend the `Timmy\Image` class.
 
 ### Breaking changes
 
