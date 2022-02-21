@@ -13,7 +13,7 @@
 - Added `get_timber_image_loading()` function.
 - Added `get_timber_picture_responsive()` function.
 - Added `get_timber_picture_fallback_image()` function.
-- Added `get_timber_image_mime_type` function.
+- Added better support for SVG images.
 - Fixed a bug when Timmy tried to resize files that it shouldn’t (video files for example).
 - Fixed issue when Timmy created upscaled image files even though it shouldn’t.
 - Changed oversize configuration option naming from `oversize` to `upscale`. You can still use `oversize`, but it will be deprecated in the future.

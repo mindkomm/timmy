@@ -31,6 +31,13 @@ class Image {
 
 	protected $full_src;
 
+	/**
+	 * Absolute attachment path.
+	 *
+	 * @var
+	 */
+	protected $path;
+
 	protected $meta;
 
 	protected $max_width;
@@ -42,6 +49,13 @@ class Image {
 	protected $resize_force;
 
 	protected $upscale;
+
+	/**
+	 * Dimensions for SVG image.
+	 *
+	 * @var array
+	 */
+	protected $svg_dimensions = [];
 
 	final protected function __construct() {}
 
@@ -106,6 +120,19 @@ class Image {
 		$this->load_attachment_image_src();
 
 		return $this->full_src;
+	}
+
+	/**
+	 * Gets absolute attachment path.
+	 *
+	 * @return false|string
+	 */
+	public function path() {
+		if ( empty( $this->path ) ) {
+			$this->path = get_attached_file( $this->id );
+		}
+
+		return $this->path;
 	}
 
 	/**
@@ -407,7 +434,13 @@ class Image {
 	}
 
 	public function max_width() {
-		if ( empty( $this->max_width ) ) {
+		if ( $this->is_svg() ) {
+			$dimensions = $this->svg_dimensions();
+
+			if ( $dimensions['width'] > 0 ) {
+				$this->max_width = round( $dimensions['width'] );
+			}
+		} elseif ( empty( $this->max_width ) ) {
 			$this->load_attachment_meta_data();
 
 			$this->max_width = $this->meta['width'];
@@ -417,7 +450,13 @@ class Image {
 	}
 
 	public function max_height() {
-		if ( empty( $this->max_height ) ) {
+		if ( $this->is_svg() ) {
+			$dimensions = $this->svg_dimensions();
+
+			if ( $dimensions['height'] > 0 ) {
+				$this->max_height = round( $dimensions['height'] );
+			}
+		} elseif ( empty( $this->max_height ) ) {
 			$this->load_attachment_meta_data();
 
 			$this->max_height = $this->meta['height'];
@@ -433,12 +472,21 @@ class Image {
 	 */
 	public function width() {
 		list( $width, $height ) = Helper::get_dimensions_for_size( $this->size );
+
+		if ( $this->is_svg() ) {
+			$dimensions = $this->svg_dimensions();
+
+			if ( empty( $dimensions ) ) {
+				return false;
+			}
+		} else {
 		list( $width ) = Helper::get_dimensions_upscale( $width, $height, [
 			'upscale'    => $this->upscale,
 			'resize'     => $this->size['resize'],
 			'max_width'  => $this->max_width(),
 			'max_height' => $this->max_height(),
 		] );
+		}
 
 		return $width;
 	}
@@ -446,14 +494,25 @@ class Image {
 	public function height() {
 		list( $width, $height ) = Helper::get_dimensions_for_size( $this->size );
 
-		$height = Helper::maybe_fix_height( $height, $width, $this->max_width(), $this->max_height() );
+		if ( $this->is_svg() ) {
+			$dimensions = $this->svg_dimensions();
 
+			if ( empty( $dimensions ) ) {
+				return false;
+			}
+
+			if ( $dimensions['width'] && $dimensions['height'] ) {
+				$height = Helper::get_height_from_width( $width, $dimensions['width'], $dimensions['height'] );
+			}
+		} else {
+			$height = Helper::maybe_fix_height( $height, $width, $this->max_width(), $this->max_height() );
 		list( , $height ) = Helper::get_dimensions_upscale( $width, $height, [
 			'upscale'    => $this->upscale,
 			'resize'     => $this->size['resize'],
 			'max_width'  => $this->max_width(),
 			'max_height' => $this->max_height(),
 		] );
+		}
 
 		return $height;
 	}
@@ -672,6 +731,19 @@ class Image {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Gets dimensions for an SVG image.
+	 *
+	 * @return array
+	 */
+	public function svg_dimensions() {
+		if ( empty( $this->svg_dimensions ) ) {
+			$this->svg_dimensions = Helper::get_svg_dimensions( $this->path() );
+		}
+
+		return $this->svg_dimensions;
 	}
 
 	/**

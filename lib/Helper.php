@@ -405,6 +405,46 @@ class Helper {
 	}
 
 	/**
+	 * Gets SVG size from the width/height or viewport of an SVG.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param string $svg The path to the SVG file.
+	 *
+	 * @return array|null
+	 */
+	public static function get_svg_dimensions( $svg ) {
+		$svg    = simplexml_load_file( $svg );
+		$width  = 0;
+		$height = 0;
+
+		if ( false === $svg ) {
+			return null;
+		}
+
+		$attributes = $svg->attributes();
+
+		if ( isset( $attributes->width, $attributes->height ) ) {
+			$width  = floatval( $attributes->width );
+			$height = floatval( $attributes->height );
+		} elseif ( isset( $attributes->viewBox ) ) {
+			$sizes = explode( ' ', $attributes->viewBox );
+
+			if ( isset( $sizes[2], $sizes[3] ) ) {
+				$width  = (float) $sizes[2];
+				$height = (float) $sizes[3];
+			}
+		} else {
+			return null;
+		}
+
+		return [
+			'width'  => $width,
+			'height' => $height,
+		];
+	}
+
+	/**
 	 * Output an error message.
 	 *
 	 * Triggers a notice, but only in development environments, when WP_DEBUG is set to true.

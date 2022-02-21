@@ -217,33 +217,7 @@ class TestFunctions extends TimmyUnitTestCase {
 		$this->assertEquals( $image, $result );
 	}
 
-	/**
-	 * Tests whether we get the full src of an SVG with size full.
-	 *
-	 * @since 0.14.4
-	 */
-	public function test_get_timber_image_full_with_svg() {
-		$attachment = $this->create_image( [ 'file' => 'sveegee.svg' ] );
-		$result     = get_timber_image( $attachment, 'full' );
 
-		$image = ' src="' . $this->get_upload_url() . '/sveegee.svg" alt=""';
-
-		$this->assertEquals( $image, $result );
-	}
-
-	/**
-	 * Tests whether we get the full src of an SVG with size large.
-	 *
-	 * @since 0.14.4
-	 */
-	public function test_get_timber_image_large_with_svg() {
-		$attachment = $this->create_image( [ 'file' => 'sveegee.svg' ] );
-		$result     = get_timber_image( $attachment, 'large' );
-
-		$image = ' src="' . $this->get_upload_url() . '/sveegee.svg" alt=""';
-
-		$this->assertEquals( $image, $result );
-	}
 
 	/**
 	 * @since 0.14.5
