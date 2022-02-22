@@ -26,22 +26,6 @@ You will use a `<picture>` element instead of an `<img>`
 </picture>
 ```
 
-If you want to enable WebP conversion for all image sizes, you can add it to your image sizes with the `timmy/sizes` filter.
-
-```php
-add_filter( 'timmy/sizes', function( $sizes ) {
-	$sizes = array_map( function( $size ) {
-		if ( ! isset( $size['to_webp'] ) ) {
-			$size['to_webp'] = true;
-		}
-
-		return $size;
-	}, $sizes );
-
-	return $sizes;
-}, 50 );
-```
-
 ### Art directed picture with fallbacks
 
 To be implemented …

@@ -93,6 +93,7 @@ You shouldn’t use `full` or `original` as keys in your configuration. If you d
 - [show_in_ui](#show_in_ui)
 - [generate_srcset_sizes](#generate_srcset_sizes)
 - [upscale](#upscale) (formerly named `oversize`)
+- [webp](#webp)
 
 ---
 
@@ -353,6 +354,40 @@ This is a shortcut for:
 ),
 ```
 
+---
+
+### webp
+
+(`bool|array`), optional, Default: `false`
+
+Allows you to convert an image to WebP.
+
+```php
+'webp' => true
+```
+
+You can also pass an array to control the quality of the image. By default, a quality of `100` is used.
+
+```php
+'webp' => [
+    'quality' => 80,
+]
+```
+
+If you want to enable WebP conversion for all image sizes, you can add it to your image sizes with the `timmy/sizes` filter.
+
+```php
+add_filter( 'timmy/sizes', function( $sizes ) {
+	return array_map( function( $size ) {
+		if ( ! isset( $size['webp'] ) ) {
+			$size['webp'] = true;
+		}
+
+		return $size;
+	}, $sizes );
+}, 50 );
+```
+
 ## Image configuration example
 
 You will add this to the **functions.php** file of your theme:
@@ -373,6 +408,7 @@ add_filter( 'timmy/sizes', function( $sizes ) {
             'resize' => array( 370 ),
             'sizes'  => '(min-width: 62rem) 33.333vw, 100vw',
             'name'   => 'Width 1/4',
+            'webp'   => true
         ),
         'custom-4-crop' => array(
             'resize'     => array( 370, 270 ),
@@ -381,6 +417,7 @@ add_filter( 'timmy/sizes', function( $sizes ) {
             'name'       => 'Width 1/4 fix',
             'show_in_ui' => false,
             'post_types' => array( 'example', 'post', 'page' ),
+            'webp'       => true
         ),
         'custom-6'      => array(
             // If you do not set a second value in the array, the image will not be cropped
@@ -389,6 +426,7 @@ add_filter( 'timmy/sizes', function( $sizes ) {
             'sizes'      => '(min-width: 62rem) 50vw, 100vw',
             'name'       => 'Width 1/2',
             'post_types' => array( 'example' ),
+            'webp'       => true,
         ),
         'sponsor-logo'  => array(
             'resize'    => array( 370, 370 ),
@@ -403,6 +441,7 @@ add_filter( 'timmy/sizes', function( $sizes ) {
         'large'         => array(
             'resize'     => array( 1400 ),
             'show_in_ui' => false,
+            'webp'       => true
         ),
         // 14:6 crop
         'header'        => array(

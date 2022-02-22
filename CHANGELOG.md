@@ -58,7 +58,7 @@ Timmy\Timmy::responsive_content_images();
 
 - Changed additional parameters that are passed to the `timber/src_default` filter. There is no longer an array of additional `$attributes` to this filter, but only an instance of `Timmy\Image`.
 - Removed function pluggability. This means that you can’t overwrite any Timber functions anymore. If you want a similar functionality, you can copy the functions. They have way less logic in them than before, because a lot of the logic moved to the `Timmy\Image` class.
-- Removed `get_post_thumbnail()` and `get_post_thumbnail_src()` functions, because they are not namespace as the other functions and are practically the same as `get_timber_image()` and `get_timber_image_src()`.
+- Removed `get_post_thumbnail()` and `get_post_thumbnail_src()` functions, because they are not namespaced as the other functions and are practically the same as `get_timber_image()` and `get_timber_image_src()`.
 
 ## 0.14.8 - 2021-07-28
 
