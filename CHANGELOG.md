@@ -10,6 +10,7 @@
     ```
 - Fixed a bug when Timmy tries to resize files that it shouldn’t, like video files.
 - Updated testing suite.
+- Updated `composer/installers` Composer dependency to allow versions `^1.0` and `^2.0`.
 
 ## 0.14.8 - 2021-07-28
 
