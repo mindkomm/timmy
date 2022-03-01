@@ -127,7 +127,6 @@ class Helper {
 
 		$max_width  = $args['max_width'];
 		$max_height = $args['max_height'];
-		$resize     = $args['resize'];
 
 		/**
 		 * Check upscale.

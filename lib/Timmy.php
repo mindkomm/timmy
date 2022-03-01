@@ -574,7 +574,6 @@ class Timmy {
 			'upscale'    => Helper::get_upscale_for_size( $img_size ),
 			'max_width'  => $max_width,
 			'max_height' => $max_height,
-			'resize'     => $resize,
 		] );
 
 		// Bail out if no resize is needed.
@@ -681,7 +680,6 @@ class Timmy {
 		) = wp_get_attachment_image_src( (int) $timber_image->ID, 'full' );
 
 		$upscale = Helper::get_upscale_for_size( $img_size );
-		$resize  = $img_size['resize'];
 
 		// Get values for the default image size.
 		list( $width, $height ) = Helper::get_dimensions_for_size( $img_size );
@@ -703,7 +701,6 @@ class Timmy {
 			'upscale'    => $upscale,
 			'max_width'  => $max_width,
 			'max_height' => $max_height,
-			'resize'     => $resize,
 		] );
 
 		$crop  = Helper::get_crop_for_size( $img_size );
@@ -987,7 +984,6 @@ class Timmy {
 				'upscale'    => $upscale,
 				'max_width'  => $max_width,
 				'max_height' => $max_height,
-				'resize'     => $srcset_size,
 			] );
 
 			// Skip if no resize is needed.

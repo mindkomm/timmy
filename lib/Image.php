@@ -299,7 +299,6 @@ class Image {
 
 		list( , $height ) = Helper::get_dimensions_upscale( $width, $height, [
 			'upscale'    => $this->upscale,
-			'resize'     => $this->size['resize'],
 			'max_width'  => $this->max_width(),
 			'max_height' => $this->max_height(),
 		] );
@@ -486,7 +485,6 @@ class Image {
 		} else {
 			list( $width ) = Helper::get_dimensions_upscale( $width, $height, [
 				'upscale'    => $this->upscale,
-				'resize'     => $this->size['resize'],
 				'max_width'  => $this->max_width(),
 				'max_height' => $this->max_height(),
 			] );
@@ -512,7 +510,6 @@ class Image {
 			$height = Helper::maybe_fix_height( $height, $width, $this->max_width(), $this->max_height() );
 			list( , $height ) = Helper::get_dimensions_upscale( $width, $height, [
 				'upscale'    => $this->upscale,
-				'resize'     => $this->size['resize'],
 				'max_width'  => $this->max_width(),
 				'max_height' => $this->max_height(),
 			] );
