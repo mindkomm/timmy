@@ -1,7 +1,13 @@
 # Changelog
 
-## 0.15.0
+## 0.14.9
 
+- Added `Timmy\Timmy::VERSION` constant. You can use this to check Timmy’s version using `version_compare()`:
+    ```php
+    if ( version_compare( Timmy\Timmy::VERSION, '1.0.0', '<' ) ) {
+        // Do something for Timmy versions < 1.0.0.
+    }
+    ```
 - Fixed a bug when Timmy tries to resize files that it shouldn’t, like video files.
 
 ## 0.14.8 - 2021-07-28
