@@ -184,6 +184,7 @@ class Image {
 	public function picture_responsive() {
 		$to_webp   = ! empty( $this->size['webp'] );
 		$mime_type = false;
+		$html      = '';
 
 		if ( $to_webp ) {
 			$mime_type = isset( $this->size['tojpg'] ) && $this->size['tojpg']
@@ -191,8 +192,10 @@ class Image {
 				: $this->mime_type();
 		}
 
+		// WebP source needs to come first.
+		if ( $to_webp ) {
 		$source_attributes = [
-			'type' => $mime_type
+				'type' => 'image/webp',
 		];
 
 		$source_attributes = array_merge( $source_attributes, $this->responsive_attributes( [
@@ -200,14 +203,15 @@ class Image {
 			'attr_height' => false,
 			'src_default' => false,
 			'loading'     => false,
-			'to_webp'     => false,
+				'to_webp'     => true,
+				'is_source'   => true,
 		] ) );
 
-		$html = '<source' . Helper::get_attribute_html( $source_attributes ) . '>' . PHP_EOL;
+			$html .= '<source' . Helper::get_attribute_html( $source_attributes ) . '>' . PHP_EOL;
+		}
 
-		if ( $to_webp ) {
 			$source_attributes = [
-				'type' => 'image/webp'
+			'type' => $mime_type,
 			];
 
 			$source_attributes = array_merge( $source_attributes, $this->responsive_attributes( [
@@ -215,11 +219,11 @@ class Image {
 				'attr_height' => false,
 				'src_default' => false,
 				'loading'     => false,
-				'to_webp'     => true,
+			'to_webp'     => false,
+			'is_source'   => true,
 			] ) );
 
 			$html .= '<source' . Helper::get_attribute_html( $source_attributes ) . '>' . PHP_EOL;
-		}
 
 		// Add fallback.
 		$html .= $this->picture_fallback_image();
@@ -653,6 +657,8 @@ class Image {
 			'loading'     => 'lazy',
 			'to_webp'     => $this->is_webp(),
 			'src_default' => true,
+			// Whether the attributes are for a <source> element.
+			'is_source'   => false,
 		];
 
 		$args = wp_parse_args( $args, $default_args );
@@ -720,6 +726,12 @@ class Image {
 		if ( $args['lazy_sizes'] && ! empty( $attributes['sizes'] ) ) {
 			$attributes['data-sizes'] = $attributes['sizes'];
 			unset( $attributes['sizes'] );
+		}
+
+		// Maybe rename src attribute to srcset
+		if ( $args['is_source'] && ! empty( $attributes['src'] ) ) {
+			$attributes['srcset'] = $attributes['src'];
+			unset( $attributes['src'] );
 		}
 
 		// Remove any falsy attributes.
