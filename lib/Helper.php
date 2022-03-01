@@ -112,6 +112,8 @@ class Helper {
 	/**
 	 * Gets width and height dimensions by considering the upscale parameters.
 	 *
+	 * @since 1.0.0
+	 *
 	 * @param int   $width  Current width.
 	 * @param int   $height Current height.
 	 * @param array $args
@@ -127,6 +129,8 @@ class Helper {
 
 		$max_width  = $args['max_width'];
 		$max_height = $args['max_height'];
+		$desired_width  = $width;
+		$desired_height = $height;
 
 		/**
 		 * Check upscale.
@@ -140,13 +144,27 @@ class Helper {
 		 * sense to include bigger, low-quality sizes and still constrain an image’s dimensions.
 		 */
 		if ( $width > $max_width ) {
-			// Calculate new height based on new width.
-			$height = (int) round( $max_width * ( $height / $width ) );
-
-			// Overwrite $width to use a max width.
+			// Overwrite $width to use the max width.
 			$width = $max_width;
-		} elseif ( $height > 0 && $height > $max_height ) {
+
+			// Set max_height for use in second if clause.
+			if ( $desired_width > 0 ) {
+				$max_height = min( $max_height, $max_width * ( $desired_height / $desired_width ) );
+			}
+
+			// Calculate new height based on new width.
+			$height = (int) round( $max_width * ( $desired_height / $desired_width ) );
+		}
+
+		if ( $height > 0 && $height > $max_height ) {
+			// Overwrite height to use the max height.
 			$height = $max_height;
+
+			if ( $desired_height > 0 && $desired_width > 0 ) {
+				$max_width = min( $max_width, $max_height * ( $desired_width / $desired_height ) );
+			}
+
+			// Calculate new width based on height.
 			$width  = (int) round( $max_width / $max_height * $height );
 		}
 

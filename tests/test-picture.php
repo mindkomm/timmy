@@ -41,4 +41,15 @@ class TestPicture extends TimmyUnitTestCase {
 
 		$this->assertEquals( $expected, $result );
 	}
+
+	public function test_picture_webp_with_small_image_square() {
+		$attachment = $this->create_image( [
+			'file' => 'test-200px.jpg',
+		] );
+		$result     = get_timber_picture_responsive( $attachment, 'picture-webp-resize-square' );
+
+		$expected = '<source type="image/webp" srcset="' . $this->get_upload_url() . '/test-200px-133x133-c-default.webp">' . PHP_EOL . '<source type="image/jpeg" srcset="' . $this->get_upload_url() . '/test-200px-133x133-c-default.jpg">' . PHP_EOL .  '<img src="' . $this->get_upload_url() . '/test-200px-133x133-c-default.jpg" width="133" height="133" alt="" loading="lazy">';
+
+		$this->assertEquals( $expected, $result );
+	}
 }

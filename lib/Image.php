@@ -160,16 +160,19 @@ class Image {
 			return Helper::get_original_attachment_url( $this->id );
 		}
 
+		list( $width, $height ) = Helper::get_dimensions_for_size( $this->size );
+		list( $width, $height ) = Helper::get_dimensions_upscale( $width, $height, [
+			'upscale'    => $this->upscale,
+			'max_width'  => $this->max_width(),
+			'max_height' => $this->max_height(),
+		] );
+
 		// Resize the image for that size.
 		$src = Timmy::resize(
 			$this->size,
 			$this->full_src(),
-			$this->width(),
-			/**
-			 * Always use height from size configuration, because otherwise we would get images with
-			 * different filenames, causing a lot of images to be regenerated.
-			 */
-			Helper::get_height_for_size( $this->size ),
+			$width,
+			$height,
 			$this->resize_crop,
 			$this->resize_force
 		);

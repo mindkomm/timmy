@@ -40,11 +40,11 @@ add_filter( 'timmy/sizes', function( $sizes ) {
 			'resize' => [ 1400 ],
 			'srcset' => [ [ 560 ] ],
 			'sizes'  => '100vw',
-			'webp' => true,
+			'webp'   => true,
 		],
 		'webp-quality-100'                    => [
 			'resize' => [ 1400 ],
-			'webp' => [
+			'webp'   => [
 				'quality' => 100,
 			],
 		],
@@ -59,13 +59,18 @@ add_filter( 'timmy/sizes', function( $sizes ) {
 			'resize' => [ 1400 ],
 			'srcset' => [ [ 560 ] ],
 			'sizes'  => '100vw',
-			'webp' => true,
+			'webp'   => true,
 		],
 		'picture-webp-with-small-image'       => [
 			'resize'     => [ 1400 ],
 			'srcset'     => [ [ 560 ] ],
 			'show_in_ui' => false,
-			'webp'     => true,
+			'webp'       => true,
+		],
+		'picture-webp-resize-square'          => [
+			'resize'     => [ 560, 560 ],
+			'show_in_ui' => false,
+			'webp'       => true,
 		],
 		'header-wide'                         => [
 			'resize'                => [ 1400 ],
