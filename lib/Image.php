@@ -51,13 +51,28 @@ class Image {
 	protected $upscale;
 
 	/**
+	 * Alt text.
+	 *
+	 * @var string
+	 */
+	protected $alt;
+
+	/**
+	 * Caption text.
+	 *
+	 * @var string
+	 */
+	protected $caption;
+
+	/**
 	 * Dimensions for SVG image.
 	 *
 	 * @var array
 	 */
 	protected $svg_dimensions = [];
 
-	final protected function __construct() {}
+	final protected function __construct() {
+	}
 
 	/**
 	 * Creates an image.
@@ -94,7 +109,7 @@ class Image {
 				$this->full_src,
 				$this->max_width,
 				$this->max_height
-			) = wp_get_attachment_image_src( $this->id, 'full' );
+				) = wp_get_attachment_image_src( $this->id, 'full' );
 		}
 	}
 
@@ -197,24 +212,8 @@ class Image {
 
 		// WebP source needs to come first.
 		if ( $to_webp ) {
-		$source_attributes = [
-				'type' => 'image/webp',
-		];
-
-		$source_attributes = array_merge( $source_attributes, $this->responsive_attributes( [
-			'attr_width'  => false,
-			'attr_height' => false,
-			'src_default' => false,
-			'loading'     => false,
-				'to_webp'     => true,
-				'is_source'   => true,
-		] ) );
-
-			$html .= '<source' . Helper::get_attribute_html( $source_attributes ) . '>' . PHP_EOL;
-		}
-
 			$source_attributes = [
-			'type' => $mime_type,
+				'type' => 'image/webp',
 			];
 
 			$source_attributes = array_merge( $source_attributes, $this->responsive_attributes( [
@@ -222,11 +221,27 @@ class Image {
 				'attr_height' => false,
 				'src_default' => false,
 				'loading'     => false,
-			'to_webp'     => false,
-			'is_source'   => true,
+				'to_webp'     => true,
+				'is_source'   => true,
 			] ) );
 
 			$html .= '<source' . Helper::get_attribute_html( $source_attributes ) . '>' . PHP_EOL;
+		}
+
+		$source_attributes = [
+			'type' => $mime_type,
+		];
+
+		$source_attributes = array_merge( $source_attributes, $this->responsive_attributes( [
+			'attr_width'  => false,
+			'attr_height' => false,
+			'src_default' => false,
+			'loading'     => false,
+			'to_webp'     => false,
+			'is_source'   => true,
+		] ) );
+
+		$html .= '<source' . Helper::get_attribute_html( $source_attributes ) . '>' . PHP_EOL;
 
 		// Add fallback.
 		$html .= $this->picture_fallback_image();
@@ -291,14 +306,14 @@ class Image {
 			'to_webp' => $this->is_webp(),
 		] );
 
-		$return  = false;
-		$width   = $this->width();
+		$return = false;
+		$width  = $this->width();
 		/**
 		 * Always use height from size configuration, because otherwise we would get images with
 		 * different filenames, causing a lot of images to be regenerated.
 		 */
 		$height = Helper::get_height_for_size( $this->size );
-		$srcset  = [];
+		$srcset = [];
 
 		list( , $height ) = Helper::get_dimensions_upscale( $width, $height, [
 			'upscale'    => $this->upscale,
@@ -332,7 +347,7 @@ class Image {
 				list(
 					$width_intermediate,
 					$height_intermediate
-				) = Helper::get_dimensions_for_srcset_size( $this->size['resize'], $srcset_src );
+					) = Helper::get_dimensions_for_srcset_size( $this->size['resize'], $srcset_src );
 
 				// Bail out if the current size’s width is bigger than available width.
 				if ( ! $this->upscale['allow']
@@ -346,7 +361,7 @@ class Image {
 				$width_descriptor = $this->srcset_width_descriptor( $width_intermediate, $height_intermediate );
 
 				// Check for x-notation in srcset, e.g. '2x'.
-				$suffix = is_string( $srcset_src ) && 'x' === substr( $srcset_src, -1, 1 )
+				$suffix = is_string( $srcset_src ) && 'x' === substr( $srcset_src, - 1, 1 )
 					? " {$srcset_src}"
 					: " {$width_descriptor}w";
 
@@ -605,7 +620,7 @@ class Image {
 	}
 
 	public function upscale() {
-		 return $this->upscale;
+		return $this->upscale;
 	}
 
 	/**
@@ -751,13 +766,30 @@ class Image {
 	/**
 	 * Gets the image alt text.
 	 *
+	 * If the alt text wasn’t set before, the alt text is loaded from the attachment metadata.
+	 *
 	 * @return string False on error or image alt text on success.
 	 */
 	public function alt() {
-		$alt = get_post_meta( $this->id, '_wp_attachment_image_alt', true );
-		$alt = trim( strip_tags( $alt ) );
+		if ( ! isset( $this->alt ) ) {
+			$alt = get_post_meta( $this->id, '_wp_attachment_image_alt', true );
+			$alt = trim( strip_tags( $alt ) );
 
-		return $alt;
+			$this->alt = $alt;
+		}
+
+		return $this->alt;
+	}
+
+	/**
+	 * Sets the image alt text.
+	 *
+	 * @param string $alt The alt text to set.
+	 *
+	 * @return void
+	 */
+	public function set_alt( string $alt ) {
+		$this->alt = $alt;
 	}
 
 	/**
@@ -766,13 +798,26 @@ class Image {
 	 * @return string|null Null on error or caption on success.
 	 */
 	public function caption() {
-		$post = get_post( $this->id );
+		if ( ! isset( $this->caption ) ) {
+			$post = get_post( $this->id );
 
-		if ( $post && ! empty( $post->post_excerpt ) ) {
-			return $post->post_excerpt;
+			if ( $post && ! empty( $post->post_excerpt ) ) {
+				$this->caption = $post->post_excerpt;
+			}
 		}
 
-		return null;
+		return $this->caption;
+	}
+
+	/**
+	 * Sets the image caption text.
+	 *
+	 * @param string $caption The image caption to set.
+	 *
+	 * @return void
+	 */
+	public function set_caption( string $caption ) {
+		$this->caption = $caption;
 	}
 
 	/**
