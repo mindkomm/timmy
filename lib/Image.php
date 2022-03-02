@@ -326,6 +326,13 @@ class Image {
 		return $src_default;
 	}
 
+	/**
+	 * Gets the srcset for an image.
+	 *
+	 * @param array $args Optional. Args for the srcset.
+	 *
+	 * @return false|string
+	 */
 	public function srcset( $args = [] ) {
 		$args = wp_parse_args( $args, [
 			'webp' => $this->is_webp(),

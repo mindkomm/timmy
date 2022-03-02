@@ -54,18 +54,20 @@ function get_timber_image_src( $timber_image, $size ) {
 /**
  * Returns the srcset for a TimberImage.
  *
- * @param  int|Timber\Image $timber_image Instance of Timber\Image or attachment ID.
- * @param  string|array     $size         Size key or array of the image to return.
+ * @param int|Timber\Image $timber_image Instance of Timber\Image or attachment ID.
+ * @param string|array     $size         Size key or array of the image to return.
+ * @param array            $args         Optional args for the srcset.
+ *
  * @return string|bool Image src. False if image can’t be found or no srcset is available.
  */
-function get_timber_image_srcset( $timber_image, $size ) {
+function get_timber_image_srcset( $timber_image, $size, $args = [] ) {
 	$image = Timmy::get_image( $timber_image, $size );
 
 	if ( ! $image ) {
 		return false;
 	}
 
-	return $image->srcset();
+	return $image->srcset( $args );
 }
 
 /**
