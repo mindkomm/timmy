@@ -4,7 +4,7 @@
   "description": "Advanced image manipulation for Timber.",
   "license": "MIT",
   "require": {
-    "composer/installers": "~1.0",
+    "composer/installers": "^1.0 || ^2.0",
     "php": ">=7.4.0",
     "timber/timber": "^1.19"
   },

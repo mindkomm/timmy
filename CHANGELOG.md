@@ -60,6 +60,18 @@ Timmy\Timmy::responsive_content_images();
 - Removed function pluggability. This means that you can’t overwrite any Timber functions anymore. If you want a similar functionality, you can copy the functions. They have way less logic in them than before, because a lot of the logic moved to the `Timmy\Image` class.
 - Removed `get_post_thumbnail()` and `get_post_thumbnail_src()` functions, because they are not namespaced as the other functions and are practically the same as `get_timber_image()` and `get_timber_image_src()`.
 
+## 0.14.9
+
+- Added `Timmy\Timmy::VERSION` constant. You can use this to check Timmy’s version using `version_compare()`:
+    ```php
+    if ( version_compare( Timmy\Timmy::VERSION, '1.0.0', '<' ) ) {
+        // Do something for Timmy versions < 1.0.0.
+    }
+    ```
+- Fixed a bug when Timmy tries to resize files that it shouldn’t, like video files.
+- Updated testing suite.
+- Update
+
 ## 0.14.8 - 2021-07-28
 
 - Fixed more issues with regex for Responsive Content Images.
