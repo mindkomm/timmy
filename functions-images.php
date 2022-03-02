@@ -202,7 +202,7 @@ function get_timber_picture_responsive( $timber_image, $size, $args = [] ) {
 		return false;
 	}
 
-	return $image->picture_responsive();
+	return $image->picture_responsive( $args );
 }
 
 /**

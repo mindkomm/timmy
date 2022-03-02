@@ -199,7 +199,23 @@ class Image {
 		return $src;
 	}
 
-	public function picture_responsive() {
+	/**
+	 * Gets the HTML markup for a responsive picture.
+	 *
+	 * @param array $args
+	 *
+	 * @return string
+	 */
+	public function picture_responsive( $args = [] ) {
+		/**
+		 * Default arguments for image markup.
+		 */
+		$default_args = [
+			'loading' => 'lazy',
+		];
+
+		$args = wp_parse_args( $args, $default_args );
+
 		$to_webp   = ! empty( $this->size['webp'] );
 		$mime_type = false;
 		$html      = '';
@@ -244,18 +260,27 @@ class Image {
 		$html .= '<source' . Helper::get_attribute_html( $source_attributes ) . '>' . PHP_EOL;
 
 		// Add fallback.
-		$html .= $this->picture_fallback_image();
+		$html .= $this->picture_fallback_image( $args );
 
 		return $html;
 	}
 
-	public function picture_fallback_image() {
+	public function picture_fallback_image( $args = [] ) {
+		/**
+		 * Default arguments for image markup.
+		 */
+		$default_args = [
+			'loading' => 'lazy',
+		];
+
+		$args = wp_parse_args( $args, $default_args );
+
 		$fallback_attributes = [
 			'src'     => $this->src( [ 'to_webp' => false ] ),
 			'width'   => $this->width(),
 			'height'  => $this->height(),
 			'alt'     => $this->alt(),
-			'loading' => $this->loading(),
+			'loading' => $this->loading( $args['loading'] ),
 		];
 
 		return '<img' . Helper::get_attribute_html( $fallback_attributes ) . '>';
