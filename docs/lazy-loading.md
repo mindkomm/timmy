@@ -107,6 +107,25 @@ You can also disable lazy loading per instance. Pass in `false` as a value for `
 ]); ?>>
 ```
 
+**Be aware** that WordPress also runs a filter on `the_content` to add a `loading="lazy"` attribute to images automatically with the [`wp_filter_content_tags()`](https://developer.wordpress.org/reference/functions/wp_filter_content_tags/) function. That’s why you might think that using `{ loading: false }` has no effect.
+
+In WordPress 5.9, the [logic was improved](https://make.wordpress.org/core/2021/12/29/enhanced-lazy-loading-performance-in-5-9/) to omit the first image found in the content from being lazy-loaded.
+
+You could disable this behavior by using the `wp_lazy_loading_enabled` filter. Use a check for `the_content` filter to target that behaviour specifically.
+
+```php
+/**
+ * Disable automatic adding of lazy tags by WordPress.
+ */
+add_filter( 'wp_lazy_loading_enabled', function( $default, $tag_name, $context ) {
+	if ( 'the_content' === $context && 'img' === $tag_name ) {
+		return false;
+	}
+
+	return $default;
+}, 10, 3 );
+```
+
 ## JavaScript lazy loading
 
 As an alternative to native lazy loading, you can use a JavaScript library for lazy-loading (for example: [lazysizes](https://github.com/aFarkas/lazysizes)) or [lozad](https://github.com/ApoorvSaxena/lozad.js). This was a popular technique when the native `loading` attribute still wasn’t supported very well by browsers.
