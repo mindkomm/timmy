@@ -159,7 +159,7 @@ class Image {
 		// @todo Test with false image or wrong image size key.
 
 		$args = wp_parse_args( $args, [
-			'to_webp' => $this->is_webp(),
+			'webp' => $this->is_webp(),
 		] );
 
 		/**
@@ -192,7 +192,7 @@ class Image {
 			$this->resize_force
 		);
 
-		if ( $args['to_webp'] ) {
+		if ( $args['webp'] ) {
 			$src = Timmy::to_webp( $src, $this->size );
 		}
 
@@ -237,7 +237,7 @@ class Image {
 				'attr_height' => false,
 				'src_default' => false,
 				'loading'     => false,
-				'to_webp'     => true,
+				'webp'        => true,
 				'is_source'   => true,
 			] ) );
 
@@ -253,7 +253,7 @@ class Image {
 			'attr_height' => false,
 			'src_default' => false,
 			'loading'     => false,
-			'to_webp'     => false,
+			'webp'        => false,
 			'is_source'   => true,
 		] ) );
 
@@ -276,7 +276,7 @@ class Image {
 		$args = wp_parse_args( $args, $default_args );
 
 		$fallback_attributes = [
-			'src'     => $this->src( [ 'to_webp' => false ] ),
+			'src'     => $this->src( [ 'webp' => false ] ),
 			'width'   => $this->width(),
 			'height'  => $this->height(),
 			'alt'     => $this->alt(),
@@ -328,7 +328,7 @@ class Image {
 
 	public function srcset( $args = [] ) {
 		$args = wp_parse_args( $args, [
-			'to_webp' => $this->is_webp(),
+			'webp' => $this->is_webp(),
 		] );
 
 		$return = false;
@@ -356,7 +356,7 @@ class Image {
 			$this->resize_force
 		);
 
-		if ( $args['to_webp'] ) {
+		if ( $args['webp'] ) {
 			$default_size = Timmy::to_webp( $default_size, $this->size );
 		}
 
@@ -400,7 +400,7 @@ class Image {
 					$this->resize_force
 				);
 
-				if ( $args['to_webp'] ) {
+				if ( $args['webp'] ) {
 					$src = Timmy::to_webp( $src, $this->size );
 				}
 
@@ -695,7 +695,7 @@ class Image {
 			'lazy_src'    => false,
 			'lazy_sizes'  => false,
 			'loading'     => 'lazy',
-			'to_webp'     => $this->is_webp(),
+			'webp'        => $this->is_webp(),
 			'src_default' => true,
 			// Whether the attributes are for a <source> element.
 			'is_source'   => false,
@@ -719,7 +719,7 @@ class Image {
 				$attributes['src'] = wp_get_attachment_url( $this->id );
 			}
 		} else {
-			$srcset = $this->srcset( [ 'to_webp' => $args['to_webp'] ] );
+			$srcset = $this->srcset( [ 'webp' => $args['webp'] ] );
 
 			if ( $srcset ) {
 				$attributes['srcset'] = $srcset;
@@ -730,7 +730,7 @@ class Image {
 
 				$attributes['sizes'] = $this->sizes();
 			} else {
-				$attributes['src'] = $this->src( [ 'to_webp' => $args['to_webp'] ] );
+				$attributes['src'] = $this->src( [ 'webp' => $args['webp'] ] );
 			}
 
 			$attributes['style'] = $this->style();
