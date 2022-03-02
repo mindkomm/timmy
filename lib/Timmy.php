@@ -18,7 +18,7 @@ class Timmy {
 	 *
 	 * @var string
 	 */
-	const VERSION = '0.14.9';
+	const VERSION = '1.0.0';
 
 	/**
 	 * Image sizes that can be selected in the backend.
