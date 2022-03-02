@@ -1,5 +1,7 @@
 <?php
 
+use Timmy\Timmy;
+
 /**
  * Class TestUpscale
  */
@@ -53,6 +55,34 @@ class TestPicture extends TimmyUnitTestCase {
 		$this->assertEquals( $expected, $result );
 	}
 
+	public function test_picture_webp_args_array_with_srcset_descriptors() {
+		$attachment = $this->create_image();
+		$result     = get_timber_picture_responsive( $attachment, [
+			'resize' => [ 260 ],
+			'srcset' => [ '1x', '2x' ],
+			'webp'   => true,
+		] );
+
+		$expected = '<source type="image/webp" srcset="' . $this->get_upload_url() . '/test-260x0-c-default.webp 1x, ' . $this->get_upload_url() . '/test-520x0-c-default.webp 2x">' . PHP_EOL . '<source type="image/jpeg" srcset="' . $this->get_upload_url() . '/test-260x0-c-default.jpg 1x, ' . $this->get_upload_url() . '/test-520x0-c-default.jpg 2x">' . PHP_EOL . '<img src="' . $this->get_upload_url() . '/test-260x0-c-default.jpg" width="260" height="173" alt="" loading="lazy">';
+
+		$this->assertEquals( $expected, $result );
+	}
+
+	public function test_picture_webp_args_array_with_srcset_descriptors_timmy_image() {
+		$attachment = $this->create_image();
+		$image      = Timmy::get_image( $attachment, [
+			'resize' => [ 260 ],
+			'srcset' => [ '1x', '2x' ],
+			'webp'   => true,
+		] );
+
+		$result = $image->picture_responsive();
+
+		$expected = '<source type="image/webp" srcset="' . $this->get_upload_url() . '/test-260x0-c-default.webp 1x, ' . $this->get_upload_url() . '/test-520x0-c-default.webp 2x">' . PHP_EOL . '<source type="image/jpeg" srcset="' . $this->get_upload_url() . '/test-260x0-c-default.jpg 1x, ' . $this->get_upload_url() . '/test-520x0-c-default.jpg 2x">' . PHP_EOL . '<img src="' . $this->get_upload_url() . '/test-260x0-c-default.jpg" width="260" height="173" alt="" loading="lazy">';
+
+		$this->assertEquals( $expected, $result );
+	}
+
 	public function test_picture_loading_false() {
 		$attachment = $this->create_image();
 		$result     = get_timber_picture_responsive( $attachment, 'picture', [ 'loading' => false ] );
@@ -66,8 +96,8 @@ class TestPicture extends TimmyUnitTestCase {
 	public function test_picture_loading_false_timmy_image() {
 		$attachment = $this->create_image();
 
-		$image = Timmy\Timmy::get_image( $attachment->ID, 'picture' );
-		$result     = $image->picture_responsive( [ 'loading' => false ] );
+		$image  = Timmy::get_image( $attachment->ID, 'picture' );
+		$result = $image->picture_responsive( [ 'loading' => false ] );
 
 		$expected =  '<source srcset="' . $this->get_upload_url() . '/test-560x0-c-default.jpg 560w, ' . $this->get_upload_url() . '/test-1400x0-c-default.jpg 1400w" sizes="100vw">' . PHP_EOL .
 		'<img src="' . $this->get_upload_url() . '/test-1400x0-c-default.jpg" width="1400" height="933" alt="">';
