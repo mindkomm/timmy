@@ -366,13 +366,17 @@ Allows you to convert an image to WebP.
 'webp' => true
 ```
 
-You can also pass an array to control the quality of the image. By default, a quality of `100` is used.
+You can also pass an array to control the quality of the image. By default, a quality of `80` is used.
 
 ```php
 'webp' => [
     'quality' => 80,
 ]
 ```
+
+If you turn that quality up too high, you might end up with WebP images that are bigger than the source image. As quoted from the [WebP FAQ](https://developers.google.com/speed/webp/faq):
+
+> If the source is in lossy format and you are trying to compress it as a lossy WebP with higher quality setting. For instance, trying to convert a JPEG file saved at quality 80 to a WebP file with quality 95 will usually result in a larger file, even if both formats are lossy. Assessing the source's quality is often impossible, so it is advised to lower the target WebP quality if the file size is consistently larger.
 
 If you want to enable WebP conversion for all image sizes, you can add it to your image sizes with the `timmy/sizes` filter.
 

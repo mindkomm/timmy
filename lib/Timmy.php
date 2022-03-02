@@ -760,9 +760,28 @@ class Timmy {
 		return $file_src;
 	}
 
+	/**
+	 * Converts an image to WebP.
+	 *
+	 * Uses 80 as the defaultquality setting, because a higher setting might result in a bigger file
+	 * size. As quoted from the WebP FAQ:
+	 *
+	 *      "If the source is in lossy format and you are trying to compress it as a lossy WebP with
+	 *      higher quality setting. For instance, trying to convert a JPEG file saved at quality 80
+	 *      to a WebP file with quality 95 will usually result in a larger file, even if both
+	 *      formats are lossy. Assessing the source's quality is often impossible, so it is advised
+	 *      to lower the target WebP quality if the file size is consistently larger."
+	 *
+	 * @link https://developers.google.com/speed/webp/faq
+	 *
+	 * @param $file_src
+	 * @param $size
+	 *
+	 * @return string
+	 */
 	public static function to_webp( $file_src, $size ) {
 		$args = [
-			'quality' => 100,
+			'quality' => 80,
 			'force'   => false,
 		];
 
