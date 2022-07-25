@@ -8,6 +8,23 @@ use Timber\Post;
  */
 class TimmyUnitTestCase extends WP_UnitTestCase {
 	/**
+	 * Maintain a list of action/filter hook removals to perform at the end of each test.
+	 */
+	private $temporary_hook_removals = [];
+
+	public function tear_down() {
+		parent::tear_down();
+
+		// Remove any hooks added during this test run.
+		foreach ( $this->temporary_hook_removals as $callback ) {
+			$callback();
+		}
+
+		// Reset hooks
+		$this->temporary_hook_removals = [];
+	}
+
+	/**
 	 * @param string $img
 	 * @param null   $dest_name
 	 *
@@ -160,5 +177,27 @@ class TimmyUnitTestCase extends WP_UnitTestCase {
 			'ID'           => $attachment_id,
 			'post_content' => $description,
 		] );
+	}
+
+	/**
+	 * Exactly the same as add_filter, but automatically calls remove_filter with the same
+	 * arguments during tear_down().
+	 */
+	protected function add_filter_temporarily( string $filter, callable $callback, int $pri = 10, int $count = 1 ) {
+		add_filter( $filter, $callback, $pri, $count );
+		$this->temporary_hook_removals[] = function() use ( $filter, $callback, $pri, $count ) {
+			remove_filter( $filter, $callback, $pri, $count );
+		};
+	}
+
+	/**
+	 * Exactly the same as add_action, but automatically calls remove_action with the same
+	 * arguments during tear_down().
+	 */
+	protected function add_action_temporarily( string $action, callable $callback, int $pri = 10, int $count = 1 ) {
+		add_action( $action, $callback, $pri, $count );
+		$this->temporary_hook_removals[] = function() use ( $action, $callback, $pri, $count ) {
+			remove_action( $action, $callback, $pri, $count );
+		};
 	}
 }

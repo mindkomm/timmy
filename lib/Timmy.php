@@ -596,8 +596,22 @@ class Timmy {
 		// Resize the image for that size.
 		$src = self::resize( $img_size, $file_src, $width, $height, $crop, $force );
 
-		// Maybe convert to webp.
-		if ( self::should_convert_to_webp( $file_src, $img_size ) ) {
+		// Maybe convert to WebP.
+		if (
+			self::should_convert_to_webp( $file_src, $img_size )
+			/**
+			 * We don’t want to convert to WebP when the image size is saved in the metadata of an
+			 * image, which happens when generating a downsized version. Saving the image sizes in
+			 * the metadata happens inside the wp_generate_attachment_metadata filter, which we can
+			 * check for.
+			 *
+			 * If WebP images would be saved in the attachment metadata, WebP images would also be
+			 * used by other plugins, which can lead to unextected side effects. For example,
+			 * Yoast SEO uses this for generating the OG image in the HTML head. But platforms like
+			 * LinkedIn don’t support WebP images (yet). So we shouldn’t use it there.
+			 */
+			&& ! doing_filter( 'wp_generate_attachment_metadata' )
+		) {
 			$src = self::to_webp( $src, $img_size );
 		}
 
