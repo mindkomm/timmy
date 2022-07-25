@@ -574,7 +574,6 @@ class Timmy {
 
 		$max_width  = $meta_data['width'];
 		$max_height = $meta_data['height'];
-		$resize     = $img_size['resize'];
 
 		list( $width, $height ) = Helper::get_dimensions_for_size( $img_size );
 		list( $width, $height ) = Helper::get_dimensions_upscale( $width, $height, [
