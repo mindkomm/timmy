@@ -231,8 +231,8 @@ class TestResponsiveContentImages extends TimmyUnitTestCase {
 			return $sizes;
 		};
 
-		add_filter( 'timmy/sizes/use_cache', '__return_false' );
-		add_filter( 'timmy/sizes', $filter );
+		$this->add_filter_temporarily( 'timmy/sizes/use_cache', '__return_false' );
+		$this->add_filter_temporarily( 'timmy/sizes', $filter );
 
 		$image = $this->create_image();
 		$rci   = Timmy::responsive_content_images();
@@ -250,9 +250,6 @@ class TestResponsiveContentImages extends TimmyUnitTestCase {
 		);
 
 		$result = $rci->make_content_images_responsive( $content );
-
-		remove_filter( 'timmy/sizes/use_cache', '__return_false' );
-		remove_filter( 'timmy/sizes', $filter );
 
 		$this->assertEquals( $expected, $result );
 	}
