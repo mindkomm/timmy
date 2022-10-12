@@ -23,6 +23,9 @@ class TimmyUnitTestCase extends TestCase {
 
 		// Reset hooks
 		$this->temporary_hook_removals = [];
+
+		// Deletes files added to the `uploads` directory during tests.
+		$this->remove_added_uploads();
 	}
 
 	/**
