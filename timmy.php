@@ -4,6 +4,8 @@
  * Plugin URI: https://github.com/mindkomm/timmy/
  * Description: Advanced image handling for Timber images.
  * Version: 1.0.0
+ * Requires at least: 5.5
+ * Requires PHP: 7.4
  * Author: MIND
  * Author URI: https://www.mind.ch
  */
