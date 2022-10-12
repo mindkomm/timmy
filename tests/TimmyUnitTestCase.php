@@ -2,11 +2,12 @@
 
 use Timber\Image;
 use Timber\Post;
+use Yoast\WPTestUtils\WPIntegration\TestCase;
 
 /**
  * Class TimmyUnitTestCase
  */
-class TimmyUnitTestCase extends WP_UnitTestCase {
+class TimmyUnitTestCase extends TestCase {
 	/**
 	 * Maintain a list of action/filter hook removals to perform at the end of each test.
 	 */

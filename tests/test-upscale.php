@@ -15,7 +15,7 @@ class TestUpscale extends TimmyUnitTestCase {
 		image_downsize( $attachment->ID, 'large' );
 		$file_path = $this->get_upload_path() . '/test-200px-1400x0-c-default.jpg';
 
-		$this->assertFileNotExists( $file_path );
+		$this->assertFileDoesNotExist( $file_path );
 	}
 
 	/**
@@ -33,7 +33,7 @@ class TestUpscale extends TimmyUnitTestCase {
 
 		remove_filter( 'timmy/upscale', '__return_true' );
 
-		$this->assertFileExists( $file_path );
+		$this->assertFileDoesNotExist( $file_path );
 	}
 
 	/**

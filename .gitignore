@@ -4,3 +4,4 @@ composer.lock
 vendor/
 wp-content/
 tmp/
+.phpunit.result.cache
