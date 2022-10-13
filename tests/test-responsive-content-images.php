@@ -1,6 +1,5 @@
 <?php
 
-use Timmy\Responsive_Content_Images;
 use Timmy\Timmy;
 
 /**
@@ -82,7 +81,7 @@ class TestResponsiveContentImages extends TimmyUnitTestCase {
 		$rci   = Timmy::responsive_content_images();
 
 		$content = sprintf( '<!-- wp:image {"id":40,"sizeSlug":"responsive-content-image"} -->
-<figure class="wp-block-image size-responsive-content-image"><img src="%1$s/dog-400x0-c-default.jpg" alt="" class="wp-image-%2$s"/><figcaption>Image with a caption and a break<br>at 100%</figcaption></figure>
+<figure class="wp-block-image size-responsive-content-image"><img src="%1$s/dog-400x0-c-default.jpg" alt="" class="wp-image-%2$s"/><figcaption>Image with a caption and a break<br>at 100 percent</figcaption></figure>
 <!-- /wp:image -->',
 			$this->get_upload_url(),
 			$image->ID
@@ -91,7 +90,7 @@ class TestResponsiveContentImages extends TimmyUnitTestCase {
 		$content = trim( do_blocks( $content ) );
 
 		$expected = sprintf(
-			'<figure class="wp-block-image size-responsive-content-image"><img srcset="%1$s/test-370x0-c-default.jpg 370w, %1$s/test-400x0-c-default.jpg 400w, %1$s/test-768x0-c-default.jpg 768w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" width="400" height="267" loading="lazy" alt="" class="wp-image-%2$s"><figcaption>Image with a caption and a break<br>at 100/figcaption></figure>',
+			'<figure class="wp-block-image size-responsive-content-image"><img srcset="%1$s/test-370x0-c-default.jpg 370w, %1$s/test-400x0-c-default.jpg 400w, %1$s/test-768x0-c-default.jpg 768w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" width="400" height="267" loading="lazy" alt="" class="wp-image-%2$s"><figcaption>Image with a caption and a break<br>at 100 percent</figcaption></figure>',
 			$this->get_upload_url(),
 			$image->ID
 		);
@@ -105,7 +104,7 @@ class TestResponsiveContentImages extends TimmyUnitTestCase {
 		$rci   = Timmy::responsive_content_images();
 
 		$content = sprintf( '<!-- wp:image {"id":40,"width":300,"height":200,"sizeSlug":"responsive-content-image"} -->
-<figure class="wp-block-image size-responsive-content-image is-resized"><img src="%1$s/dog-400x0-c-default.jpg" alt="" class="wp-image-%2$s" width="300" height="200"/><figcaption>Image with a caption and a break<br>at 100%</figcaption></figure>
+<figure class="wp-block-image size-responsive-content-image is-resized"><img src="%1$s/dog-400x0-c-default.jpg" alt="" class="wp-image-%2$s" width="300" height="200"/><figcaption>Image with a caption and a break<br>at 100 percent</figcaption></figure>
 <!-- /wp:image -->',
 			$this->get_upload_url(),
 			$image->ID
@@ -114,7 +113,7 @@ class TestResponsiveContentImages extends TimmyUnitTestCase {
 		$content = trim( do_blocks( $content ) );
 
 		$expected = sprintf(
-			'<figure class="wp-block-image size-responsive-content-image is-resized"><img width="300" height="200" srcset="%1$s/test-370x0-c-default.jpg 370w, %1$s/test-400x0-c-default.jpg 400w, %1$s/test-768x0-c-default.jpg 768w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" loading="lazy" alt="" class="wp-image-%2$s"><figcaption>Image with a caption and a break<br>at 100/figcaption></figure>',
+			'<figure class="wp-block-image size-responsive-content-image is-resized"><img width="300" height="200" srcset="%1$s/test-370x0-c-default.jpg 370w, %1$s/test-400x0-c-default.jpg 400w, %1$s/test-768x0-c-default.jpg 768w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" loading="lazy" alt="" class="wp-image-%2$s"><figcaption>Image with a caption and a break<br>at 100 percent</figcaption></figure>',
 			$this->get_upload_url(),
 			$image->ID
 		);
@@ -231,8 +230,8 @@ class TestResponsiveContentImages extends TimmyUnitTestCase {
 			return $sizes;
 		};
 
-		add_filter( 'timmy/sizes/use_cache', '__return_false' );
-		add_filter( 'timmy/sizes', $filter );
+		$this->add_filter_temporarily( 'timmy/sizes/use_cache', '__return_false' );
+		$this->add_filter_temporarily( 'timmy/sizes', $filter );
 
 		$image = $this->create_image();
 		$rci   = Timmy::responsive_content_images();
@@ -250,9 +249,6 @@ class TestResponsiveContentImages extends TimmyUnitTestCase {
 		);
 
 		$result = $rci->make_content_images_responsive( $content );
-
-		remove_filter( 'timmy/sizes/use_cache', '__return_false' );
-		remove_filter( 'timmy/sizes', $filter );
 
 		$this->assertEquals( $expected, $result );
 	}

@@ -10,8 +10,7 @@
   },
   "require-dev": {
     "wpackagist-plugin/advanced-custom-fields": "5.*",
-    "phpunit/phpunit": "^7.0",
-    "yoast/phpunit-polyfills": "^1.0",
+    "yoast/wp-test-utils": "^1.0",
     "szepeviktor/phpstan-wordpress": "^1.0"
   },
   "autoload": {
@@ -20,6 +19,11 @@
     },
     "files": [
       "functions-images.php"
+    ]
+  },
+  "autoload-dev": {
+    "classmap": [
+      "tests/"
     ]
   },
   "keywords": [
@@ -47,7 +51,8 @@
     }
   ],
   "scripts": {
-    "install-tests": "bash bin/install-wp-tests.sh timmy-tests root \"\" localhost latest"
+    "install-tests": "bash bin/install-wp-tests.sh timmy-tests root \"\" localhost latest",
+    "test:no-cov": "phpunit --no-coverage"
   },
   "config": {
     "allow-plugins": {

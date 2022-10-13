@@ -84,7 +84,7 @@ class TestFunctions extends TimmyUnitTestCase {
 	 * image is returned.
 	 */
 	public function test_get_timber_image_full_ignored_threshold() {
-		add_filter( 'big_image_size_threshold', '__return_false' );
+		$this->add_filter_temporarily( 'big_image_size_threshold', '__return_false' );
 
 		$attachment = $this->create_image( [ 'file' => 'huge.jpg' ] );
 		$result     = get_timber_image( $attachment, 'full' );
@@ -92,8 +92,6 @@ class TestFunctions extends TimmyUnitTestCase {
 		$image = ' src="' . $this->get_upload_url() . '/huge.jpg" alt=""';
 
 		$this->assertEquals( $image, $result );
-
-		remove_filter( 'big_image_size_threshold', '__return_false' );
 	}
 
 	public function test_get_timber_image_attributes_responsive() {

@@ -114,12 +114,10 @@ class TestTimmy extends TimmyUnitTestCase {
 			return $ignore;
 		};
 
-		add_filter( 'timmy/resize/ignore', $filter, 99 );
+		$this->add_filter_temporarily( 'timmy/resize/ignore', $filter, 99 );
 
 		$attachment = $this->create_image( [ 'file' => 'sveegee.svg' ] );
 		image_downsize( $attachment->ID );
-
-		remove_filter( 'timmy/resize/ignore', $filter, 99 );
 	}
 
 	public function test_timmy_ignores_video() {
