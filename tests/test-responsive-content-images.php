@@ -105,7 +105,7 @@ class TestResponsiveContentImages extends TimmyUnitTestCase {
 		$rci   = Timmy::responsive_content_images();
 
 		$content = sprintf( '<!-- wp:image {"id":40,"width":300,"height":200,"sizeSlug":"responsive-content-image"} -->
-<figure class="wp-block-image size-responsive-content-image is-resized"><img src="%1$s/dog-400x0-c-default.jpg" alt="" class="wp-image-%2$s" width="300" height="200"/><figcaption>Image with a caption and a break<br>at 100%</figcaption></figure>
+<figure class="wp-block-image size-responsive-content-image is-resized"><img src="%1$s/dog-400x0-c-default.jpg" alt="" class="wp-image-%2$s" width="300" height="200"/><figcaption>Image with a caption and a break<br>at 100 percent</figcaption></figure>
 <!-- /wp:image -->',
 			$this->get_upload_url(),
 			$image->ID
@@ -114,7 +114,7 @@ class TestResponsiveContentImages extends TimmyUnitTestCase {
 		$content = trim( do_blocks( $content ) );
 
 		$expected = sprintf(
-			'<figure class="wp-block-image size-responsive-content-image is-resized"><img width="300" height="200" srcset="%1$s/test-370x0-c-default.jpg 370w, %1$s/test-400x0-c-default.jpg 400w, %1$s/test-768x0-c-default.jpg 768w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" loading="lazy" alt="" class="wp-image-%2$s"><figcaption>Image with a caption and a break<br>at 100/figcaption></figure>',
+			'<figure class="wp-block-image size-responsive-content-image is-resized"><img width="300" height="200" srcset="%1$s/test-370x0-c-default.jpg 370w, %1$s/test-400x0-c-default.jpg 400w, %1$s/test-768x0-c-default.jpg 768w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" loading="lazy" alt="" class="wp-image-%2$s"><figcaption>Image with a caption and a break<br>at 100 percent</figcaption></figure>',
 			$this->get_upload_url(),
 			$image->ID
 		);
