@@ -7,7 +7,7 @@ use Yoast\WPTestUtils\WPIntegration\TestCase;
 /**
  * Class TimmyUnitTestCase
  */
-class TimmyUnitTestCase extends TestCase {
+abstract class TimmyUnitTestCase extends TestCase {
 	/**
 	 * Maintain a list of action/filter hook removals to perform at the end of each test.
 	 */
