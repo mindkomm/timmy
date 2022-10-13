@@ -1,6 +1,5 @@
 <?php
 
-use Timmy\Responsive_Content_Images;
 use Timmy\Timmy;
 
 /**

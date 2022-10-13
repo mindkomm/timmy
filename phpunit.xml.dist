@@ -17,11 +17,4 @@
             <directory prefix="test-" suffix=".php">./tests/</directory>
         </testsuite>
     </testsuites>
-    <!--<filter>
-          <whitelist processUncoveredFilesFromWhitelist="true">
-              <directory suffix=".php">lib</directory>
-              <file>functions-deprecated.php</file>
-              <file>functions-images.php</file>
-          </whitelist>
-      </filter>-->
 </phpunit>

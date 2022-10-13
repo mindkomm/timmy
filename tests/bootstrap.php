@@ -35,5 +35,4 @@ tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
  */
 WPIntegration\bootstrap_it();
 
-// require_once 'TimmyUnitTestCase.php';
 require_once 'timmy-sizes.php';
