@@ -40,9 +40,9 @@ class Image {
 
 	protected $meta;
 
-	protected $max_width;
+	protected $max_width = 0;
 
-	protected $max_height;
+	protected $max_height = 0;
 
 	protected $resize_crop;
 
@@ -379,11 +379,14 @@ class Image {
 				list(
 					$width_intermediate,
 					$height_intermediate
-					) = Helper::get_dimensions_for_srcset_size( $this->size['resize'], $srcset_src );
+				) = Helper::get_dimensions_for_srcset_size( $this->size['resize'], $srcset_src );
+
+				$max_width = $this->max_width();
 
 				// Bail out if the current size’s width is bigger than available width.
 				if ( ! $this->upscale['allow']
-					&& ( $width_intermediate > $this->max_width()
+					&& (
+						( $max_width > 0 && $width_intermediate > $max_width )
 						|| ( 0 === $width_intermediate && $height_intermediate > $this->max_height() )
 					)
 				) {
@@ -496,7 +499,9 @@ class Image {
 		} elseif ( empty( $this->max_width ) ) {
 			$this->load_attachment_meta_data();
 
-			$this->max_width = $this->meta['width'];
+			if ( ! empty( $this->meta['width'] ) ) {
+				$this->max_width = $this->meta['width'];
+			}
 		}
 
 		return $this->max_width;
@@ -512,7 +517,9 @@ class Image {
 		} elseif ( empty( $this->max_height ) ) {
 			$this->load_attachment_meta_data();
 
-			$this->max_height = $this->meta['height'];
+			if ( ! empty( $this->meta['height'] ) ) {
+				$this->max_height = $this->meta['height'];
+			}
 		}
 
 		return $this->max_height;
@@ -521,7 +528,7 @@ class Image {
 	/**
 	 * Gets the image width for a size.
 	 *
-	 * @return false|int False on error or image width.
+	 * @return false|int Width on success, false on error.
 	 */
 	public function width() {
 		list( $width, $height ) = Helper::get_dimensions_for_size( $this->size );
@@ -543,6 +550,11 @@ class Image {
 		return $width;
 	}
 
+	/**
+	 * Gets the height for a size.
+	 *
+	 * @return false|int Height on success, false on error.
+	 */
 	public function height() {
 		list( $width, $height ) = Helper::get_dimensions_for_size( $this->size );
 
@@ -557,12 +569,18 @@ class Image {
 				$height = Helper::get_height_from_width( $width, $dimensions['width'], $dimensions['height'] );
 			}
 		} else {
-			$height = Helper::maybe_fix_height( $height, $width, $this->max_width(), $this->max_height() );
-			list( , $height ) = Helper::get_dimensions_upscale( $width, $height, [
-				'upscale'    => $this->upscale,
-				'max_width'  => $this->max_width(),
-				'max_height' => $this->max_height(),
-			] );
+			$max_width  = $this->max_width();
+			$max_height = $this->max_height();
+
+			// Only calculate new height if height and width metadata was loaded.
+			if ( $max_width > 0 && $max_height > 0 ) {
+				$height = Helper::maybe_fix_height( $height, $width, $max_width, $max_height );
+				list( , $height ) = Helper::get_dimensions_upscale( $width, $height, [
+					'upscale'    => $this->upscale,
+					'max_width'  => $max_width,
+					'max_height' => $max_height,
+				] );
+			}
 		}
 
 		return $height;

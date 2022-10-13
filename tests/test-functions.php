@@ -10,6 +10,19 @@ class TestFunctions extends TimmyUnitTestCase {
 		$this->assertEquals( $image, $result );
 	}
 
+	public function test_get_timber_image_src_without_metadata() {
+		$attachment = $this->create_image();
+
+		// Remove attachment metadata.
+		wp_update_attachment_metadata( $attachment->ID, [] );
+
+		$result = get_timber_image_src( $attachment, 'large' );
+
+		$image = $this->get_upload_url() . '/test-1400x0-c-default.jpg';
+
+		$this->assertEquals( $image, $result );
+	}
+
 	public function test_get_timber_image_src_non_image() {
 		$result = get_timber_image_src( 'gaga', 'large' );
 
@@ -19,6 +32,19 @@ class TestFunctions extends TimmyUnitTestCase {
 	public function test_get_timber_image() {
 		$attachment = $this->create_image();
 		$result     = get_timber_image( $attachment, 'large' );
+
+		$image = ' src="' . $this->get_upload_url() . '/test-1400x0-c-default.jpg" alt=""';
+
+		$this->assertEquals( $image, $result );
+	}
+
+	public function test_get_timber_image_without_metadata() {
+		$attachment = $this->create_image();
+
+		// Remove attachment metadata.
+		wp_update_attachment_metadata( $attachment->ID, [] );
+
+		$result = get_timber_image( $attachment, 'large' );
 
 		$image = ' src="' . $this->get_upload_url() . '/test-1400x0-c-default.jpg" alt=""';
 
@@ -115,7 +141,29 @@ class TestFunctions extends TimmyUnitTestCase {
 		] );
 		$result     = get_timber_image_responsive( $attachment, 'large' );
 
-		$expected = ' srcset="' . $this->get_upload_url() . '/test-560x0-c-default.jpg 560w, ' . $this->get_upload_url() . '/test-1400x0-c-default.jpg 1400w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" width="1400" height="933" loading="lazy" alt="Burrito Wrap"';
+		$expected = sprintf(
+			' srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" width="1400" height="933" loading="lazy" alt="Burrito Wrap"', $this->get_upload_url()
+		);
+
+		$this->assertEquals( $expected, $result );
+	}
+
+	public function test_get_timber_image_responsive_without_metadata() {
+		$alt_text   = 'Burrito Wrap';
+		$attachment = $this->create_image( [
+			'alt'         => $alt_text,
+			'description' => 'Burritolino',
+		] );
+
+		// Remove attachment metadata.
+		wp_update_attachment_metadata( $attachment->ID, [] );
+
+		$result = get_timber_image_responsive( $attachment, 'large' );
+
+		$expected = sprintf(
+			' srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" width="1400" loading="lazy" alt="Burrito Wrap"',
+			$this->get_upload_url()
+		);
 
 		$this->assertEquals( $expected, $result );
 	}
@@ -124,7 +172,25 @@ class TestFunctions extends TimmyUnitTestCase {
 		$attachment = $this->create_image();
 		$result     = get_timber_image_responsive_src( $attachment, 'large' );
 
-		$expected = ' srcset="' . $this->get_upload_url() . '/test-560x0-c-default.jpg 560w, ' . $this->get_upload_url() . '/test-1400x0-c-default.jpg 1400w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" width="1400" height="933" loading="lazy"';
+		$expected = sprintf(
+			' srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" width="1400" height="933" loading="lazy"',
+			$this->get_upload_url()
+		);
+
+		$this->assertEquals( $expected, $result );
+	}
+
+	public function test_get_timber_image_responsive_src_without_metadata() {
+		$attachment = $this->create_image();
+		$result     = get_timber_image_responsive_src( $attachment, 'large' );
+
+		// Remove attachment metadata.
+		wp_update_attachment_metadata( $attachment->ID, [] );
+
+		$expected = sprintf(
+			' srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" width="1400" height="933" loading="lazy"',
+			$this->get_upload_url()
+		);
 
 		$this->assertEquals( $expected, $result );
 	}
@@ -148,7 +214,7 @@ class TestFunctions extends TimmyUnitTestCase {
 	public function test_get_timber_image_responsive_src_width_attribute_disabled() {
 		$attachment = $this->create_image();
 		$result     = get_timber_image_responsive_src( $attachment, 'large', [
-			'attr_width'    => false,
+			'attr_width' => false,
 		] );
 
 		$expected = sprintf(
@@ -162,7 +228,7 @@ class TestFunctions extends TimmyUnitTestCase {
 	public function test_get_timber_image_responsive_src_height_attribute_disabled() {
 		$attachment = $this->create_image();
 		$result     = get_timber_image_responsive_src( $attachment, 'large', [
-			'attr_height'    => false,
+			'attr_height' => false,
 		] );
 
 		$expected = sprintf(
@@ -176,7 +242,7 @@ class TestFunctions extends TimmyUnitTestCase {
 	public function test_get_timber_image_responsive_src_loading_eager() {
 		$attachment = $this->create_image();
 		$result     = get_timber_image_responsive_src( $attachment, 'large', [
-			'loading'    => 'eager',
+			'loading' => 'eager',
 		] );
 
 		$expected = sprintf(
@@ -190,7 +256,7 @@ class TestFunctions extends TimmyUnitTestCase {
 	public function test_get_timber_image_responsive_src_loading_false() {
 		$attachment = $this->create_image();
 		$result     = get_timber_image_responsive_src( $attachment, 'large', [
-			'loading'    => false,
+			'loading' => false,
 		] );
 
 		$expected = sprintf(
@@ -210,7 +276,18 @@ class TestFunctions extends TimmyUnitTestCase {
 		$this->assertEquals( $image, $result );
 	}
 
+	public function test_get_timber_image_full_with_gif_without_metadata() {
+		$attachment = $this->create_image( [ 'file' => 'logo-small.gif' ] );
 
+		// Remove attachment metadata.
+		wp_update_attachment_metadata( $attachment->ID, [] );
+
+		$result = get_timber_image( $attachment, 'full' );
+
+		$image = ' src="' . $this->get_upload_url() . '/logo-small.gif" alt=""';
+
+		$this->assertEquals( $image, $result );
+	}
 
 	/**
 	 * @since 0.14.5
@@ -261,6 +338,18 @@ class TestFunctions extends TimmyUnitTestCase {
 		$this->assertEquals( 1400, $result );
 	}
 
+	public function test_get_timber_image_width_without_metadata() {
+		$attachment = $this->create_image();
+
+		// Remove attachment metadata.
+		wp_update_attachment_metadata( $attachment->ID, [] );
+
+		$image  = Timmy\Timmy::get_image( $attachment, 'large' );
+		$result = $image->width();
+
+		$this->assertEquals( 1400, $result );
+	}
+
 	public function test_get_timber_image_height() {
 		$attachment = $this->create_image();
 
@@ -268,6 +357,19 @@ class TestFunctions extends TimmyUnitTestCase {
 		$result = $image->height();
 
 		$this->assertEquals( 933, $result );
+	}
+
+	public function test_get_timber_image_height_without_metadata() {
+		$attachment = $this->create_image();
+
+		// Remove attachment metadata.
+		wp_update_attachment_metadata( $attachment->ID, [] );
+
+		$image  = Timmy\Timmy::get_image( $attachment, 'large' );
+		$result = $image->height();
+
+		// Can’t calculate a height.
+		$this->assertEquals( 0, $result );
 	}
 
 	/**
