@@ -3,6 +3,26 @@
 use Timmy\Timmy;
 
 class TestWebP extends TimmyUnitTestCase {
+	public function test_webp() {
+		$attachment = $this->create_image();
+
+		$image     = wp_get_attachment_image_src( $attachment->ID, 'webp' );
+		$file_path = $this->get_upload_path() . '/test-1400x0-c-default.webp';
+
+		$this->assertEquals( $this->get_upload_url() . '/test-1400x0-c-default.webp', $image[0] );
+		$this->assertFileExists( $file_path );
+	}
+
+	public function test_webp_quality() {
+		$attachment = $this->create_image();
+
+		$image     = wp_get_attachment_image_src( $attachment->ID, 'webp-quality-100' );
+		$file_path = $this->get_upload_path() . '/test-1400x0-c-default.webp';
+
+		$this->assertEquals( $this->get_upload_url() . '/test-1400x0-c-default.webp', $image[0] );
+		$this->assertFileExists( $file_path );
+	}
+
 	public function test_picture_webp() {
 		$alt_text   = 'Burrito Wrap';
 		$attachment = $this->create_image( [
