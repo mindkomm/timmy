@@ -2,9 +2,6 @@
 
 use Timmy\Timmy;
 
-/**
- * Class TestUpscale
- */
 class TestWebP extends TimmyUnitTestCase {
 	public function test_picture_webp() {
 		$alt_text   = 'Burrito Wrap';

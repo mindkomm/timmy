@@ -2,9 +2,6 @@
 
 use Timber\ImageHelper;
 
-/**
- * Class TestAcf
- */
 class TestAcf extends TimmyUnitTestCase {
 	function set_up() {
 		parent::set_up();

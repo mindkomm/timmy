@@ -1,10 +1,5 @@
 <?php
 
-use Timber\Image;
-
-/**
- * Class TestFunctions
- */
 class TestFunctions extends TimmyUnitTestCase {
 	public function test_get_timber_image_src() {
 		$attachment = $this->create_image();

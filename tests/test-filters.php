@@ -1,8 +1,5 @@
 <?php
 
-/**
- * Class TestFilters
- */
 class TestFilters extends TimmyUnitTestCase {
 	public function test_use_src_fallback_disable() {
 		$this->add_filter_temporarily( 'timmy/use_src_default', '__return_false' );

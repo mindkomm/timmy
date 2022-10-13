@@ -1,8 +1,5 @@
 <?php
 
-/**
- * Class TestSvg
- */
 class TestSvg extends TimmyUnitTestCase {
 	/**
 	 * Tests whether we get the full src of an SVG with size full.

@@ -1,8 +1,5 @@
 <?php
 
-/**
- * Class TestUpscale
- */
 class TestUpscale extends TimmyUnitTestCase {
 	/**
 	 * Tests whether upscaled image file is not created.

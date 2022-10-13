@@ -3,9 +3,6 @@
 use Timber\Image;
 use Timber\Timber;
 
-/**
- * Class TestImageTexts
- */
 class TestImageTexts extends TimmyUnitTestCase {
 	public function test_get_timber_image_texts() {
 		$attachment  = $this->create_image();

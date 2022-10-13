@@ -2,9 +2,6 @@
 
 use Timmy\Timmy;
 
-/**
- * Class TestPicture
- */
 class TestPicture extends TimmyUnitTestCase {
 	public function test_picture() {
 		$alt_text   = 'Burrito Wrap';

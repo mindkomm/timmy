@@ -2,9 +2,6 @@
 
 use Timmy\Timmy;
 
-/**
- * Class TestResponsiveContentImages
- */
 class TestResponsiveContentImages extends TimmyUnitTestCase {
 	public function test_classic_image() {
 		$image = $this->create_image();
