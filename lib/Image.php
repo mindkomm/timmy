@@ -235,14 +235,16 @@ class Image {
 				'type' => 'image/webp',
 			];
 
-			$source_attributes = array_merge( $source_attributes, $this->responsive_attributes( [
-				'attr_width'  => false,
-				'attr_height' => false,
-				'src_default' => false,
-				'loading'     => false,
-				'webp'        => true,
-				'is_source'   => true,
-			] ) );
+			$source_attributes = array_merge( $source_attributes, $this->responsive_attributes(
+				array_merge( $args, [
+					'attr_width'  => false,
+					'attr_height' => false,
+					'src_default' => false,
+					'loading'     => false,
+					'webp'        => true,
+					'is_source'   => true,
+				] )
+			) );
 
 			$html .= '<source' . Helper::get_attribute_html( $source_attributes ) . '>' . PHP_EOL;
 		}

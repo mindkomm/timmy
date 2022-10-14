@@ -40,6 +40,27 @@ class TestWebP extends TimmyUnitTestCase {
 		$this->assertEquals( $expected, $result );
 	}
 
+	public function test_picture_webp_with_lazy_attributes() {
+		$alt_text   = 'Burrito Wrap';
+		$attachment = $this->create_image( [
+			'alt'         => $alt_text,
+			'description' => 'Burritolino',
+		] );
+		$result     = get_timber_picture_responsive( $attachment, 'picture-webp', [
+			'lazy_srcset' => true,
+			'lazy_src'    => true,
+			'lazy_sizes'  => true,
+		] );
+
+		$expected = sprintf(
+			'<source type="image/webp" data-srcset="%1$s/test-560x0-c-default.webp 560w, %1$s/test-1400x0-c-default.webp 1400w" data-sizes="100vw">%2$s<source type="image/jpeg" data-srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" data-sizes="100vw">%2$s<img width="1400" height="933" alt="Burrito Wrap" loading="lazy" data-src="%1$s/test-1400x0-c-default.jpg">',
+			$this->get_upload_url(),
+			PHP_EOL
+		);
+
+		$this->assertEquals( $expected, $result );
+	}
+
 	public function test_picture_webp_with_small_image() {
 		$attachment = $this->create_image( [
 			'file' => 'test-200px.jpg',
