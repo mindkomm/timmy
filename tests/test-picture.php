@@ -1,6 +1,5 @@
 <?php
 
-use Timmy\Helper;
 use Timmy\Timmy;
 
 class TestPicture extends TimmyUnitTestCase {

@@ -31,7 +31,11 @@ class TestWebP extends TimmyUnitTestCase {
 		] );
 		$result     = get_timber_picture_responsive( $attachment, 'picture-webp' );
 
-		$expected = '<source type="image/webp" srcset="' . $this->get_upload_url() . '/test-560x0-c-default.webp 560w, ' . $this->get_upload_url() . '/test-1400x0-c-default.webp 1400w" sizes="100vw">' . PHP_EOL . '<source type="image/jpeg" srcset="' . $this->get_upload_url() . '/test-560x0-c-default.jpg 560w, ' . $this->get_upload_url() . '/test-1400x0-c-default.jpg 1400w" sizes="100vw">' . PHP_EOL .  '<img src="' . $this->get_upload_url() . '/test-1400x0-c-default.jpg" width="1400" height="933" alt="Burrito Wrap" loading="lazy">';
+		$expected = sprintf(
+			'<source type="image/webp" srcset="%1$s/test-560x0-c-default.webp 560w, %1$s/test-1400x0-c-default.webp 1400w" sizes="100vw">%2$s<source type="image/jpeg" srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" sizes="100vw">%2$s<img src="%1$s/test-1400x0-c-default.jpg" width="1400" height="933" alt="Burrito Wrap" loading="lazy">',
+			$this->get_upload_url(),
+			PHP_EOL
+		);
 
 		$this->assertEquals( $expected, $result );
 	}
@@ -42,7 +46,11 @@ class TestWebP extends TimmyUnitTestCase {
 		] );
 		$result     = get_timber_picture_responsive( $attachment, 'picture-webp-with-small-image' );
 
-		$expected = '<source type="image/webp" srcset="' . $this->get_upload_url() . '/test-200px-200x0-c-default.webp">' . PHP_EOL . '<source type="image/jpeg" srcset="' . $this->get_upload_url() . '/test-200px-200x0-c-default.jpg">' . PHP_EOL . '<img src="' . $this->get_upload_url() . '/test-200px-200x0-c-default.jpg" width="200" height="133" alt="" loading="lazy">';
+		$expected = sprintf(
+			'<source type="image/webp" srcset="%1$s/test-200px-200x0-c-default.webp">%2$s<source type="image/jpeg" srcset="%1$s/test-200px-200x0-c-default.jpg">%2$s<img src="%1$s/test-200px-200x0-c-default.jpg" width="200" height="133" alt="" loading="lazy">',
+			$this->get_upload_url(),
+			PHP_EOL
+		);
 
 		$this->assertEquals( $expected, $result );
 	}
@@ -53,7 +61,11 @@ class TestWebP extends TimmyUnitTestCase {
 		] );
 		$result     = get_timber_picture_responsive( $attachment, 'picture-webp-resize-square' );
 
-		$expected = '<source type="image/webp" srcset="' . $this->get_upload_url() . '/test-200px-133x133-c-default.webp">' . PHP_EOL . '<source type="image/jpeg" srcset="' . $this->get_upload_url() . '/test-200px-133x133-c-default.jpg">' . PHP_EOL .  '<img src="' . $this->get_upload_url() . '/test-200px-133x133-c-default.jpg" width="133" height="133" alt="" loading="lazy">';
+		$expected = sprintf(
+			'<source type="image/webp" srcset="%1$s/test-200px-133x133-c-default.webp">%2$s<source type="image/jpeg" srcset="%1$s/test-200px-133x133-c-default.jpg">%2$s<img src="%1$s/test-200px-133x133-c-default.jpg" width="133" height="133" alt="" loading="lazy">',
+			$this->get_upload_url(),
+			PHP_EOL
+		);
 
 		$this->assertEquals( $expected, $result );
 	}
@@ -66,7 +78,11 @@ class TestWebP extends TimmyUnitTestCase {
 			'webp'   => true,
 		] );
 
-		$expected = '<source type="image/webp" srcset="' . $this->get_upload_url() . '/test-260x0-c-default.webp 1x, ' . $this->get_upload_url() . '/test-520x0-c-default.webp 2x">' . PHP_EOL . '<source type="image/jpeg" srcset="' . $this->get_upload_url() . '/test-260x0-c-default.jpg 1x, ' . $this->get_upload_url() . '/test-520x0-c-default.jpg 2x">' . PHP_EOL . '<img src="' . $this->get_upload_url() . '/test-260x0-c-default.jpg" width="260" height="173" alt="" loading="lazy">';
+		$expected = sprintf(
+			'<source type="image/webp" srcset="%1$s/test-260x0-c-default.webp 1x, %1$s/test-520x0-c-default.webp 2x">%2$s<source type="image/jpeg" srcset="%1$s/test-260x0-c-default.jpg 1x, %1$s/test-520x0-c-default.jpg 2x">%2$s<img src="%1$s/test-260x0-c-default.jpg" width="260" height="173" alt="" loading="lazy">',
+			$this->get_upload_url(),
+			PHP_EOL
+		);
 
 		$this->assertEquals( $expected, $result );
 	}
@@ -81,7 +97,11 @@ class TestWebP extends TimmyUnitTestCase {
 
 		$result = $image->picture_responsive();
 
-		$expected = '<source type="image/webp" srcset="' . $this->get_upload_url() . '/test-260x0-c-default.webp 1x, ' . $this->get_upload_url() . '/test-520x0-c-default.webp 2x">' . PHP_EOL . '<source type="image/jpeg" srcset="' . $this->get_upload_url() . '/test-260x0-c-default.jpg 1x, ' . $this->get_upload_url() . '/test-520x0-c-default.jpg 2x">' . PHP_EOL . '<img src="' . $this->get_upload_url() . '/test-260x0-c-default.jpg" width="260" height="173" alt="" loading="lazy">';
+		$expected = sprintf(
+			'<source type="image/webp" srcset="%1$s/test-260x0-c-default.webp 1x, %1$s/test-520x0-c-default.webp 2x">%2$s<source type="image/jpeg" srcset="%1$s/test-260x0-c-default.jpg 1x, %1$s/test-520x0-c-default.jpg 2x">%2$s<img src="%1$s/test-260x0-c-default.jpg" width="260" height="173" alt="" loading="lazy">',
+			$this->get_upload_url(),
+			PHP_EOL
+		);
 
 		$this->assertEquals( $expected, $result );
 	}
