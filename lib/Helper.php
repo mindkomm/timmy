@@ -123,6 +123,7 @@ class Helper {
 	public static function get_dimensions_upscale( $width, $height, $args ) {
 		$upscale = $args['upscale'];
 
+		// Bail out if upscale is allowed.
 		if ( $upscale['allow'] ) {
 			return [ $width, $height ];
 		}
@@ -131,6 +132,11 @@ class Helper {
 		$max_height = $args['max_height'];
 		$desired_width  = $width;
 		$desired_height = $height;
+
+		// Bail out if no valid max width or height could be found.
+		if ( $max_width === 0 && $max_height === 0 ) {
+			return [ $width, $height ];
+		}
 
 		/**
 		 * Check upscale.
@@ -220,7 +226,11 @@ class Helper {
 	 * @return int
 	 */
 	public static function get_height_from_width( $width, $original_width, $original_height ) {
-		return (int) round( $width * ( $original_height / $original_width ) );
+		if ( $original_height > 0 && $original_width > 0 ) {
+			return (int) round( $width * ( $original_height / $original_width ) );
+		}
+
+		return $width;
 	}
 
 	/**
