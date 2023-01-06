@@ -160,7 +160,7 @@ function get_timber_image_description( $timber_image ) {
  * @param string                        $size         Size key of the image to return the
  *                                                    attributes for.
  * @param array                         $args         Optional. Array of options. See
- *                                                    get_timber_image_responsive() for possible
+ *                                                    get_timber_image_responsive_src() for possible
  *                                                    options.
  *
  * @return bool|array An associative array of HTML attributes. False if image can’t be found.
@@ -194,6 +194,9 @@ function get_timber_image_attributes_responsive( $timber_image, $size, $args = a
  *
  * @param int|\Timber\Image $timber_image Instance of Timber\Image or Attachment ID.
  * @param string|array      $size         Timmy image size.
+ * @param array             $args         Optional. Array of options. See
+ *                                        get_timber_image_responsive_src() for possible
+ *                                        options.
  *
  * @return false|string
  */

@@ -211,7 +211,10 @@ class Image {
 		 * Default arguments for image markup.
 		 */
 		$default_args = [
-			'loading' => 'lazy',
+			'loading'     => 'lazy',
+			'lazy_srcset' => false,
+			'lazy_src'    => false,
+			'lazy_sizes'  => false,
 		];
 
 		$args = wp_parse_args( $args, $default_args );
@@ -232,14 +235,16 @@ class Image {
 				'type' => 'image/webp',
 			];
 
-			$source_attributes = array_merge( $source_attributes, $this->responsive_attributes( [
-				'attr_width'  => false,
-				'attr_height' => false,
-				'src_default' => false,
-				'loading'     => false,
-				'webp'        => true,
-				'is_source'   => true,
-			] ) );
+			$source_attributes = array_merge( $source_attributes, $this->responsive_attributes(
+				array_merge( $args, [
+					'attr_width'  => false,
+					'attr_height' => false,
+					'src_default' => false,
+					'loading'     => false,
+					'webp'        => true,
+					'is_source'   => true,
+				] )
+			) );
 
 			$html .= '<source' . Helper::get_attribute_html( $source_attributes ) . '>' . PHP_EOL;
 		}
@@ -248,14 +253,16 @@ class Image {
 			'type' => $mime_type,
 		];
 
-		$source_attributes = array_merge( $source_attributes, $this->responsive_attributes( [
-			'attr_width'  => false,
-			'attr_height' => false,
-			'src_default' => false,
-			'loading'     => false,
-			'webp'        => false,
-			'is_source'   => true,
-		] ) );
+		$source_attributes = array_merge( $source_attributes, $this->responsive_attributes(
+			array_merge( $args, [
+				'attr_width'  => false,
+				'attr_height' => false,
+				'src_default' => false,
+				'loading'     => false,
+				'webp'        => false,
+				'is_source'   => true,
+			] )
+		) );
 
 		$html .= '<source' . Helper::get_attribute_html( $source_attributes ) . '>' . PHP_EOL;
 
@@ -282,6 +289,8 @@ class Image {
 			'alt'     => $this->alt(),
 			'loading' => $this->loading( $args['loading'] ),
 		];
+
+		$fallback_attributes = $this->add_data_attributes( $fallback_attributes, $args );
 
 		return '<img' . Helper::get_attribute_html( $fallback_attributes ) . '>';
 	}
@@ -774,9 +783,35 @@ class Image {
 		// Lazy-loading.
 		$attributes['loading'] = $this->loading( $args['loading'] );
 
-		/**
-		 * Maybe rename attributes with "data-" prefixes.
-		 */
+		// Maybe update attributes with "data-" prefixes.
+		$attributes = $this->add_data_attributes( $attributes, $args );
+
+		// Maybe rename src attribute to srcset
+		if ( $args['is_source'] && ! empty( $attributes['src'] ) ) {
+			$attributes['srcset'] = $attributes['src'];
+			unset( $attributes['src'] );
+		}
+
+		// Remove any falsy attributes.
+		$attributes = array_filter( $attributes );
+
+		return $attributes;
+	}
+
+	/**
+	 * Adds "data-" attributes for usage with JavaScript lazy loading libraries.
+	 *
+	 * @param array $args       Args.
+	 * @param array $attributes Updated attributes.
+	 *
+	 * @return mixed
+	 */
+	protected function add_data_attributes( array $attributes, array $args ) {
+		$args = wp_parse_args( $args, [
+			'lazy_srcset' => false,
+			'lazy_src'    => false,
+			'lazy_sizes'  => false,
+		] );
 
 		if ( $args['lazy_srcset'] && ! empty( $attributes['srcset'] ) ) {
 			$attributes['data-srcset'] = $attributes['srcset'];
@@ -792,15 +827,6 @@ class Image {
 			$attributes['data-sizes'] = $attributes['sizes'];
 			unset( $attributes['sizes'] );
 		}
-
-		// Maybe rename src attribute to srcset
-		if ( $args['is_source'] && ! empty( $attributes['src'] ) ) {
-			$attributes['srcset'] = $attributes['src'];
-			unset( $attributes['src'] );
-		}
-
-		// Remove any falsy attributes.
-		$attributes = array_filter( $attributes );
 
 		return $attributes;
 	}
