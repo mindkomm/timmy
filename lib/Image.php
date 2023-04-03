@@ -250,7 +250,7 @@ class Image {
 
 		$args = wp_parse_args( $args, $default_args );
 
-		$to_webp   = ! empty( $this->size['webp'] );
+		$to_webp   = $this->is_webp();
 		$mime_type = false;
 		$html      = '';
 
@@ -994,6 +994,7 @@ class Image {
 		return isset( $this->size['webp'] )
 			&& $this->size['webp']
 			&& ! $this->is_svg()
+			&& ! $this->is_gif()
 			&& ! $this->is_pdf();
 	}
 

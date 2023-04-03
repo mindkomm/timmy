@@ -163,4 +163,33 @@ class TestWebP extends TimmyUnitTestCase {
 
 		$this->assertEquals( 'image/jpeg', $metadata['sizes']['large']['mime-type'] );
 	}
+
+	public function test_timmy_ignores_gif_when_using_webp() {
+		$attachment = $this->create_image( [ 'file' => 'logo-small.gif' ] );
+
+		$image = Timmy::get_image( $attachment, 'webp' );
+
+		$result   = $image->picture_responsive();
+		$expected = sprintf(
+			'<source srcset="%1$s/logo-small-100x0-c-default.gif">
+<img src="http://example.org/wp-content/uploads/2023/04/logo-small-100x0-c-default.gif" width="100" height="50" alt="" loading="lazy">',
+			$this->get_upload_url()
+		);
+
+		$this->assertSame( $expected, $result );
+	}
+
+	public function test_timmy_ignores_svg_when_using_webp() {
+		$attachment = $this->create_image( [ 'file' => 'sveegee.svg' ] );
+
+		$image = Timmy::get_image( $attachment, 'webp' );
+
+		$result   = $image->picture_responsive();
+		$expected = sprintf(
+			'<img src="%1$s/sveegee.svg" width="400" height="400" alt="" loading="lazy">',
+			$this->get_upload_url()
+		);
+
+		$this->assertSame( $expected, $result );
+	}
 }
