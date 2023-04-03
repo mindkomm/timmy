@@ -254,6 +254,7 @@ class Image {
 			$light_attributes['media'] = '(prefers-color-scheme: light)';
 			$dark_image = Timmy::get_image( $this->color_scheme_dark_image, $this->size );
 
+			$dark_image->set_size_key( $this->size_key );
 			$dark_image->set_color_scheme_dark_image( $this->id );
 
 			// WebP source needs to come first.
