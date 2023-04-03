@@ -127,7 +127,7 @@ class Image {
 				$this->full_src,
 				$this->max_width,
 				$this->max_height
-				) = wp_get_attachment_image_src( $this->id, 'full' );
+			) = wp_get_attachment_image_src( $this->id, 'full' );
 		}
 	}
 
@@ -292,10 +292,10 @@ class Image {
 		}
 
 		if ( ! $this->is_full_size() ) {
-		$source_attributes = Helper::responsive_source_attributes( $this, $args, $mime_type );
-		$source_attributes = array_merge( $source_attributes, $light_attributes );
+			$source_attributes = Helper::responsive_source_attributes( $this, $args, $mime_type );
+			$source_attributes = array_merge( $source_attributes, $light_attributes );
 
-		$html .= '<source' . Helper::get_attribute_html( $source_attributes ) . '>' . PHP_EOL;
+			$html .= '<source' . Helper::get_attribute_html( $source_attributes ) . '>' . PHP_EOL;
 		}
 
 		// Add fallback.
@@ -576,7 +576,7 @@ class Image {
 			$width  = $this->max_width();
 			$height = $this->max_height();
 		} else {
-		list( $width, $height ) = Helper::get_dimensions_for_size( $this->size );
+			list( $width, $height ) = Helper::get_dimensions_for_size( $this->size );
 		}
 
 		if ( $this->is_svg() ) {
@@ -606,7 +606,7 @@ class Image {
 			$width  = $this->max_width();
 			$height = $this->max_height();
 		} else {
-		list( $width, $height ) = Helper::get_dimensions_for_size( $this->size );
+			list( $width, $height ) = Helper::get_dimensions_for_size( $this->size );
 		}
 
 		if ( $this->is_svg() ) {
@@ -995,6 +995,17 @@ class Image {
 			&& $this->size['webp']
 			&& ! $this->is_svg()
 			&& ! $this->is_pdf();
+	}
+
+	/**
+	 * Sets whether an image will be converted to WebP.
+	 *
+	 * @param bool $webp Whether to convert the image to WebP.
+	 *
+	 * @return void
+	 */
+	public function set_webp( bool $webp ) {
+		$this->size['webp'] = $webp;
 	}
 
 	/**
