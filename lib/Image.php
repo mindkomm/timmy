@@ -198,7 +198,7 @@ class Image {
 	 */
 	public function src( $args = [] ) {
 		// @todo Test with false image or wrong image size key.
-		if ( $this->is_full_size() ) {
+		if ( $this->is_full_size() || $this->is_svg() ) {
 			return $this->auto_full_src();
 		}
 
@@ -291,7 +291,7 @@ class Image {
 			$html .= '<source' . Helper::get_attribute_html( $source_attributes ) . '>' . PHP_EOL;
 		}
 
-		if ( ! $this->is_full_size() ) {
+		if ( ! $this->is_full_size() && ! $this->is_svg() ) {
 			$source_attributes = Helper::responsive_source_attributes( $this, $args, $mime_type );
 			$source_attributes = array_merge( $source_attributes, $light_attributes );
 
@@ -787,7 +787,7 @@ class Image {
 		 * The full size may be a scaled version of the image. To always request the original
 		 * version, 'original' has to be used as the size.
 		 */
-		if ( $this->is_full_size() ) {
+		if ( $this->is_full_size() || $this->is_svg() ) {
 			$attributes['src'] = $this->auto_full_src();
 		} else {
 			$srcset = $this->srcset( [ 'webp' => $args['webp'] ] );
@@ -982,7 +982,7 @@ class Image {
 	 * @return bool
 	 */
 	public function is_full_size() {
-		return in_array( $this->size_key, [ 'full', 'original' ], true ) || $this->is_svg();
+		return in_array( $this->size_key, [ 'full', 'original' ], true );
 	}
 
 	/**
