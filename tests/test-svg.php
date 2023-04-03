@@ -33,7 +33,7 @@ class TestSvg extends TimmyUnitTestCase {
 		$attachment = $this->create_image( [ 'file' => 'sveegee.svg' ] );
 		$result     = get_timber_image_responsive( $attachment, 'large' );
 
-		$image = ' src="' . $this->get_upload_url() . '/sveegee.svg" width="1400" height="1400" loading="lazy" alt=""';
+		$image = ' src="' . $this->get_upload_url() . '/sveegee.svg" width="400" height="400" loading="lazy" alt=""';
 
 		$this->assertEquals( $image, $result );
 	}
