@@ -1,5 +1,7 @@
 <?php
 
+use Timmy\Timmy;
+
 class TestFunctions extends TimmyUnitTestCase {
 	public function test_get_timber_image_src() {
 		$attachment = $this->create_image();
@@ -10,17 +12,27 @@ class TestFunctions extends TimmyUnitTestCase {
 		$this->assertEquals( $image, $result );
 	}
 
+	public function test_get_timber_image_src_small_image() {
+		$attachment = $this->create_image( [ 'file' => 'test-200px.jpg' ] );
+
+		$image  = Timmy::get_image( $attachment, 'large' );
+		$result = $image->src();
+
+		$image = $this->get_upload_url() . '/test-200px.jpg';
+
+		$this->assertEquals( $image, $result );
+	}
+
 	public function test_get_timber_image_src_without_metadata() {
 		$attachment = $this->create_image();
 
 		// Remove attachment metadata.
 		wp_update_attachment_metadata( $attachment->ID, [] );
 
-		$result = get_timber_image_src( $attachment, 'large' );
+		$result   = get_timber_image_src( $attachment, 'large' );
+		$expected = $this->get_upload_url() . '/test-1400x0-c-default.jpg';
 
-		$image = $this->get_upload_url() . '/test-1400x0-c-default.jpg';
-
-		$this->assertEquals( $image, $result );
+		$this->assertEquals( $expected, $result );
 	}
 
 	public function test_get_timber_image_src_non_image() {
@@ -276,6 +288,28 @@ class TestFunctions extends TimmyUnitTestCase {
 		$this->assertEquals( $image, $result );
 	}
 
+	public function test_get_timber_image_full_with_gif_apiv1() {
+		$attachment = $this->create_image( [ 'file' => 'logo-small.gif' ] );
+
+		$image  = Timmy::get_image( $attachment, 'full' );
+		$result = $image->src();
+
+		$expected = $this->get_upload_url() . '/logo-small.gif';
+
+		$this->assertEquals( $expected, $result );
+	}
+
+	public function test_get_timber_image_large_with_gif() {
+		$attachment = $this->create_image( [ 'file' => 'logo-small.gif' ] );
+
+		$image  = Timmy::get_image( $attachment, 'large' );
+		$result = $image->src();
+
+		$expected = $this->get_upload_url() . '/logo-small.gif';
+
+		$this->assertEquals( $expected, $result );
+	}
+
 	public function test_get_timber_image_full_with_gif_without_metadata() {
 		$attachment = $this->create_image( [ 'file' => 'logo-small.gif' ] );
 
@@ -332,7 +366,7 @@ class TestFunctions extends TimmyUnitTestCase {
 	public function test_get_timber_image_width() {
 		$attachment = $this->create_image();
 
-		$image  = Timmy\Timmy::get_image( $attachment, 'large' );
+		$image  = Timmy::get_image( $attachment, 'large' );
 		$result = $image->width();
 
 		$this->assertEquals( 1400, $result );
@@ -344,7 +378,7 @@ class TestFunctions extends TimmyUnitTestCase {
 		// Remove attachment metadata.
 		wp_update_attachment_metadata( $attachment->ID, [] );
 
-		$image  = Timmy\Timmy::get_image( $attachment, 'large' );
+		$image  = Timmy::get_image( $attachment, 'large' );
 		$result = $image->width();
 
 		$this->assertEquals( 1400, $result );
@@ -353,7 +387,7 @@ class TestFunctions extends TimmyUnitTestCase {
 	public function test_get_timber_image_height() {
 		$attachment = $this->create_image();
 
-		$image  = Timmy\Timmy::get_image( $attachment, 'large' );
+		$image  = Timmy::get_image( $attachment, 'large' );
 		$result = $image->height();
 
 		$this->assertEquals( 933, $result );
@@ -365,7 +399,7 @@ class TestFunctions extends TimmyUnitTestCase {
 		// Remove attachment metadata.
 		wp_update_attachment_metadata( $attachment->ID, [] );
 
-		$image  = Timmy\Timmy::get_image( $attachment, 'large' );
+		$image  = Timmy::get_image( $attachment, 'large' );
 		$result = $image->height();
 
 		// Can’t calculate a height.
