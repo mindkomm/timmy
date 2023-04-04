@@ -186,7 +186,7 @@ class TestWebP extends TimmyUnitTestCase {
 
 		$result   = $image->picture_responsive();
 		$expected = sprintf(
-			'<img src="%1$s/sveegee.svg" width="400" height="400" alt="" loading="lazy">',
+			'<img src="%1$s/sveegee.svg" width="1400" height="1400" alt="" loading="lazy">',
 			$this->get_upload_url()
 		);
 
