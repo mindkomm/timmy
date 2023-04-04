@@ -27,6 +27,26 @@ class TestColorSchemeDark extends TimmyUnitTestCase {
 		$this->assertEquals( $expected, $result );
 	}
 
+	public function test_picture_full() {
+		$attachment = $this->create_image();
+		$attachment_dark = $this->create_image( [
+			'file' => 'test-color-scheme-dark.jpg',
+		] );
+
+		$image = Timmy::get_image( $attachment->ID, 'full' );
+		$image->set_color_scheme_dark_image( $attachment_dark->ID );
+
+		$result = $image->picture_responsive();
+
+		$expected = sprintf(
+			'<source srcset="%1$s/test-color-scheme-dark.jpg" media="(prefers-color-scheme: dark)">%2$s<img src="%1$s/test.jpg" width="2400" height="1600" alt="" loading="lazy">',
+			$this->get_upload_url(),
+			PHP_EOL
+		);
+
+		$this->assertEquals( $expected, $result );
+	}
+
 	public function test_picture_loading_false() {
 		$attachment      = $this->create_image();
 		$attachment_dark = $this->create_image( [ 'file' => 'test-color-scheme-dark.jpg' ] );

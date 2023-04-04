@@ -91,6 +91,23 @@ class TestWebP extends TimmyUnitTestCase {
 		$this->assertEquals( $expected, $result );
 	}
 
+	public function test_picture_with_full_src_webp() {
+		$attachment = $this->create_image();
+
+		$image = Timmy::get_image( $attachment, 'full' );
+		$image->set_webp( true );
+
+		$result = $image->picture_responsive();
+
+		$expected = sprintf(
+			'<source type="image/webp" srcset="%1$s/test.jpg">%2$s<img src="%1$s/test.jpg" width="2400" height="1600" alt="" loading="lazy">',
+			$this->get_upload_url(),
+			PHP_EOL
+		);
+
+		$this->assertEquals( $expected, $result );
+	}
+
 	public function test_picture_webp_args_array_with_srcset_descriptors() {
 		$attachment = $this->create_image();
 		$result     = get_timber_picture_responsive( $attachment, [

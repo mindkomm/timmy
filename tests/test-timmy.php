@@ -107,7 +107,7 @@ class TestTimmy extends TimmyUnitTestCase {
 		$this->assertEquals( $image, $result );
 	}
 
-	public function test_timmy_ignores_sgv() {
+	public function test_timmy_ignores_svg() {
 		$filter = function( $ignore) {
 			$this->assertEquals( true, $ignore );
 

@@ -127,7 +127,7 @@ class Image {
 				$this->full_src,
 				$this->max_width,
 				$this->max_height
-				) = wp_get_attachment_image_src( $this->id, 'full' );
+			) = wp_get_attachment_image_src( $this->id, 'full' );
 		}
 	}
 
@@ -156,6 +156,29 @@ class Image {
 	}
 
 	/**
+	 * Gets the optimal full size for the given image size and mime type.
+	 *
+	 * Directly returns the full source when a full source or an SVG image is
+	 * requested.
+	 *
+	 * The full size may be a scaled version of the image. To always request the
+	 * original version, 'original' has to be used as the size.
+	 *
+	 * @return string|null
+	 */
+	public function auto_full_src() : ?string {
+		if ( 'full' === $this->size_key || $this->is_svg() ) {
+			// Deliberately return the attachment URL, which can be a 'scaled'
+			// version of an image.
+			return wp_get_attachment_url( $this->id );
+		} elseif ( 'original' === $this->size_key ) {
+			return Helper::get_original_attachment_url( $this->id );
+		}
+
+		return null;
+	}
+
+	/**
 	 * Gets absolute attachment path.
 	 *
 	 * @return false|string
@@ -175,23 +198,13 @@ class Image {
 	 */
 	public function src( $args = [] ) {
 		// @todo Test with false image or wrong image size key.
+		if ( $this->is_full_size() || $this->is_svg() ) {
+			return $this->auto_full_src();
+		}
 
 		$args = wp_parse_args( $args, [
 			'webp' => $this->is_webp(),
 		] );
-
-		/**
-		 * Directly return full source when full source or an SVG image is requested.
-		 *
-		 * The full size may be a scaled version of the image. To always request the original
-		 * version, 'original' has to be used as the size.
-		 */
-		if ( 'full' === $this->size_key || $this->is_svg() ) {
-			// Deliberately return the attachment URL, which can be a 'scaled' version of an image.
-			return wp_get_attachment_url( $this->id );
-		} elseif ( 'original' === $this->size_key ) {
-			return Helper::get_original_attachment_url( $this->id );
-		}
 
 		list( $width, $height ) = Helper::get_dimensions_for_size( $this->size );
 		list( $width, $height ) = Helper::get_dimensions_upscale( $width, $height, [
@@ -279,10 +292,12 @@ class Image {
 			$html .= '<source' . Helper::get_attribute_html( $source_attributes ) . '>' . PHP_EOL;
 		}
 
-		$source_attributes = Helper::responsive_source_attributes( $this, $args, $mime_type );
-		$source_attributes = array_merge( $source_attributes, $light_attributes );
+		if ( ! $this->is_full_size() && ! $this->is_svg() ) {
+			$source_attributes = Helper::responsive_source_attributes( $this, $args, $mime_type );
+			$source_attributes = array_merge( $source_attributes, $light_attributes );
 
-		$html .= '<source' . Helper::get_attribute_html( $source_attributes ) . '>' . PHP_EOL;
+			$html .= '<source' . Helper::get_attribute_html( $source_attributes ) . '>' . PHP_EOL;
+		}
 
 		// Add fallback.
 		$html .= $this->picture_fallback_image( $args );
@@ -558,7 +573,12 @@ class Image {
 	 * @return false|int Width on success, false on error.
 	 */
 	public function width() {
-		list( $width, $height ) = Helper::get_dimensions_for_size( $this->size );
+		if ( $this->is_full_size() ) {
+			$width  = $this->max_width();
+			$height = $this->max_height();
+		} else {
+			list( $width, $height ) = Helper::get_dimensions_for_size( $this->size );
+		}
 
 		if ( $this->is_svg() ) {
 			$dimensions = $this->svg_dimensions();
@@ -583,7 +603,12 @@ class Image {
 	 * @return false|int Height on success, false on error.
 	 */
 	public function height() {
-		list( $width, $height ) = Helper::get_dimensions_for_size( $this->size );
+		if ( $this->is_full_size() ) {
+			$width  = $this->max_width();
+			$height = $this->max_height();
+		} else {
+			list( $width, $height ) = Helper::get_dimensions_for_size( $this->size );
+		}
 
 		if ( $this->is_svg() ) {
 			$dimensions = $this->svg_dimensions();
@@ -763,13 +788,8 @@ class Image {
 		 * The full size may be a scaled version of the image. To always request the original
 		 * version, 'original' has to be used as the size.
 		 */
-		if ( in_array( $this->size_key, [ 'full', 'original' ], true ) || $this->is_svg() ) {
-			if ( 'original' === $this->size_key ) {
-				$attributes['src'] = Helper::get_original_attachment_url( $this->id );
-			} else {
-				// Deliberately get the attachment URL, which can be a 'scaled' version of an image.
-				$attributes['src'] = wp_get_attachment_url( $this->id );
-			}
+		if ( $this->is_full_size() || $this->is_svg() ) {
+			$attributes['src'] = $this->auto_full_src();
 		} else {
 			$srcset = $this->srcset( [ 'webp' => $args['webp'] ] );
 
@@ -958,6 +978,15 @@ class Image {
 	}
 
 	/**
+	 * Checks whether an image is considered a full size image.
+	 *
+	 * @return bool
+	 */
+	public function is_full_size() {
+		return in_array( $this->size_key, [ 'full', 'original' ], true );
+	}
+
+	/**
 	 * Checks whether an image will be converted to WebP.
 	 *
 	 * @return bool
@@ -967,6 +996,17 @@ class Image {
 			&& $this->size['webp']
 			&& ! $this->is_svg()
 			&& ! $this->is_pdf();
+	}
+
+	/**
+	 * Sets whether an image will be converted to WebP.
+	 *
+	 * @param bool $webp Whether to convert the image to WebP.
+	 *
+	 * @return void
+	 */
+	public function set_webp( bool $webp ) {
+		$this->size['webp'] = $webp;
 	}
 
 	/**

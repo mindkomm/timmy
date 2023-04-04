@@ -20,6 +20,22 @@ class TestPicture extends TimmyUnitTestCase {
 		$this->assertEquals( $expected, $result );
 	}
 
+	public function test_picture_with_full_src() {
+		$attachment = $this->create_image( [
+			'alt' => 'Burrito Wrap',
+		] );
+
+		$image  = Timmy::get_image( $attachment, 'full' );
+		$result = $image->picture_responsive();
+
+		$expected = sprintf(
+			'<img src="%1$s/test.jpg" width="2400" height="1600" alt="Burrito Wrap" loading="lazy">',
+			$this->get_upload_url(),
+		);
+
+		$this->assertEquals( $expected, $result );
+	}
+
 	public function test_picture_loading_false() {
 		$attachment = $this->create_image();
 		$result     = get_timber_picture_responsive( $attachment, 'picture', [ 'loading' => false ] );
