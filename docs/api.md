@@ -37,3 +37,47 @@ As soon as you have that image, you can start interacting with it.
     {% endif %}
 {% endif %
 ```
+
+## Images for dark color schemes
+
+If you want to display seperate images for dark color schemes, you can pass it using the `Image::set_color_scheme_dark_image()` function.
+
+When you then use `Image::picture_responsive()`, Timmy will add the relevant media attributes to the `<source>` tags automatically.
+
+**PHP**
+
+```php
+$image = Timmy::get_image( $attachment_id, 'large' );
+
+$image->set_color_scheme_dark_image( $dark_attachment_id );
+
+echo $image->picture_responsive();
+```
+
+**Twig**
+
+```twig
+{% set image = get_timmy_image( attachment_id, 'large' ) %}
+
+{% do image.set_color_scheme_dark_image(dark_attachment_id) %}
+
+<picture>
+    {{ image.picture_responsive }}
+<picture>
+```
+
+This will result in the following HTML
+
+```html
+<picture>
+    <!-- Sources for dark color scheme. -->
+    <source type="image/webp" srcset="dark.webp" media="(prefers-color-scheme: dark)" />
+    <source type="image/jpeg" srcset="dark.jpg" media="(prefers-color-scheme: dark)" />
+
+    <!-- Sources for default/light color scheme. -->
+    <source type="image/webp" srcset="light.webp" media="(prefers-color-scheme: light)" />
+    <source type="image/jpeg" srcset="light.jpg" media="(prefers-color-scheme: light)" />
+
+    <img src="light.jpg" />
+</picture>
+```

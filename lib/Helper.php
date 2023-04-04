@@ -355,6 +355,61 @@ class Helper {
 	}
 
 	/**
+	 * Gets responsive attributes for <source> elements.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \Timmy\Image $image     Timmy image instance.
+	 * @param array        $args      Args.
+	 * @param string       $mime_type Mime type.
+	 *
+	 * @return array|string[]
+	 */
+	public static function responsive_source_attributes( Image $image, $args, $mime_type ) : array {
+		$source_attributes = [
+			'type' => $mime_type,
+		];
+
+		return array_merge( $source_attributes, $image->responsive_attributes(
+			array_merge( $args, [
+				'attr_width'  => false,
+				'attr_height' => false,
+				'src_default' => false,
+				'loading'     => false,
+				'webp'        => false,
+				'is_source'   => true,
+			] )
+		) );
+	}
+
+	/**
+	 * Gets attributes for WebP images in <source>.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param \Timmy\Image $image Timmy image instance.
+	 * @param array        $args  Args.
+	 *
+	 * @return array|string[]
+	 */
+	public static function responsive_webp_attributes( Image $image, array $args ) : array {
+		$attributes = [
+			'type' => 'image/webp',
+		];
+
+		return array_merge( $attributes, $image->responsive_attributes(
+			array_merge( $args, [
+				'attr_width'  => false,
+				'attr_height' => false,
+				'src_default' => false,
+				'loading'     => false,
+				'webp'        => true,
+				'is_source'   => true,
+			] )
+		) );
+	}
+
+	/**
 	 * Gets the HTML for an array of HTML tag attributes.
 	 *
 	 * @since 0.14.0

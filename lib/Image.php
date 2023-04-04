@@ -51,6 +51,13 @@ class Image {
 	protected $upscale;
 
 	/**
+	 * Image ID for dark mode / dark color scheme.
+	 *
+	 * @var int
+	 */
+	protected $color_scheme_dark_image;
+
+	/**
 	 * Alt text.
 	 *
 	 * @var string
@@ -101,6 +108,17 @@ class Image {
 
 	public function size() {
 		return $this->size;
+	}
+
+	/**
+	 * Sets the image for dark mode / dark color scheme.
+	 *
+	 * @param int $image_id
+	 *
+	 * @return void
+	 */
+	public function set_color_scheme_dark_image( int $image_id ) {
+		$this->color_scheme_dark_image = $image_id;
 	}
 
 	protected function load_attachment_image_src() {
@@ -223,46 +241,46 @@ class Image {
 		$mime_type = false;
 		$html      = '';
 
+		$light_attributes = [];
+
 		if ( $to_webp ) {
 			$mime_type = isset( $this->size['tojpg'] ) && $this->size['tojpg']
 				? 'image/jpeg'
 				: $this->mime_type();
 		}
 
-		// WebP source needs to come first.
-		if ( $to_webp ) {
-			$source_attributes = [
-				'type' => 'image/webp',
-			];
+		// Dark color scheme.
+		if ( $this->color_scheme_dark_image ) {
+			$light_attributes['media'] = '(prefers-color-scheme: light)';
+			$dark_image = Timmy::get_image( $this->color_scheme_dark_image, $this->size );
 
-			$source_attributes = array_merge( $source_attributes, $this->responsive_attributes(
-				array_merge( $args, [
-					'attr_width'  => false,
-					'attr_height' => false,
-					'src_default' => false,
-					'loading'     => false,
-					'webp'        => true,
-					'is_source'   => true,
-				] )
-			) );
+			$dark_image->set_size_key( $this->size_key );
+			$dark_image->set_color_scheme_dark_image( $this->id );
+
+			// WebP source needs to come first.
+			if ( $to_webp ) {
+				$source_attributes = Helper::responsive_webp_attributes( $dark_image, $args );
+				$source_attributes['media'] = '(prefers-color-scheme: dark)';
+
+				$html .= '<source' . Helper::get_attribute_html( $source_attributes ) . '>' . PHP_EOL;
+			}
+
+			$source_attributes = Helper::responsive_source_attributes( $dark_image, $args, $mime_type );
+			$source_attributes['media'] = '(prefers-color-scheme: dark)';
 
 			$html .= '<source' . Helper::get_attribute_html( $source_attributes ) . '>' . PHP_EOL;
 		}
 
-		$source_attributes = [
-			'type' => $mime_type,
-		];
+		// WebP source needs to come first.
+		if ( $to_webp ) {
+			$source_attributes = Helper::responsive_webp_attributes( $this, $args );
+			$source_attributes = array_merge( $source_attributes, $light_attributes );
 
-		$source_attributes = array_merge( $source_attributes, $this->responsive_attributes(
-			array_merge( $args, [
-				'attr_width'  => false,
-				'attr_height' => false,
-				'src_default' => false,
-				'loading'     => false,
-				'webp'        => false,
-				'is_source'   => true,
-			] )
-		) );
+			$html .= '<source' . Helper::get_attribute_html( $source_attributes ) . '>' . PHP_EOL;
+		}
+
+		$source_attributes = Helper::responsive_source_attributes( $this, $args, $mime_type );
+		$source_attributes = array_merge( $source_attributes, $light_attributes );
 
 		$html .= '<source' . Helper::get_attribute_html( $source_attributes ) . '>' . PHP_EOL;
 
@@ -388,7 +406,7 @@ class Image {
 				list(
 					$width_intermediate,
 					$height_intermediate
-				) = Helper::get_dimensions_for_srcset_size( $this->size['resize'], $srcset_src );
+					) = Helper::get_dimensions_for_srcset_size( $this->size['resize'], $srcset_src );
 
 				$max_width = $this->max_width();
 
