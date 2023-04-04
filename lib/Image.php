@@ -167,15 +167,13 @@ class Image {
 	 * @return string|null
 	 */
 	public function auto_full_src() : ?string {
-		if ( 'full' === $this->size_key || $this->is_svg() ) {
-			// Deliberately return the attachment URL, which can be a 'scaled'
-			// version of an image.
-			return wp_get_attachment_url( $this->id );
-		} elseif ( 'original' === $this->size_key ) {
+		if ( 'original' === $this->size_key ) {
 			return Helper::get_original_attachment_url( $this->id );
 		}
 
-		return null;
+		// Deliberately return the attachment URL, which can be a 'scaled'
+		// version of an image.
+		return wp_get_attachment_url( $this->id );
 	}
 
 	/**
@@ -213,15 +211,22 @@ class Image {
 			'max_height' => $this->max_height(),
 		] );
 
-		// Resize the image for that size.
-		$src = Timmy::resize(
-			$this->size,
-			$this->full_src(),
-			$width,
-			$height,
-			$this->resize_crop,
-			$this->resize_force
-		);
+		if ( $this->upscale['allow']
+			|| ( $this->max_width() !== $width )
+			|| ( 0 === $width && $height !== $this->max_height() )
+		) {
+			// Resize the image for that size.
+			$src = Timmy::resize(
+				$this->size,
+				$this->full_src(),
+				$width,
+				$height,
+				$this->resize_crop,
+				$this->resize_force
+			);
+		} else {
+			$src = $this->auto_full_src();
+		}
 
 		if ( $args['webp'] ) {
 			$src = Timmy::to_webp( $src, $this->size );
@@ -421,7 +426,7 @@ class Image {
 				list(
 					$width_intermediate,
 					$height_intermediate
-					) = Helper::get_dimensions_for_srcset_size( $this->size['resize'], $srcset_src );
+				) = Helper::get_dimensions_for_srcset_size( $this->size['resize'], $srcset_src );
 
 				$max_width = $this->max_width();
 
@@ -532,13 +537,17 @@ class Image {
 	}
 
 	public function max_width() {
+		if ( ! empty( $this->max_width ) ) {
+			return $this->max_width;
+		}
+
 		if ( $this->is_svg() ) {
 			$dimensions = $this->svg_dimensions();
 
 			if ( $dimensions['width'] > 0 ) {
 				$this->max_width = round( $dimensions['width'] );
 			}
-		} elseif ( empty( $this->max_width ) ) {
+		} else {
 			$this->load_attachment_meta_data();
 
 			if ( ! empty( $this->meta['width'] ) ) {
@@ -550,13 +559,17 @@ class Image {
 	}
 
 	public function max_height() {
+		if ( ! empty( $this->max_height ) ) {
+			return $this->max_height;
+		}
+
 		if ( $this->is_svg() ) {
 			$dimensions = $this->svg_dimensions();
 
 			if ( $dimensions['height'] > 0 ) {
 				$this->max_height = round( $dimensions['height'] );
 			}
-		} elseif ( empty( $this->max_height ) ) {
+		} else {
 			$this->load_attachment_meta_data();
 
 			if ( ! empty( $this->meta['height'] ) ) {

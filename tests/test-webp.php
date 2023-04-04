@@ -68,7 +68,7 @@ class TestWebP extends TimmyUnitTestCase {
 		$result     = get_timber_picture_responsive( $attachment, 'picture-webp-with-small-image' );
 
 		$expected = sprintf(
-			'<source type="image/webp" srcset="%1$s/test-200px-200x0-c-default.webp">%2$s<source type="image/jpeg" srcset="%1$s/test-200px-200x0-c-default.jpg">%2$s<img src="%1$s/test-200px-200x0-c-default.jpg" width="200" height="133" alt="" loading="lazy">',
+			'<source type="image/webp" srcset="%1$s/test-200px.webp">%2$s<source type="image/jpeg" srcset="%1$s/test-200px.jpg">%2$s<img src="%1$s/test-200px.jpg" width="200" height="133" alt="" loading="lazy">',
 			$this->get_upload_url(),
 			PHP_EOL
 		);
@@ -171,9 +171,9 @@ class TestWebP extends TimmyUnitTestCase {
 
 		$result   = $image->picture_responsive();
 		$expected = sprintf(
-			'<source srcset="%1$s/logo-small-100x0-c-default.gif">
-<img src="http://example.org/wp-content/uploads/2023/04/logo-small-100x0-c-default.gif" width="100" height="50" alt="" loading="lazy">',
-			$this->get_upload_url()
+			'<source srcset="%1$s/logo-small.gif">%2$s<img src="http://example.org/wp-content/uploads/2023/04/logo-small.gif" width="100" height="50" alt="" loading="lazy">',
+			$this->get_upload_url(),
+			PHP_EOL
 		);
 
 		$this->assertSame( $expected, $result );
