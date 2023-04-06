@@ -142,4 +142,23 @@ class TestColorSchemeDark extends TimmyUnitTestCase {
 
 		$this->assertEquals( $expected, $result );
 	}
+
+	public function test_svg() {
+		$attachment = $this->create_image( [ 'file' => 'sveegee.svg' ] );
+		$attachment_dark = $this->create_image( [
+			'file' => 'svg-400-200.svg',
+		] );
+
+		$image = Timmy::get_image( $attachment->ID, 'large' );
+		$image->set_color_scheme_dark_image( $attachment_dark->ID );
+
+		$result   = $image->picture_responsive();
+		$expected = sprintf(
+			'<source srcset="%1$s/svg-400-200.svg" media="(prefers-color-scheme: dark)">%2$s<img src="%1$s/sveegee.svg" width="1400" height="1400" alt="" loading="lazy">',
+			$this->get_upload_url(),
+			PHP_EOL
+		);
+
+		$this->assertEquals( $expected, $result );
+	}
 }
