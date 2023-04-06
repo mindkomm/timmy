@@ -239,8 +239,8 @@ function get_timber_picture_fallback_image( $timber_image, $size ) {
  *                                       get_timber_image_responsive_src() for a list of args
  *                                       that can be used.
  *
- * @return string|false Image srcset, sizes, alt and title attributes. False if image can’t be
- *                     found.
+ * @return string|false Image srcset, sizes, width, height and alt attributes. False if image can’t
+ *                      be found.
  */
 function get_timber_image_responsive( $timber_image, $size, $args = array() ) {
 	$image = Timmy::get_image( $timber_image, $size );

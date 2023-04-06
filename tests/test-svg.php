@@ -55,4 +55,26 @@ class TestSvg extends TimmyUnitTestCase {
 
 		$this->assertEquals( $image, $result );
 	}
+
+	public function test_svg_responsive_rect_without_viewbox_responsive() {
+		$attachment = $this->create_image( [ 'file' => 'svg-without-viewbox.svg' ] );
+
+		$image  = \Timmy\Timmy::get_image( $attachment, 'large' );
+		$result = $image->responsive();
+
+		$image = ' src="' . $this->get_upload_url() . '/svg-without-viewbox.svg" loading="lazy" alt=""';
+
+		$this->assertEquals( $image, $result );
+	}
+
+	public function test_svg_responsive_rect_without_viewbox_but_width_and_height_responsive() {
+		$attachment = $this->create_image( [ 'file' => 'svg-without-viewbox-width-height.svg' ] );
+
+		$image  = \Timmy\Timmy::get_image( $attachment, 'large' );
+		$result = $image->responsive();
+
+		$image = ' src="' . $this->get_upload_url() . '/svg-without-viewbox-width-height.svg" width="1400" height="1400" loading="lazy" alt=""';
+
+		$this->assertEquals( $image, $result );
+	}
 }

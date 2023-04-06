@@ -236,6 +236,26 @@ class Image {
 	}
 
 	/**
+	 * Get srcset and size for the image.
+	 *
+	 * @return string Image srcset, sizes, width, height alt attributes.
+	 */
+	public function responsive_src( array $args = [] ) : string {
+		return Helper::get_attribute_html( $this->responsive_attributes( $args ) );
+	}
+
+	/**
+	 * Get the responsive markup for the image.
+	 *
+	 * @return string Image srcset, sizes, width, height alt attributes.
+	 */
+	public function responsive( array $args = [] ) : string {
+		return Helper::get_attribute_html( array_merge( $this->responsive_attributes( $args ), [
+			'alt' => $this->alt(),
+		] ) );
+	}
+
+	/**
 	 * Gets the HTML markup for a responsive picture.
 	 *
 	 * @param array $args
@@ -599,6 +619,8 @@ class Image {
 			if ( empty( $dimensions ) ) {
 				return false;
 			}
+
+			// SVG image can scale, so we can always return the requested width.
 		} else {
 			list( $width ) = Helper::get_dimensions_upscale( $width, $height, [
 				'upscale'    => $this->upscale,
@@ -634,18 +656,18 @@ class Image {
 				$height = Helper::get_height_from_width( $width, $dimensions['width'], $dimensions['height'] );
 			}
 		} else {
-			$max_width  = $this->max_width();
-			$max_height = $this->max_height();
+		$max_width  = $this->max_width();
+		$max_height = $this->max_height();
 
-			// Only calculate new height if height and width metadata was loaded.
-			if ( $max_width > 0 && $max_height > 0 ) {
-				$height = Helper::maybe_fix_height( $height, $width, $max_width, $max_height );
-				list( , $height ) = Helper::get_dimensions_upscale( $width, $height, [
-					'upscale'    => $this->upscale,
-					'max_width'  => $max_width,
-					'max_height' => $max_height,
-				] );
-			}
+		// Only calculate new height if height and width metadata was loaded.
+		if ( $max_width > 0 && $max_height > 0 ) {
+			$height = Helper::maybe_fix_height( $height, $width, $max_width, $max_height );
+			list( , $height ) = Helper::get_dimensions_upscale( $width, $height, [
+				'upscale'    => $this->upscale,
+				'max_width'  => $max_width,
+				'max_height' => $max_height,
+			] );
+		}
 		}
 
 		return $height;
