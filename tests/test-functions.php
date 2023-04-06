@@ -160,6 +160,23 @@ class TestFunctions extends TimmyUnitTestCase {
 		$this->assertEquals( $expected, $result );
 	}
 
+	public function test_get_timber_image_responsive_apiv1() {
+		$alt_text   = 'Burrito Wrap';
+		$attachment = $this->create_image( [
+			'alt'         => $alt_text,
+			'description' => 'Burritolino',
+		] );
+
+		$image  = Timmy::get_image( $attachment, 'large' );
+		$result = $image->responsive();
+
+		$expected = sprintf(
+			' srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" width="1400" height="933" loading="lazy" alt="Burrito Wrap"', $this->get_upload_url()
+		);
+
+		$this->assertEquals( $expected, $result );
+	}
+
 	public function test_get_timber_image_responsive_without_metadata() {
 		$alt_text   = 'Burrito Wrap';
 		$attachment = $this->create_image( [
@@ -279,6 +296,23 @@ class TestFunctions extends TimmyUnitTestCase {
 		$this->assertEquals( $expected, $result );
 	}
 
+	public function test_get_timber_image_responsive_src_loading_false_apiv1() {
+		$attachment = $this->create_image();
+
+		$image = Timmy::get_image( $attachment, 'large' );
+
+		$result = $image->responsive_src( [
+			'loading' => false,
+		] );
+
+		$expected = sprintf(
+			' srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" width="1400" height="933"',
+			$this->get_upload_url()
+		);
+
+		$this->assertEquals( $expected, $result );
+	}
+
 	public function test_get_timber_image_full_with_gif() {
 		$attachment = $this->create_image( [ 'file' => 'logo-small.gif' ] );
 		$result     = get_timber_image( $attachment, 'full' );
@@ -354,6 +388,20 @@ class TestFunctions extends TimmyUnitTestCase {
 	public function test_get_timber_image_srcset_x_descriptors() {
 		$attachment = $this->create_image();
 		$result     = get_timber_image_srcset( $attachment, 'large-x-descriptors' );
+
+		$expected = sprintf(
+			'%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1x, %1$s/test-2100x0-c-default.jpg 1.5x',
+			$this->get_upload_url()
+		);
+
+		$this->assertEquals( $expected, $result );
+	}
+
+	public function test_get_timber_image_srcset_x_descriptors_apiv1() {
+		$attachment = $this->create_image();
+
+		$image  = Timmy::get_image( $attachment, 'large-x-descriptors' );
+		$result = $image->srcset();
 
 		$expected = sprintf(
 			'%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1x, %1$s/test-2100x0-c-default.jpg 1.5x',
