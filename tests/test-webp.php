@@ -171,7 +171,7 @@ class TestWebP extends TimmyUnitTestCase {
 
 		$result   = $image->picture_responsive();
 		$expected = sprintf(
-			'<source srcset="%1$s/logo-small.gif">%2$s<img src="http://example.org/wp-content/uploads/2023/04/logo-small.gif" width="100" height="50" alt="" loading="lazy">',
+			'<source srcset="%1$s/logo-small.gif">%2$s<img src="%1$s/logo-small.gif" width="100" height="50" alt="" loading="lazy">',
 			$this->get_upload_url(),
 			PHP_EOL
 		);
