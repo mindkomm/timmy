@@ -8,3 +8,5 @@ name: CI
 jobs:
   release:
     uses: mindkomm/workflows/.github/workflows/release.yml@main
+    with:
+        default-branch: 1.x
