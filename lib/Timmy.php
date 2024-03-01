@@ -438,7 +438,7 @@ class Timmy {
 
 		// When media files are requested through an AJAX call, an action will be present in $_POST.
 		$action = is_admin() && isset( $_POST['action'] )
-			? filter_var( $_POST['action'], FILTER_SANITIZE_STRING )
+			? htmlspecialchars( $_POST['action'] )
 			: false;
 
 		$attachment = get_post( $attachment_id );
