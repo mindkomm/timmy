@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.1.0](https://github.com/mindkomm/timmy/compare/1.0.0...v1.1.0) (2024-03-01)
+
+
+### Features
+
+* Add release workflow ([7e2fa13](https://github.com/mindkomm/timmy/commit/7e2fa1397ddecada681f72b4dfc8d33b17f1ea2c))
+
+
+### Bug Fixes
+
+* Fix manifest file name ([2d7cc7c](https://github.com/mindkomm/timmy/commit/2d7cc7ccbb32c5d666a6e31c5d650a4fcc3f01de))
+* Fix release please manifest ([8aa1bd3](https://github.com/mindkomm/timmy/commit/8aa1bd3439f49c2c6822111218b47f640f17c2d9))
+* Try v4 of release please ([b08c1e7](https://github.com/mindkomm/timmy/commit/b08c1e7e9ea0c4e2d9df19aa91ef09801dd0c8c3))
+* Update release please config ([d207fbe](https://github.com/mindkomm/timmy/commit/d207fbef549ccaba67ed90c1ed22b7854780bc12))
+* Use default token ([c7134e1](https://github.com/mindkomm/timmy/commit/c7134e1dc6a144470bfc27239e32890aaac157dd))
+
 ## 1.0.0
 
 - Increased minimum supported PHP version to 7.4.
