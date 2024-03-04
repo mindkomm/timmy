@@ -100,8 +100,9 @@ class Timmy {
 		// Filters the metadata for an image.
 		add_filter( 'wp_get_attachment_metadata', array( $this, 'filter_attachment_metadata' ), 10, 2 );
 
-		// Filters the generated attachment meta data.
-		add_filter( 'wp_generate_attachment_metadata', array( $this, 'filter_wp_generate_attachment_metadata' ), 10, 2 );
+		// Hook into generating attachment meta data filter.
+		add_filter( 'wp_generate_attachment_metadata', array( $this, 'delete_generated_image_sizes' ), 5, 2 );
+		add_filter( 'wp_generate_attachment_metadata', array( $this, 'filter_wp_generate_attachment_metadata' ), 30, 2 );
 
 		// Filters the attachment data prepared for JavaScript.
 		add_filter( 'wp_prepare_attachment_for_js', array( $this, 'filter_wp_prepare_attachment_for_js' ), 10, 3 );
@@ -324,22 +325,22 @@ class Timmy {
 	}
 
 	/**
-	 * Hooks into the filter that generates additional image sizes to generate all additional image
-	 * sizes with TimberImageHelper.
+	 * Deletes all existing image sizes for that file.
 	 *
-	 * This function will run when you upload an image. It will also run if you run Regenerate
-	 * Thumbnails, so all additional images sizes registered with Timber will be first deleted and
-	 * then regenerated through Timmy.
+	 * This function will run when you upload an image. It will also run if you
+	 * run plugins like Regenerate Thumbnails. All additional images sizes
+	 * registered with Timber will be first deleted.
 	 *
-	 * @param array $meta_data     Meta data for an attachment.
-	 * @param int   $attachment_id Attachment ID.
+	 * Because Timber also creates image sizes when they’re needed, we can
+	 * safely do this.
 	 *
-	 * @return array $meta_data
+	 * By running with a priority of 5, we make sure that generated image files
+	 * are not present before other plugins run their filters.
 	 */
-	public function filter_wp_generate_attachment_metadata( $meta_data, $attachment_id ) {
+	public function delete_generated_image_sizes( $meta_data, $attachment_id ) {
 		/**
-		 * Don’t automatically generate image sizes on upload for SVG and GIF images.
-		 * GIF images will still be resized when requested on the fly.
+		 * Don’t automatically generate image sizes on upload for SVG and GIF
+		 * images. GIF images will still be resized when requested on the fly.
 		 */
 		if ( self::ignore_attachment( $attachment_id ) ) {
 			return $meta_data;
@@ -348,16 +349,37 @@ class Timmy {
 		// Timber needs the file src as a URL.
 		$file_src = Helper::get_original_attachment_url( $attachment_id );
 
-		$attachment = get_post( $attachment_id );
-
-		/**
-		 * Delete all existing image sizes for that file.
-		 *
-		 * This way, when Regenerate Thumbnails will be used, all non-registered image sizes will be
-		 * deleted as well. Because Timber creates image sizes when they’re needed, we can safely do
-		 * this.
-		 */
 		Timber\ImageHelper::delete_generated_files( $file_src );
+
+		return $meta_data;
+	}
+
+	/**
+	 * Hooks into the filter that generates additional image sizes to generate
+	 * all additional image sizes with TimberImageHelper.
+	 *
+	 * This function will run when you upload an image. It will also run if you
+	 * run a plugin like Regenerate Thumbnails. All additional images sizes
+	 * registered with Timber will be regenerated through Timmy.
+	 *
+	 * By running this with a priority of 30, we make sure that image sizes are
+	 * generated after other plugins have run their filters.
+	 *
+	 * @param array $meta_data     Meta data for an attachment.
+	 * @param int   $attachment_id Attachment ID.
+	 *
+	 * @return array $meta_data
+	 */
+	public function filter_wp_generate_attachment_metadata( $meta_data, $attachment_id ) {
+		/**
+		 * Don’t automatically generate image sizes on upload for SVG and GIF
+		 * images. GIF images will still be resized when requested on the fly.
+		 */
+		if ( self::ignore_attachment( $attachment_id ) ) {
+			return $meta_data;
+		}
+
+		$attachment = get_post( $attachment_id );
 
 		$meta_data['sizes'] = $this->generate_image_sizes( $attachment );
 
@@ -448,7 +470,7 @@ class Timmy {
 
 		// When media files are requested through an AJAX call, an action will be present in $_POST.
 		$action = is_admin() && isset( $_POST['action'] )
-			? filter_var( $_POST['action'], FILTER_SANITIZE_STRING )
+			? htmlspecialchars( $_POST['action'] )
 			: false;
 
 		$attachment = get_post( $attachment_id );
