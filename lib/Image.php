@@ -348,6 +348,10 @@ class Image {
 			'loading' => $this->loading( $args['loading'] ),
 		];
 
+		if (!empty($args['class'])) {
+			$fallback_attributes['class'] = $args['class'];
+		}
+
 		$fallback_attributes = $this->add_data_attributes( $fallback_attributes, $args );
 
 		return '<img' . Helper::get_attribute_html( $fallback_attributes ) . '>';
