@@ -1,5 +1,26 @@
 # Changelog
 
+## [2.0.0](https://github.com/mindkomm/timmy/compare/1.0.0...v2.0.0) (2024-03-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* Add compatibility with Timber 2.x
+
+### Features
+
+* Add compatibility for Timber 2.0 ([262447d](https://github.com/mindkomm/timmy/commit/262447de3afb49f9605a84f17e65656b6ed96f70))
+* Add compatibility with Timber 2.x ([1687f3f](https://github.com/mindkomm/timmy/commit/1687f3f036ac7862d37a95a2445f297a4d55f218))
+* Optimize filter priority for deleting and generating image sizes ([2ec4013](https://github.com/mindkomm/timmy/commit/2ec40134fb81f13e95b6cb90c4a51da5daae3476))
+
+
+### Bug Fixes
+
+* Add release workflow ([#64](https://github.com/mindkomm/timmy/issues/64)) ([54b4d5e](https://github.com/mindkomm/timmy/commit/54b4d5ebeafa7127f12349a28435d440280ab73b))
+* Always export composer.json ([142efa9](https://github.com/mindkomm/timmy/commit/142efa97614325fa74d5570545268227275c3915))
+* Fix a PHP 8.1 deprecation ([cbce1f2](https://github.com/mindkomm/timmy/commit/cbce1f26aaa37701cd7f7bc6c4b1cccd0ee6ead9))
+* Fix tests with Timber 2.0 ([1dd3189](https://github.com/mindkomm/timmy/commit/1dd3189f374a921cc7cb1443a0df4bb36eed5205))
+
 ## 1.0.0
 
 - Increased minimum supported PHP version to 7.4.
