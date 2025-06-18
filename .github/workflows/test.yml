@@ -129,18 +129,8 @@ jobs:
         with:
           dependency-versions: ${{ matrix.dependency-version }}
 
-      - name: Downgrade PHPUnit to ^7.5 when WP < 5.9
-        if: ${{ matrix.wp < '5.9' }}
-        run: composer req phpunit/phpunit:^7.5 yoast/wp-test-utils:^1.0 -W --dev
-
       - name: Install tests
         run: bash bin/install-wp-tests.sh timmy_test root '' 127.0.0.1:${{ job.services.mysql.ports['3306'] }} ${{ matrix.wp }} true
-
-      # - name: Setup PCOV
-      #   if: ${{ matrix.coverage == true }}
-      #   run: |
-      #     composer require --dev --ignore-platform-reqs pcov/clobber
-      #     vendor/bin/pcov clobber
 
       - name: Run tests
         if: ${{ !matrix.webp }}
