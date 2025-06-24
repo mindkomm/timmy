@@ -192,4 +192,16 @@ class TestWebP extends TimmyUnitTestCase {
 
 		$this->assertSame( $expected, $result );
 	}
+
+	public function test_should_convert_to_webp_filter() {
+        $this->add_filter_temporarily( 'timmy/should_convert_to_webp', '__return_false' );
+
+		$attachment = $this->create_image();
+
+		$image     = wp_get_attachment_image_src( $attachment->ID, 'webp' );
+		$file_path = $this->get_upload_path() . '/test-1400x0-c-default.webp';
+
+		$this->assertEquals( $this->get_upload_url() . '/test-1400x0-c-default.jpg', $image[0] );
+		$this->assertFileDoesNotExist( $file_path );
+	}
 }
