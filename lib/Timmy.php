@@ -619,7 +619,7 @@ class Timmy {
 
 		// Maybe convert to WebP.
 		if (
-			self::should_convert_to_webp( $file_src, $img_size )
+			self::should_convert_to_webp( $file_src, $img_size, $attachment_id )
 			/**
 			 * We don’t want to convert to WebP when the image size is saved in the metadata of an
 			 * image, which happens when generating a downsized version. Saving the image sizes in
@@ -861,21 +861,36 @@ class Timmy {
 	 *
 	 * @param string $file_src The src of the original image.
 	 * @param array  $img_size Configuration values for an image size.
+	 * @param ?int   $attachment_id Attachment ID.
 	 *
 	 * @return bool
 	 */
-	public static function should_convert_to_webp( $file_src, $img_size ) {
-		if ( isset( $img_size['webp'] )
+	public static function should_convert_to_webp($file_src, $img_size, ?int $attachment_id = null)
+	{
+		$should_convert = false;
+
+		if (
+			isset($img_size['webp'])
 			&& $img_size['webp']
 			&& 'application/pdf' !== wp_check_filetype(
 				$file_src,
 				Helper::get_mime_types()
-            )['type']
+			)['type']
 		) {
-			return true;
+			$should_convert = true;
 		}
 
-		return false;
+		/**
+		 * Filters whether an image should be converted to WebP.
+		 *
+		 * @param bool   $should_convert Whether the image should be converted to WebP.
+		 * @param ?int   $attachment_id  Attachment ID.
+		 * @param string $file_src       The source path of the original image.
+		 * @param array  $img_size       Configuration values for the image size.
+		 */
+		$should_convert = apply_filters('timmy/should_convert_to_webp', $should_convert, $attachment_id, $file_src, $img_size);
+
+		return $should_convert;
 	}
 
 	/**
@@ -1056,7 +1071,7 @@ class Timmy {
 			$src = self::resize( $img_size, $file_src, $width, $height, $crop, $force );
 
 			// Maybe convert to webp.
-			if ( self::should_convert_to_webp( $file_src, $img_size ) ) {
+			if ( self::should_convert_to_webp( $file_src, $img_size, $attachment->ID ) ) {
 				self::to_webp( $src, $img_size );
 			}
 		}
