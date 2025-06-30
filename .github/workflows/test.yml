@@ -88,8 +88,12 @@ jobs:
     name: PHP ${{ matrix.php }} ${{ matrix.extensions == 'imagick' && ' (Imagick)' || '' }}${{ matrix.coverage && ' (with coverage)' || '' }} ${{ matrix.webp && ' (webp)' || '' }} | WP ${{ matrix.wp }}${{ matrix.multisite == 1 && ' (MS)' || '' }} | ${{ matrix.dependency-version }}
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+
+      - name: Install Subversion
+        run: |
+          sudo apt-get install -y subversion
+          sudo apt-get update
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -115,20 +119,7 @@ jobs:
       - name: Setup problem matchers for PHPUnit
         run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
 
-      - name: Get composer cache directory
-        id: composer-cache
-        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
-
-      - name: Cache composer dependencies
-        uses: actions/cache@v2
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-${{ matrix.dependency-version }}-${{ matrix.php }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.dependency-version }}-${{ matrix.php }}-composer-
-
-      - name: Install composer dependencies
-        run: composer update --${{ matrix.dependency-version }} --prefer-dist --no-progress --no-interaction
+      - uses: ramsey/composer-install@v3
 
       - name: Downgrade PHPUnit to ^7.5 when WP < 5.9
         if: ${{ matrix.wp < '5.9' }}
