@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.2.0](https://github.com/mindkomm/timmy/compare/v1.1.0...v1.2.0) (2025-06-30)
+
+
+### Features
+
+* Add `timmy/should_convert_to_webp` filter ([#95](https://github.com/mindkomm/timmy/issues/95)) ([899094d](https://github.com/mindkomm/timmy/commit/899094dd9d92bfb11d557b9277eaf9210b3295ff))
+
+
+### Bug Fixes
+
+* Fix test workflow ([0b41b96](https://github.com/mindkomm/timmy/commit/0b41b9638c2868e6af92d609a5e7e91222eee839))
+
+
+### Miscellaneous Chores
+
+* Update release branches ([512efea](https://github.com/mindkomm/timmy/commit/512efea0307beed7994fb8bb8d4652097a6c763f))
+
 ## [1.1.0](https://github.com/mindkomm/timmy/compare/1.0.0...v1.1.0) (2024-03-26)
 
 
