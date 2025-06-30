@@ -1,5 +1,28 @@
 # Changelog
 
+## [1.3.0](https://github.com/mindkomm/timmy/compare/v1.2.0...v1.3.0) (2025-06-30)
+
+
+### Features
+
+* Add `timmy/should_convert_to_webp` filter ([#95](https://github.com/mindkomm/timmy/issues/95)) ([899094d](https://github.com/mindkomm/timmy/commit/899094dd9d92bfb11d557b9277eaf9210b3295ff))
+* Optimize filter priority for deleting and generating image sizes ([2ec4013](https://github.com/mindkomm/timmy/commit/2ec40134fb81f13e95b6cb90c4a51da5daae3476))
+
+
+### Bug Fixes
+
+* Add release workflow ([#64](https://github.com/mindkomm/timmy/issues/64)) ([54b4d5e](https://github.com/mindkomm/timmy/commit/54b4d5ebeafa7127f12349a28435d440280ab73b))
+* Always export composer.json ([142efa9](https://github.com/mindkomm/timmy/commit/142efa97614325fa74d5570545268227275c3915))
+* Fix a PHP 8.1 deprecation ([cbce1f2](https://github.com/mindkomm/timmy/commit/cbce1f26aaa37701cd7f7bc6c4b1cccd0ee6ead9))
+* Fix test workflow ([0b41b96](https://github.com/mindkomm/timmy/commit/0b41b9638c2868e6af92d609a5e7e91222eee839))
+
+
+### Miscellaneous Chores
+
+* **1.x:** release 1.1.0 ([a6145b8](https://github.com/mindkomm/timmy/commit/a6145b829429e0eb3a05e0e4b992ecd1360ee3b7))
+* **1.x:** release 1.2.0 ([#77](https://github.com/mindkomm/timmy/issues/77)) ([ae28ec0](https://github.com/mindkomm/timmy/commit/ae28ec0270bafba875c3261a31d2fd96c5e9dbf2))
+* Update release branches ([512efea](https://github.com/mindkomm/timmy/commit/512efea0307beed7994fb8bb8d4652097a6c763f))
+
 ## [1.2.0](https://github.com/mindkomm/timmy/compare/v1.1.0...v1.2.0) (2025-06-30)
 
 
