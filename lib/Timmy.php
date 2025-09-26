@@ -12,6 +12,11 @@ use WP_Post;
  */
 class Timmy {
 	/**
+	 * Minimum required WordPress version.
+	 */
+	const MINIMUM_WP_VERSION = '6.5.0';
+
+	/**
 	 * Image sizes that can be selected in the backend.
 	 *
 	 * @var array
@@ -27,6 +32,12 @@ class Timmy {
 	 * Hook into WordPress
 	 */
 	public static function init() {
+		// Check minimum WordPress version requirement
+		if ( ! self::meets_wordpress_requirements() && current_user_can('manage_options') ) {
+			add_action( 'admin_notices', [ __CLASS__, 'admin_notice_wordpress_version' ] );
+			return;
+		}
+
 		if ( ! class_exists( 'Timber\ImageHelper' ) ) {
 			return;
 		}
@@ -1267,5 +1278,33 @@ class Timmy {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Check if WordPress meets the minimum version requirement.
+	 *
+	 * @return bool True if WordPress version is sufficient, false otherwise.
+	 */
+	private static function meets_wordpress_requirements() {
+		global $wp_version;
+		return version_compare( $wp_version, self::MINIMUM_WP_VERSION, '>=' );
+	}
+
+	/**
+	 * Display admin notice for insufficient WordPress version.
+	 */
+	public static function admin_notice_wordpress_version() {
+		global $wp_version;
+
+		$message = sprintf(
+			'Timmy requires WordPress %s or higher. You are currently running WordPress %s. Please update WordPress to use Timmy.',
+			self::MINIMUM_WP_VERSION,
+			$wp_version
+		);
+
+		printf(
+			'<div class="notice notice-error"><p><strong>Timmy:</strong> %s</p></div>',
+			esc_html( $message )
+		);
 	}
 }
