@@ -3,6 +3,7 @@
 - [Filters](#filters)
 	- [timmy/sizes](#timmysizes)
 	- [timmy/resize/ignore](#timmyresizeignore)
+	- [timmy/show_in_rest](#timmyshow_in_rest)
 	- [timmy/generate_srcset_sizes](#timmygenerate_srcset_sizes)
 	- [timmy/upscale](#timmyupscale)
 	- [timmy/use_src_default](#timmyuse_src_default)
@@ -64,9 +65,9 @@ Filters whether an image should be shown in the REST API.
 - **$show_in_rest**  
 	*(bool)* Whether to show the image in the REST API. Default `true`.
 - **$attachment_id**  
-	*(string)* The attachment ID.
-- **$$img_size**  
-	*(string)* Configuration values for the image size.
+	*(int* The attachment ID.
+- **$img_size**  
+	*(array)* Configuration values for the image size.
 
 **Example 1**
 
@@ -84,13 +85,6 @@ add_filter('timmy/show_in_rest', static function($show_in_rest, $attachment_id, 
 
     return $show_in_rest;
 }, 10, 3);
-```
-
-**Example 3**
-
-```php
-// Only show an image size when accessing the media endpoint directly.
-
 ```
 
 ### timmy/generate_srcset_sizes

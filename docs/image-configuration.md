@@ -292,7 +292,7 @@ If the post type a user is editing is not in the `post_types` array (and if `pos
 
 Defines whether the image size should be shown in the REST API.
 
-You can use the [`timmy/show_in_rest` filter](#timmy-show-in-rest) to control this behavior for individual images.
+You can use the [`timmy/show_in_rest` filter](./hooks.md#timmyshow_in_rest) to control this behavior for individual images.
 
 ---
 
@@ -302,7 +302,7 @@ You can use the [`timmy/show_in_rest` filter](#timmy-show-in-rest) to control th
 
 Per default, all the sizes defined under `srcset` will only be generated when the image is requested in the frontend. Only the size defined in `resize` will be generated. By setting this to true, srcset sizes will also be generated when an image is uploaded.
 
-You can use the [`timmy/generate_srcset_sizes` filter](#timmy-generate-srcset-sizes) to enable or disable this globally. Setting this option on an image size always takes precedence over the filter.
+You can use the [`timmy/generate_srcset_sizes` filter](./hooks.md#timmygenerate_srcset_sizes) to enable or disable this globally. Setting this option on an image size always takes precedence over the filter.
 
 ---
 
