@@ -8,5 +8,8 @@
     ".": {
       "changelog-path": "CHANGELOG.md"
     }
-  }
+  },
+  "extra-files": [
+    "timmy.php"
+  ]
 }
