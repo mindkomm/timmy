@@ -2,33 +2,20 @@
 
 In order to make Timmy work, you’ll have to
 
-- [1. Install Timber and Timmy](#1-install-timber-and-timmy)
-  - [Install as Plugin](#install-as-plugin)
-  - [Install with Composer](#install-with-composer)
+- [1. Install Timmy](#1-install-timmy)
 - [2. Prepare Media Settings](#2-prepare-media-settings)
 - [3. Reset post thumbnail size](#3-reset-post-thumbnail-size)
 - [4. Register your image sizes with Timmy](#4-register-your-image-sizes-with-timmy)
 - [5. Use Picturefill](#5-use-picturefill)
 - [6. Performance optimizations](#6-performance-optimizations)
 
-## 1. Install Timber and Timmy
+## 1. Install Timmy
 
-You can either install both Timmy and Timber as plugins or use Composer.
-
-### Install as Plugin
-
-1. Install the [Timber Library plugin](https://wordpress.org/plugins/timber-library/). You don’t have to necessarily go full Timber with your theme. You can use Timber and Timmy to only handle your images in your theme.
-
-2. Then [download and install the latest version of Timmy](<https://github.com/MINDKomm/Timmy/releases/latest>). (Timmy currently can’t be found in the official WordPress plugin directory. Maybe it will be soon.)
-
-### Install with Composer
+You can install Timmy with Composer
 
 ```
 composer require mindkomm/timmy
 ```
-
-* The benefit of installing Timmy through Composer is that you add it as a dependency of your theme, which puts you in full control of the version you want to work with.
-* Timmy requires Timber, so you won’t have to necessarily install Timber separately.
 
 Require the autoload file at the top of your **functions.php**:
 
@@ -39,9 +26,11 @@ require_once __DIR__ . '/vendor/autoload.php';
 Now initialize Timmy right after Timber:
 
 ```php
-new Timber\Timber();
+use Timber\Timber;
+use Timmy\Timmy;
 
-Timmy\Timmy::init()
+Timber::init();;
+Timmy::init()
 ```
 
 ## 2. Prepare Media Settings
