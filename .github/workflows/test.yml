@@ -37,8 +37,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ['7.4']
-        wp: ['6.3', 'latest']
+        php: ['8.2']
+        wp: ['6.5', 'latest']
         multisite: ['0', '1']
         dependency-version: [prefer-stable] # prefer-lowest
         webp: [false]
@@ -46,18 +46,6 @@ jobs:
         extensions: ['gd']
         experimental: [false]
         include:
-          # PHP 7.4
-          - php: '7.4'
-            wp: 'latest'
-            dependency-version: 'prefer-stable'
-            multisite: '0'
-            experimental: false
-          # PHP 8.1
-          - php: '8.1'
-            wp: 'latest'
-            dependency-version: 'prefer-stable'
-            multisite: '0'
-            experimental: false
           # PHP 8.2
           - php: '8.2'
             wp: 'latest'
@@ -94,7 +82,7 @@ jobs:
     name: PHP ${{ matrix.php }} ${{ matrix.extensions == 'imagick' && ' (Imagick)' || '' }}${{ matrix.coverage && ' (with coverage)' || '' }} ${{ matrix.webp && ' (webp)' || '' }} | WP ${{ matrix.wp }}${{ matrix.multisite == 1 && ' (MS)' || '' }} | ${{ matrix.dependency-version }}
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Install Subversion
         run: |

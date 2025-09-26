@@ -1,13 +1,11 @@
 <?php
 
-use Timber\Image;
 use Timber\Timber;
-use Yoast\WPTestUtils\WPIntegration\TestCase;
 
 /**
  * Class TimmyUnitTestCase
  */
-abstract class TimmyUnitTestCase extends TestCase {
+abstract class TimmyUnitTestCase extends WP_UnitTestCase {
 	/**
 	 * Maintain a list of action/filter hook removals to perform at the end of each test.
 	 */
@@ -25,7 +23,7 @@ abstract class TimmyUnitTestCase extends TestCase {
 		$this->temporary_hook_removals = [];
 
 		// Deletes files added to the `uploads` directory during tests.
-		$this->remove_added_uploads();
+		$this->delete_test_images();
 	}
 
 	/**
@@ -155,7 +153,7 @@ abstract class TimmyUnitTestCase extends TestCase {
 	 * @return \Timber\Post
 	 */
 	public function create_post_with_image() {
-		$post_id       = $this->factory->post->create();
+		$post_id       = self::factory()->post->create();
 		$attachment_id = $this->create_image_attachment( $post_id );
 
 		set_post_thumbnail( $post_id, $attachment_id );
