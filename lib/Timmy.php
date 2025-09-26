@@ -718,9 +718,7 @@ class Timmy {
         // WP_REST_Posts_Controller::prepare_item_for_response() method, and then in the
         // WP_REST_Attachments_Controller::prepare_item_for_response() method. The first time, it
         // won’t have any media specific data. There’s where we hook in there.
-        if (empty($response->data['media_details'])) {
-            $this->is_serving_rest_attachment_request = true;
-        }
+        $this->is_serving_rest_attachment_request = empty($response->data['media_details']);
 
 		return $response;
 	}
