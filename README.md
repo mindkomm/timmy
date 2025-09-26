@@ -1,6 +1,6 @@
 # Timmy
 
-Timmy is an opt-in library/plugin to make it more convenient to work with responsive images. It was designed to be used with [Timber](http://upstatement.com/timber/), but should work with all your WordPress projects.
+Timmy is an opt-in library to make it more convenient to work with responsive images. It was designed to be used with [Timber](http://upstatement.com/timber/), but should work with all your WordPress projects.
 
 In your Twig template, you can do this:
 
