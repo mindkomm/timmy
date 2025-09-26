@@ -91,6 +91,7 @@ You shouldn’t use `full` or `original` as keys in your configuration. If you d
 - [post_types](#post_types)
 - [name](#name)
 - [show_in_ui](#show_in_ui)
+- [show_in_rest](#show_in_rest)
 - [generate_srcset_sizes](#generate_srcset_sizes)
 - [upscale](#upscale) (formerly named `oversize`)
 - [webp](#webp)
