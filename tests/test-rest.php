@@ -3,7 +3,7 @@
 use Timmy\Helper;
 
 class TestRest extends TimmyUnitTestCase {
-	function test_show_in_rest()
+	function test_show_in_rest_embedded()
     {
 		add_post_type_support( 'page', 'thumbnail' );
 
@@ -28,6 +28,30 @@ class TestRest extends TimmyUnitTestCase {
 	    $this->assertSame( 200, $response->get_status() );
 
 		$sizes = $data[0]['_embedded']['wp:featuredmedia'][0]['media_details']['sizes'];
+
+		$this->assertArrayNotHasKey('resize-only', $sizes);
+
+		// Same size because of the 'full' size that is present in generated sizes but no Timmy’s sizes.
+		$this->assertCount( count( Helper::get_image_sizes() ), $sizes );
+    }
+
+	function test_show_in_rest_attachment() {
+		$attachment_id = $this->create_image_attachment();
+
+		// Simulate REST context.
+	    // Can’t set REST_REQUEST constant here, because we can’t unset it again.
+	    $this->add_filter_temporarily('timmy/is_serving_rest_request', '__return_true');
+
+		// Create REST request
+        $request = new WP_REST_Request( 'GET', rest_get_route_for_post($attachment_id));
+		$response = rest_do_request( $request );
+		// Internal requests need to be handled differently.
+	    // @link https://developer.wordpress.org/rest-api/frequently-asked-questions/#how-do-i-use-the-_embed-parameter-on-internal-requests
+        $data = rest_get_server()->response_to_data( $response, true );
+
+	    $this->assertSame( 200, $response->get_status() );
+
+		$sizes = $data['media_details']['sizes'];
 
 		$this->assertArrayNotHasKey('resize-only', $sizes);
 

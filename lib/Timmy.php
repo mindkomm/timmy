@@ -117,7 +117,6 @@ class Timmy {
 		add_filter( 'wp_generate_attachment_metadata', array( $this, 'delete_generated_image_sizes' ), 5, 2 );
 		add_filter( 'wp_generate_attachment_metadata', array( $this, 'filter_wp_generate_attachment_metadata' ), 30, 2 );
 
-
 		// Filters the attachment data prepared for JavaScript.
 		add_filter( 'wp_prepare_attachment_for_js', array( $this, 'filter_wp_prepare_attachment_for_js' ) );
 
