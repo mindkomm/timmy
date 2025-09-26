@@ -60,6 +60,8 @@ add_filter( 'timmy/resize/ignore', function( $return, $attachment ) {
 
 Filters whether an image should be shown in the REST API.
 
+This filter only runs then a REST request to an attachment is actually made, so any logic you apply here will only be applied for REST requests to `wp/v2/media` or endpoints that use [media embeds](https://developer.wordpress.org/rest-api/using-the-rest-api/linking-and-embedding/#embedding).
+
 **Parameters**
 
 - **$show_in_rest**  

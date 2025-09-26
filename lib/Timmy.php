@@ -318,11 +318,9 @@ class Timmy {
 		$configured_sizes = Helper::get_image_sizes();
 
         // Filter sizes for REST API requests.
-        if ($this->is_serving_rest_attachment_request) {
-            $configured_sizes = array_filter($configured_sizes, function($img_size) use ($attachment_id) {
-               return $this->should_show_in_rest($img_size, $attachment_id);
-            });
-        }
+        $configured_sizes = array_filter($configured_sizes, function($img_size) use ($attachment_id) {
+           return $this->should_show_in_rest($img_size, $attachment_id);
+        });
 
 		if ( ! isset( $meta_data['sizes'] ) && ! empty( $configured_sizes ) ) {
 			$meta_data['sizes'] = [];
@@ -979,7 +977,7 @@ class Timmy {
      */
     protected function should_show_in_rest(array $img_size, int $attachment_id): bool {
         // Bail out if not a REST request.
-        if (!$this->is_serving_rest_request()) {
+        if (!$this->is_serving_rest_request() || !$this->is_serving_rest_attachment_request) {
             return true;
         }
 
