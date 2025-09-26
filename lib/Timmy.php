@@ -945,7 +945,7 @@ class Timmy {
      */
     protected function should_show_in_rest(array $img_size, int $attachment_id): bool {
         // Bail out if not a REST request.
-        if (!function_exists('wp_is_serving_rest_request') || !wp_is_serving_rest_request()) {
+        if (!$this->is_serving_rest_request()) {
             return true;
         }
 
@@ -968,6 +968,22 @@ class Timmy {
 
         return $show_in_rest;
     }
+
+    /**
+     * Checks whether an image should be shown in the REST API.
+     *
+     * @return bool
+     */
+	private function is_serving_rest_request(): bool {
+		if (!function_exists('wp_is_serving_rest_request')) {
+			return false;
+		}
+
+		// We need to use a custom filter timmy/is_serving_rest_request for testing purposes,
+		// because wp_is_serving_rest_request() is relying on the REST_REQUEST constanct, which
+		// we can’t enable or disable at will.
+		return wp_is_serving_rest_request() || apply_filters('timmy/is_serving_rest_request', false);
+	}
 
 	/**
 	 * Get the actual width at which the image will be displayed.

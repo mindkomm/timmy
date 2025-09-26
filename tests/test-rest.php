@@ -12,10 +12,9 @@ class TestRest extends TimmyUnitTestCase {
         ]);
 		$attachment_id = $this->create_image_attachment( $post_id );
 
-		// Simulate REST context
-	    if ( ! defined( 'REST_REQUEST' ) ) {
-	        define( 'REST_REQUEST', true );
-	    }
+		// Simulate REST context.
+	    // Can’t set REST_REQUEST constant here, because we can’t unset it again.
+	    $this->add_filter_temporarily('timmy/is_serving_rest_request', '__return_true');
 
 		// Create REST request
         $request = new WP_REST_Request( 'GET', rest_get_route_for_post_type_items('page') );
@@ -28,13 +27,11 @@ class TestRest extends TimmyUnitTestCase {
 
 	    $this->assertSame( 200, $response->get_status() );
 
-		$page = $data[0];
-		$sizes = $page['_embedded']['wp:featuredmedia'][0]['media_details']['sizes'];
+		$sizes = $data[0]['_embedded']['wp:featuredmedia'][0]['media_details']['sizes'];
+
 		$this->assertArrayNotHasKey('resize-only', $sizes);
 
-		$timmy_sizes = Helper::get_image_sizes();
-
 		// Same size because of the 'full' size that is present in generated sizes but no Timmy’s sizes.
-		$this->assertCount( count( $timmy_sizes ), $sizes );
+		$this->assertCount( count( Helper::get_image_sizes() ), $sizes );
     }
 }
