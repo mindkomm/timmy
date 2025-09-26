@@ -55,6 +55,44 @@ add_filter( 'timmy/resize/ignore', function( $return, $attachment ) {
 
 ---
 
+### timmy/show_in_rest
+
+Filters whether an image should be shown in the REST API.
+
+**Parameters**
+
+- **$show_in_rest**  
+	*(bool)* Whether to show the image in the REST API. Default `true`.
+- **$attachment_id**  
+	*(string)* The attachment ID.
+- **$$img_size**  
+	*(string)* Configuration values for the image size.
+
+**Example 1**
+
+```php
+// Don’t show any image size in REST API calls.
+add_filter('timmy/show_in_rest', '__return_false');
+```
+
+**Example 2**
+
+```php
+// Set `show_in_rest` based on the value in `show_in_ui`.
+add_filter('timmy/show_in_rest', static function($show_in_rest, $attachment_id, $img_size) {
+    $show_in_rest = $img_size['show_in_ui'] ?? false;
+
+    return $show_in_rest;
+}, 10, 3);
+```
+
+**Example 3**
+
+```php
+// Only show an image size when accessing the media endpoint directly.
+
+```
+
 ### timmy/generate_srcset_sizes
 
 Filters whether srcset sizes should be generated when an image is uploaded.

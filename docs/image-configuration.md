@@ -280,9 +280,19 @@ The name parameter is used in the backend. When `show_in_ui` is `true`, then thi
 
 (`bool`), optional, Default: `true`
 
-When you set this to false, the user will not be able to select that value in the backend, e.g. when she wants to insert a Media file directly into the WYSYWIG content.
+When you set this to `false`, the user will not be able to select that value in the backend, e.g. when they want to insert a Media file directly into the WYSYWIG content.
 
 If the post type a user is editing is not in the `post_types` array (and if `post_types` is not `all`, the size will not be shown to the user.
+
+---
+
+### show_in_rest
+
+(`bool`), optional, Default: `true`
+
+Defines whether the image size should be shown in the REST API.
+
+You can use the [`timmy/show_in_rest` filter](#timmy-show-in-rest) to control this behavior for individual images.
 
 ---
 
