@@ -4,6 +4,7 @@ namespace Timmy;
 
 use Timber;
 use WP_Post;
+use WP_REST_Response;
 
 /**
  * Class Timmy
@@ -22,6 +23,13 @@ class Timmy {
 	 * @var array
 	 */
 	public $image_sizes_for_ui = array();
+
+    /**
+     * Whether WordPress is serving a REST attachment request.
+     *
+     * @var bool
+     */
+    private bool $is_serving_rest_attachment_request = false;
 
 	/**
 	 * Timmy can’t be instantiated directly.
@@ -103,13 +111,15 @@ class Timmy {
 
 		// Filters the metadata for an image.
 		add_filter( 'wp_get_attachment_metadata', array( $this, 'filter_attachment_metadata' ), 10, 2 );
+		add_filter('rest_prepare_attachment', [$this, 'filter_rest_prepare_attachment']);
 
 		// Hook into generating attachment meta data filter.
 		add_filter( 'wp_generate_attachment_metadata', array( $this, 'delete_generated_image_sizes' ), 5, 2 );
 		add_filter( 'wp_generate_attachment_metadata', array( $this, 'filter_wp_generate_attachment_metadata' ), 30, 2 );
 
+
 		// Filters the attachment data prepared for JavaScript.
-		add_filter( 'wp_prepare_attachment_for_js', array( $this, 'filter_wp_prepare_attachment_for_js' ), 10, 3 );
+		add_filter( 'wp_prepare_attachment_for_js', array( $this, 'filter_wp_prepare_attachment_for_js' ) );
 
 		// Set global $_wp_additional_image_sizes.
 		$this->set_wp_additional_image_sizes();
@@ -309,9 +319,11 @@ class Timmy {
 		$configured_sizes = Helper::get_image_sizes();
 
         // Filter sizes for REST API requests.
-        $configured_sizes = array_filter($configured_sizes, function($img_size) use ($attachment_id) {
-           return $this->should_show_in_rest($img_size, $attachment_id);
-        });
+        if ($this->is_serving_rest_attachment_request) {
+            $configured_sizes = array_filter($configured_sizes, function($img_size) use ($attachment_id) {
+               return $this->should_show_in_rest($img_size, $attachment_id);
+            });
+        }
 
 		if ( ! isset( $meta_data['sizes'] ) && ! empty( $configured_sizes ) ) {
 			$meta_data['sizes'] = [];
@@ -668,11 +680,12 @@ class Timmy {
 			// Yoast SEO uses this for generating the OG image in the HTML head. But platforms like
 			// LinkedIn don’t support WebP images (yet). So we shouldn’t use it there.
 			! doing_filter( 'wp_generate_attachment_metadata' )
-            // We don’t want to convert to WebP when the image is served through the REST API.
-            // In \WP_REST_Attachments_Controller::prepare_item_for_response(), WordPress adds the
-            // mime type of the image to the response based on the attachment’s mime type. If we
-            // converted to WebP here, the mime type and the file ending wouldn’t be consistent.
-            && ! wp_is_serving_rest_request()
+            // We don’t want to convert to WebP when the image is served through the /wp/v2/media
+            // endpoint. In \WP_REST_Attachments_Controller::prepare_item_for_response(), WordPress
+            // adds the mime type of the image to the response based on the attachment’s mime type.
+            // If we converted to WebP here, the mime type and the file ending wouldn’t be
+            // consistent.
+            && ! $this->is_serving_rest_attachment_request
 			&& self::should_convert_to_webp( $file_src, $img_size, $attachment_id )
 		) {
 			$src = self::to_webp( $src, $img_size );
@@ -694,6 +707,28 @@ class Timmy {
 	}
 
 	/**
+	 * Prepares attachment for REST API.
+	 *
+	 * @param WP_REST_Response $response The response object.
+	 * @param WP_Post $post The original attachment post.
+	 * @param WP_REST_Request $request Request used to generate the response.
+	 */
+	public function filter_rest_prepare_attachment(WP_REST_Response $response): WP_REST_Response {
+        // If the media_details are not yet set, we can still hook into generating the data. By
+        // setting the $is_serving_rest_attachment_request flag, we can only target requests that
+        // are serving classic attachment requests.
+        // WordPress actually runs the `rest_prepare_attachment` hook twice. First in the
+        // WP_REST_Posts_Controller::prepare_item_for_response() method, and then in the
+        // WP_REST_Attachments_Controller::prepare_item_for_response() method. The first time, it
+        // won’t have any media specific data. There’s where we hook in there.
+        if (empty($response->data['media_details'])) {
+            $this->is_serving_rest_attachment_request = true;
+        }
+
+		return $response;
+	}
+
+	/**
 	 * Filters image data before it is returned to the Media view.
 	 *
 	 * When the details for an image are requested in the Media view, WordPress displays the large
@@ -710,7 +745,7 @@ class Timmy {
 	 *
 	 * @return array
 	 */
-	public function filter_wp_prepare_attachment_for_js( $response, $attachment, $meta ) {
+	public function filter_wp_prepare_attachment_for_js( array $response ) {
 		if ( isset( $response['sizes']['large'] ) ) {
 			$response['sizes']['large'] = $response['sizes']['full'];
 		}
