@@ -9,9 +9,10 @@
     "timber/timber": "^2.0"
   },
   "require-dev": {
-    "wpackagist-plugin/advanced-custom-fields": "5.*",
-    "yoast/wp-test-utils": "^1.0",
-    "szepeviktor/phpstan-wordpress": "^1.0"
+    "wpackagist-plugin/advanced-custom-fields": "^6.0",
+    "szepeviktor/phpstan-wordpress": "^2.0",
+    "yoast/phpunit-polyfills": "^4.0",
+    "phpunit/phpunit": "^9.0"
   },
   "autoload": {
     "psr-4": {

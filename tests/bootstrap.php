@@ -1,11 +1,11 @@
 <?php
 
-use Yoast\WPTestUtils\WPIntegration;
 use Timmy\Timmy;
 
-require_once dirname(__DIR__) . '/vendor/yoast/wp-test-utils/src/WPIntegration/bootstrap-functions.php';
+require_once dirname(__DIR__) . '/vendor/autoload.php';
+require_once dirname(__DIR__) . '/vendor/yoast/phpunit-polyfills/phpunitpolyfills-autoload.php';
 
-$_tests_dir = Yoast\WPTestUtils\WPIntegration\get_path_to_wp_test_dir();
+$_tests_dir = getenv('WP_TESTS_DIR') ? getenv('WP_TESTS_DIR') : rtrim(sys_get_temp_dir(), '/\\') . '/wordpress-tests-lib';
 
 if (!is_file("{$_tests_dir}/includes/functions.php")) {
     echo "Could not find {$_tests_dir}/includes/functions.php, have you run bin/install-wp-tests.sh <db-name> <db-user> <db-pass> [db-host] [wp-version] [skip-database-creation]?" . PHP_EOL; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -19,8 +19,6 @@ require_once $_tests_dir . '/includes/functions.php';
  * Manually load the plugin being tested.
  */
 function _manually_load_plugin() {
-	require dirname( __FILE__ ) . '/../vendor/autoload.php';
-
     Timber\Timber::init();
 	Timmy::init();
 
@@ -30,9 +28,9 @@ function _manually_load_plugin() {
 tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
 
 /*
- * Bootstrap WordPress. This will also load the Composer autoload file, the PHPUnit Polyfills
- * and the custom autoloader for the TestCase and the mock object classes.
+ * Bootstrap WordPress.
  */
-WPIntegration\bootstrap_it();
+require_once $_tests_dir . '/includes/bootstrap.php';
 
+require_once 'TimmyUnitTestCase.php';
 require_once 'timmy-sizes.php';
