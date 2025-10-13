@@ -91,6 +91,7 @@ You shouldn’t use `full` or `original` as keys in your configuration. If you d
 - [post_types](#post_types)
 - [name](#name)
 - [show_in_ui](#show_in_ui)
+- [show_in_rest](#show_in_rest)
 - [generate_srcset_sizes](#generate_srcset_sizes)
 - [upscale](#upscale) (formerly named `oversize`)
 - [webp](#webp)
@@ -280,9 +281,19 @@ The name parameter is used in the backend. When `show_in_ui` is `true`, then thi
 
 (`bool`), optional, Default: `true`
 
-When you set this to false, the user will not be able to select that value in the backend, e.g. when she wants to insert a Media file directly into the WYSYWIG content.
+When you set this to `false`, the user will not be able to select that value in the backend, e.g. when they want to insert a Media file directly into the WYSYWIG content.
 
 If the post type a user is editing is not in the `post_types` array (and if `post_types` is not `all`, the size will not be shown to the user.
+
+---
+
+### show_in_rest
+
+(`bool`), optional, Default: `true`
+
+Defines whether the image size should be shown in the REST API.
+
+You can use the [`timmy/show_in_rest` filter](./hooks.md#timmyshow_in_rest) to control this behavior for individual images.
 
 ---
 
@@ -292,7 +303,7 @@ If the post type a user is editing is not in the `post_types` array (and if `pos
 
 Per default, all the sizes defined under `srcset` will only be generated when the image is requested in the frontend. Only the size defined in `resize` will be generated. By setting this to true, srcset sizes will also be generated when an image is uploaded.
 
-You can use the [`timmy/generate_srcset_sizes` filter](#timmy-generate-srcset-sizes) to enable or disable this globally. Setting this option on an image size always takes precedence over the filter.
+You can use the [`timmy/generate_srcset_sizes` filter](./hooks.md#timmygenerate_srcset_sizes) to enable or disable this globally. Setting this option on an image size always takes precedence over the filter.
 
 ---
 

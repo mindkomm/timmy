@@ -4,6 +4,7 @@ namespace Timmy;
 
 use Timber;
 use WP_Post;
+use WP_REST_Response;
 
 /**
  * Class Timmy
@@ -22,6 +23,13 @@ class Timmy {
 	 * @var array
 	 */
 	public $image_sizes_for_ui = array();
+
+    /**
+     * Whether WordPress is serving a REST attachment request.
+     *
+     * @var bool
+     */
+    private bool $is_serving_rest_attachment_request = false;
 
 	/**
 	 * Timmy can’t be instantiated directly.
@@ -103,13 +111,14 @@ class Timmy {
 
 		// Filters the metadata for an image.
 		add_filter( 'wp_get_attachment_metadata', array( $this, 'filter_attachment_metadata' ), 10, 2 );
+		add_filter('rest_prepare_attachment', [$this, 'filter_rest_prepare_attachment']);
 
 		// Hook into generating attachment meta data filter.
 		add_filter( 'wp_generate_attachment_metadata', array( $this, 'delete_generated_image_sizes' ), 5, 2 );
 		add_filter( 'wp_generate_attachment_metadata', array( $this, 'filter_wp_generate_attachment_metadata' ), 30, 2 );
 
 		// Filters the attachment data prepared for JavaScript.
-		add_filter( 'wp_prepare_attachment_for_js', array( $this, 'filter_wp_prepare_attachment_for_js' ), 10, 3 );
+		add_filter( 'wp_prepare_attachment_for_js', array( $this, 'filter_wp_prepare_attachment_for_js' ) );
 
 		// Set global $_wp_additional_image_sizes.
 		$this->set_wp_additional_image_sizes();
@@ -232,8 +241,6 @@ class Timmy {
 		global $_wp_additional_image_sizes;
 
 		foreach ( Helper::get_image_sizes() as $key => $size ) {
-			$sizes[] = $key;
-
 			list( $width, $height ) = Helper::get_dimensions_for_size( $size );
 
 			$crop = isset( $size['resize'][1] ) ? true : false;
@@ -263,7 +270,6 @@ class Timmy {
 	 * We tell WordPress that we don’t have intermediate sizes, because we have our own image
 	 * thingy we want to work with.
 	 *
-	 *
 	 * @since 0.10.0
 	 * @see wp_generate_attachment_metadata()
 	 * @param array $sizes Image sizes.
@@ -276,9 +282,9 @@ class Timmy {
 	/**
 	 * Filters the attachment meta data.
 	 *
-	 * Adds missing image sizes to the sizes array dynamically. This is useful when image sizes are
-	 * requested in other places than your templates, e.g. through the media endpoint of REST API
-	 * in the Block Editor.
+	 * Adds missing image sizes to the sizes array dynamically. This is usefulwhen image sizes are
+	 * requested in other places than your templates, e.g. through the media
+     * endpoint of the REST API in the Block Editor.
 	 *
 	 * Image sizes can be missing when a new image size was added after an image was uploaded. This
 	 * can be circumvented when image meta data is regenerated, e.g. with Regenerate Thumbnails.
@@ -311,6 +317,11 @@ class Timmy {
 		$missing_sizes    = [];
 		$configured_sizes = Helper::get_image_sizes();
 
+        // Filter sizes for REST API requests.
+        $configured_sizes = array_filter($configured_sizes, function($img_size) use ($attachment_id) {
+           return $this->should_show_in_rest($img_size, $attachment_id);
+        });
+
 		if ( ! isset( $meta_data['sizes'] ) && ! empty( $configured_sizes ) ) {
 			$meta_data['sizes'] = [];
 		}
@@ -333,6 +344,15 @@ class Timmy {
 				);
 			}
 		}
+
+        // Make sure that the sizes array only contains the configured sizes.
+        // Any sizes that might be present in the meta data, but not in the
+        // configured sizes will be removed.
+        if (!empty($meta_data['sizes'])) {
+            $meta_data['sizes'] = array_filter($meta_data['sizes'], function($size_key) use ($configured_sizes) {
+                return in_array($size_key, array_keys($configured_sizes));
+            }, ARRAY_FILTER_USE_KEY);
+        }
 
 		return $meta_data;
 	}
@@ -614,6 +634,11 @@ class Timmy {
 			return $return;
 		}
 
+        // Filter size for REST API requests.
+        if (!$this->should_show_in_rest($img_size, $attachment_id)) {
+            return $return;
+        }
+
 		// Get meta data not filtered by Timmy.
 		$meta_data = wp_get_attachment_metadata( $attachment_id, true );
 
@@ -642,19 +667,23 @@ class Timmy {
 
 		// Maybe convert to WebP.
 		if (
-			self::should_convert_to_webp( $file_src, $img_size, $attachment_id )
-			/**
-			 * We don’t want to convert to WebP when the image size is saved in the metadata of an
-			 * image, which happens when generating a downsized version. Saving the image sizes in
-			 * the metadata happens inside the wp_generate_attachment_metadata filter, which we can
-			 * check for.
-			 *
-			 * If WebP images would be saved in the attachment metadata, WebP images would also be
-			 * used by other plugins, which can lead to unextected side effects. For example,
-			 * Yoast SEO uses this for generating the OG image in the HTML head. But platforms like
-			 * LinkedIn don’t support WebP images (yet). So we shouldn’t use it there.
-			 */
-			&& ! doing_filter( 'wp_generate_attachment_metadata' )
+			// We don’t want to convert to WebP when the image size is saved in the metadata of an
+			// image, which happens when generating a downsized version. Saving the image sizes in
+			// the metadata happens inside the wp_generate_attachment_metadata filter, which we can
+			// check for.
+            //
+			// If WebP images would be saved in the attachment metadata, WebP images would also be
+			// used by other plugins, which can lead to unexpected side effects. For example,
+			// Yoast SEO uses this for generating the OG image in the HTML head. But platforms like
+			// LinkedIn don’t support WebP images (yet). So we shouldn’t use it there.
+			! doing_filter( 'wp_generate_attachment_metadata' )
+            // We don’t want to convert to WebP when the image is served through the /wp/v2/media
+            // endpoint. In \WP_REST_Attachments_Controller::prepare_item_for_response(), WordPress
+            // adds the mime type of the image to the response based on the attachment’s mime type.
+            // If we converted to WebP here, the mime type and the file ending wouldn’t be
+            // consistent.
+            && ! $this->is_serving_rest_attachment_request
+			&& self::should_convert_to_webp( $file_src, $img_size, $attachment_id )
 		) {
 			$src = self::to_webp( $src, $img_size );
 		}
@@ -675,6 +704,26 @@ class Timmy {
 	}
 
 	/**
+	 * Prepares attachment for REST API.
+	 *
+	 * @param WP_REST_Response $response The response object.
+	 * @param WP_Post $post The original attachment post.
+	 * @param WP_REST_Request $request Request used to generate the response.
+	 */
+	public function filter_rest_prepare_attachment(WP_REST_Response $response): WP_REST_Response {
+        // If the media_details are not yet set, we can still hook into generating the data. By
+        // setting the $is_serving_rest_attachment_request flag, we can only target requests that
+        // are serving classic attachment requests.
+        // WordPress actually runs the `rest_prepare_attachment` hook twice. First in the
+        // WP_REST_Posts_Controller::prepare_item_for_response() method, and then in the
+        // WP_REST_Attachments_Controller::prepare_item_for_response() method. The first time, it
+        // won’t have any media specific data. There’s where we hook in there.
+        $this->is_serving_rest_attachment_request = empty($response->data['media_details']);
+
+		return $response;
+	}
+
+	/**
 	 * Filters image data before it is returned to the Media view.
 	 *
 	 * When the details for an image are requested in the Media view, WordPress displays the large
@@ -691,7 +740,7 @@ class Timmy {
 	 *
 	 * @return array
 	 */
-	public function filter_wp_prepare_attachment_for_js( $response, $attachment, $meta ) {
+	public function filter_wp_prepare_attachment_for_js( array $response ) {
 		if ( isset( $response['sizes']['large'] ) ) {
 			$response['sizes']['large'] = $response['sizes']['full'];
 		}
@@ -912,6 +961,58 @@ class Timmy {
 		$should_convert = apply_filters( 'timmy/should_convert_to_webp', $should_convert, $attachment_id, $file_src, $img_size );
 
         return $should_convert;
+	}
+
+    /**
+     * Checks whether an image should be shown in the REST API.
+     *
+     * @since 2.3.0
+     *
+     * @param array $img_size
+     * @param int $attachment_id
+     *
+     * @return bool
+     */
+    protected function should_show_in_rest(array $img_size, int $attachment_id): bool {
+        // Bail out if not a REST request.
+        if (!$this->is_serving_rest_request() || !$this->is_serving_rest_attachment_request) {
+            return true;
+        }
+
+        $show_in_rest = true;
+
+        if (isset($img_size['show_in_rest']) && $img_size['show_in_rest'] === false) {
+            $show_in_rest = false;
+        }
+
+        /**
+         * Filters whether an image should be shown in the REST API.
+         *
+         * @since 2.3.0
+         *
+         * @param bool  $show_in_rest Whether the image should be shown in the REST API.
+         * @param int   $attachment_id Attachment ID.
+         * @param array $img_size Configuration values for the image size.
+         */
+        $show_in_rest = apply_filters('timmy/show_in_rest', $show_in_rest, $attachment_id, $img_size);
+
+        return $show_in_rest;
+    }
+
+    /**
+     * Checks whether an image should be shown in the REST API.
+     *
+     * @return bool
+     */
+	private function is_serving_rest_request(): bool {
+		if (!function_exists('wp_is_serving_rest_request')) {
+			return false;
+		}
+
+		// We need to use a custom filter timmy/is_serving_rest_request for testing purposes,
+		// because wp_is_serving_rest_request() is relying on the REST_REQUEST constanct, which
+		// we can’t enable or disable at will.
+		return wp_is_serving_rest_request() || apply_filters('timmy/is_serving_rest_request', false);
 	}
 
 	/**

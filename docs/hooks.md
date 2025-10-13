@@ -3,6 +3,7 @@
 - [Filters](#filters)
 	- [timmy/sizes](#timmysizes)
 	- [timmy/resize/ignore](#timmyresizeignore)
+	- [timmy/show_in_rest](#timmyshow_in_rest)
 	- [timmy/generate_srcset_sizes](#timmygenerate_srcset_sizes)
 	- [timmy/upscale](#timmyupscale)
 	- [timmy/use_src_default](#timmyuse_src_default)
@@ -54,6 +55,39 @@ add_filter( 'timmy/resize/ignore', function( $return, $attachment ) {
 ```
 
 ---
+
+### timmy/show_in_rest
+
+Filters whether an image should be shown in the REST API.
+
+This filter only runs then a REST request to an attachment is actually made, so any logic you apply here will only be applied for REST requests to `wp/v2/media` or endpoints that use [media embeds](https://developer.wordpress.org/rest-api/using-the-rest-api/linking-and-embedding/#embedding).
+
+**Parameters**
+
+- **$show_in_rest**  
+	*(bool)* Whether to show the image in the REST API. Default `true`.
+- **$attachment_id**  
+	*(int* The attachment ID.
+- **$img_size**  
+	*(array)* Configuration values for the image size.
+
+**Example 1**
+
+```php
+// Don’t show any image size in REST API calls.
+add_filter('timmy/show_in_rest', '__return_false');
+```
+
+**Example 2**
+
+```php
+// Set `show_in_rest` based on the value in `show_in_ui`.
+add_filter('timmy/show_in_rest', static function($show_in_rest, $attachment_id, $img_size) {
+    $show_in_rest = $img_size['show_in_ui'] ?? false;
+
+    return $show_in_rest;
+}, 10, 3);
+```
 
 ### timmy/generate_srcset_sizes
 

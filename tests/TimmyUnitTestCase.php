@@ -118,6 +118,10 @@ abstract class TimmyUnitTestCase extends WP_UnitTestCase {
 		$attachment_id = wp_insert_attachment( $attachment, $filename, $post_id );
 		$meta          = wp_generate_attachment_metadata( $attachment_id, $filename );
 
+		if ( 0 !== $post_id ) {
+			set_post_thumbnail( $post_id, $attachment_id );
+		}
+
 		wp_update_attachment_metadata( $attachment_id, $meta );
 
 		return $attachment_id;

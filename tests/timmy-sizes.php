@@ -22,6 +22,7 @@ add_filter( 'timmy/sizes', function( $sizes ) {
 		],
 		'resize-only'                         => [
 			'resize' => [ 500 ],
+			'show_in_rest' => false,
 		],
 		'medium'                              => [
 			'resize' => [ 600 ],
