@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.3.0](https://github.com/mindkomm/timmy/compare/v2.2.0...v2.3.0) (2025-10-13)
+
+
+### Features
+
+* Add `show_in_rest` config parameter and filter ([#97](https://github.com/mindkomm/timmy/issues/97)) ([cfe7164](https://github.com/mindkomm/timmy/commit/cfe7164eaafde9c6dba608ad3c52ca10a56f1a3e))
+* Remove option to install Timmy as a plugin ([#102](https://github.com/mindkomm/timmy/issues/102)) ([f5fa731](https://github.com/mindkomm/timmy/commit/f5fa731d7f30cf5529668d10836aa6b4df217a02))
+* Update minimum required PHP version to 8.2 ([0500e4b](https://github.com/mindkomm/timmy/commit/0500e4b736282c9925e65ccfa4b5a003531ea840))
+* Update minimum required WordPress version to 6.5 and add admin notice when requirement isn’t met ([#99](https://github.com/mindkomm/timmy/issues/99)) ([cbe6c50](https://github.com/mindkomm/timmy/commit/cbe6c508679bdeac52140b90a204e85405ec4f76))
+
 ## [2.2.0](https://github.com/mindkomm/timmy/compare/v2.1.1...v2.2.0) (2025-06-18)
 
 
