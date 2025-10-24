@@ -1217,7 +1217,7 @@ class Timmy {
      */
     private function get_image_src_for_resize(int $attachment_id): ?string {
         /**
-         * Filters the image size that is used to generate the srcset.
+         * Filters the image size that is used to generate image sizes.
          *
          * @param string $size Image size to use for resizing. Can be 'full' or 'original. In case
          *                     of 'full', a scaled image size will be used if scaled images are

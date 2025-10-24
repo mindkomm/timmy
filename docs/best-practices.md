@@ -15,29 +15,52 @@ Consider the following image configuration:
 
 ```php
 add_filter( 'timmy/sizes', function( $sizes ) {
-    return array(
-        'thumbnail' => array(
-            'resize' => array( 150, 150 ),
-        ),
-        'small' => array(
-            'resize' => array( 370 ),
-            'srcset' => array( array( 570 ) ),
-        ),
-        'small-crop' => array(
-            'resize' => array( 370, 270 ),
-        ),
-        'large' => array(
-            'resize' => array( 1400 ),
-            'srcset' => array(
-                array( 370 ),
-                array( 570 ),
-            )
-        )
-    );
+    return [
+        'thumbnail' => [
+            'resize' => [ 150, 150 ],
+        ],
+        'small' => [
+            'resize' => [ 370 ],
+            'srcset' => [ [ 570 ] ],
+        ],
+        'small-crop' => [
+            'resize' => [ 370, 270 ],
+        ],
+        'large' => [
+            'resize' => [ 1400 ],
+            'srcset' => [
+                [ 370 ],
+                [ 570 ],
+            ]
+        ]
+    ];
 } );
 ```
 
 See how the image sizes use the same dimensions? By using a reduced set of dimensions throughout your configuration, you might get along with fewer image files.
+
+## Consider which images should be generated on upload and which on the fly
+
+Using the `post_types` option, you can define which image sizes should be generated on upload. All other image sizes will be generated on the fly. When you have a lot of image sizes that are generated on the fly, you might run into a maximum execution time error. But when you generate a lot of images on upload, you might generate too many image sizes that might not be used. So set your configuration carefully to find a good balance.
+
+## Scaled images
+
+Even though you use scaled images, Timmy will still generate the original image size. This is because Timmy tries to get the best quality of an image.
+
+To disable this behavior and make Timmy generate image sizes from a scaled image if scaled images are enabled, you can use the `timmy/resize/src_image_size` filter:
+
+```php
+// Don’t generate image sizes from full size images, but from scaled images.
+add_filter('timmy/resize/src_image_size', static function () {
+    return 'full';
+});
+```
+
+## Images requested through the REST API
+
+When you request an image through the REST API throught the `wp/v2/media` endpoint or through endpoints that use [media embeds](https://developer.wordpress.org/rest-api/using-the-rest-api/linking-and-embedding/#embedding), Timmy will generate missing image sizes on the fly. This is because WordPress will list all the image sizes that are available for a given image in the REST API response.
+
+You can disable single image size from showing up in the REST API response by using the [`show_in_rest` parameter](https://github.com/mindkomm/timmy/blob/2.x/docs/image-configuration.md#show_in_rest).
 
 ## Run Regenerate Thumbnails when you made changes to the image configuration
 
