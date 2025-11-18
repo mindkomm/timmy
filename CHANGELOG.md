@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.0](https://github.com/mindkomm/timmy/compare/v2.3.0...v2.4.0) (2025-11-18)
+
+
+### Features
+
+* Add timmy/resize/src_image_size filter ([#104](https://github.com/mindkomm/timmy/issues/104)) ([d6e74e7](https://github.com/mindkomm/timmy/commit/d6e74e7119938cb4b609006f6ac5f25d861c004f))
+
 ## [2.3.0](https://github.com/mindkomm/timmy/compare/v2.2.0...v2.3.0) (2025-10-13)
 
 
