@@ -379,10 +379,15 @@ class Timmy {
 			return $meta_data;
 		}
 
-		// Timber needs the file src as a URL.
-		$file_src = Helper::get_original_attachment_url( $attachment_id );
+		// Delete image sizes both for scaled and original images.
+		$original_src = Helper::get_original_attachment_url( $attachment_id );
+        $scaled_src = wp_get_attachment_url($attachment_id);
 
-		Timber\ImageHelper::delete_generated_files( $file_src );
+		Timber\ImageHelper::delete_generated_files( $original_src );
+
+        if ($original_src !== $scaled_src) {
+            Timber\ImageHelper::delete_generated_files( $scaled_src );
+        }
 
 		return $meta_data;
 	}
@@ -494,8 +499,7 @@ class Timmy {
 	 *                    the image is an intermediate size. False on failure.
 	 */
 	public function filter_image_downsize( $return, $attachment_id, $size ) {
-		// Timber needs the file src as a URL. Also checks if ID belongs to an attachment.
-		$file_src = Helper::get_original_attachment_url( $attachment_id );
+        $file_src = $this->get_image_src_for_resize($attachment_id);
 
 		if ( ! $file_src ) {
 			return false;
@@ -1148,21 +1152,21 @@ class Timmy {
 			: $generate_srcset_sizes;
 
 		// Bail out if srcset sizes shouldn’t be generated.
-		if ( false === $generate_srcset_sizes ) {
+		if ( false === $generate_srcset_sizes || ! isset( $img_size['srcset'] ) ) {
+			return;
+		}
+
+        // Timber needs the file src as an URL. Also checks if ID belongs to an
+        // attachment.
+		$file_src = $this->get_image_src_for_resize($attachment->ID);
+
+		if (! $file_src) {
 			return;
 		}
 
 		// Get values for the default image.
 		$crop  = Helper::get_crop_for_size( $img_size );
 		$force = Helper::get_force_for_size( $img_size );
-
-		// Timber needs the file src as an URL. Also checks if ID belongs to an attachment.
-		$file_src = Helper::get_original_attachment_url( $attachment->ID );
-
-		if ( ! isset( $img_size['srcset'] ) ) {
-			return;
-		}
-
 		$upscale = Helper::get_upscale_for_size( $img_size );
 
 		// Get meta data not filtered by Timmy.
@@ -1198,6 +1202,44 @@ class Timmy {
 			}
 		}
 	}
+
+    /**
+     * Gets the src for resizing.
+     *
+     * By default, the original image size is used, which ignores scaled image sizes for better
+     * quality. This is not always the best choice. For example, if you work with very large,
+     * high-resolution images, you might want to use the scaled image size to generated smaller
+     * image sizes.
+     *
+     * @param int $attachment_id
+     *
+     * @return string|null
+     */
+    private function get_image_src_for_resize(int $attachment_id): ?string {
+        /**
+         * Filters the image size that is used to generate image sizes.
+         *
+         * @param string $size Image size to use for resizing. Can be 'full' or 'original. In case
+         *                     of 'full', a scaled image size will be used if scaled images are
+         *                     active. Default 'original'.
+         * @param int $attachment_id Attachment ID.
+         */
+        $resize_src = apply_filters('timmy/resize/src_image_size', 'original', $attachment_id);
+
+		// Timber needs the file src as a URL. Also checks if ID belongs to an attachment.
+        switch ($resize_src) {
+            case 'full':
+            case 'scaled':
+                $file_src = wp_get_attachment_url( $attachment_id );
+                break;
+            case 'original':
+            default:
+		        $file_src = Helper::get_original_attachment_url( $attachment_id );
+                break;
+        }
+
+        return $file_src ?: null;
+    }
 
 	/**
 	 * Creates an image definition array that will be used for attachment metadata.

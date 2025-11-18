@@ -56,6 +56,28 @@ add_filter( 'timmy/resize/ignore', function( $return, $attachment ) {
 
 ---
 
+### timmy/resize/src_image_size
+
+Filters the image size that is used to generate image sizes.
+
+**Parameters**
+
+- **$size**  
+	*(string)* Image size to use for resizing. Can be `full` or `original`. In case of `full`, a scaled image size will be used if scaled images are active. Default `original`.
+- **$attachment_id**  
+	*(int)* The attachment ID.
+
+**Example**
+
+```php
+// Don’t generate image sizes from full size images, but from scaled images.
+add_filter('timmy/resize/src_image_size', function () {
+    return 'full';
+});
+```
+
+---
+
 ### timmy/show_in_rest
 
 Filters whether an image should be shown in the REST API.

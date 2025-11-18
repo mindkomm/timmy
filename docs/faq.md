@@ -148,3 +148,14 @@ If you want to disable scaled images, you’ll have to use the [`big_image_size_
 ```php
 add_filter( 'big_image_size_threshold', '__return_false' );
 ```
+
+To not use any quality, Timmy will also **generate images from the original size**. This can a big performance hit. You might even run into memory issues if the site uses big high-res images that are a couple of MBs in file size.
+
+But you can tell Timmy to use the scaled images when generating image sizes using the `timmy/resize/src_image_size` filter:
+
+```php
+// Don’t generate image sizes from full size images, but from scaled images.
+add_filter('timmy/resize/src_image_size', static function () {
+    return 'full';
+});
+```
