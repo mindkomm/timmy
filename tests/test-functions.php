@@ -314,45 +314,45 @@ class TestFunctions extends TimmyUnitTestCase {
 	}
 
 	public function test_get_timber_image_full_with_gif() {
-		$attachment = $this->create_image( [ 'file' => 'logo-small.gif' ] );
+		$attachment = $this->create_image( [ 'file' => 'large.gif' ] );
 		$result     = get_timber_image( $attachment, 'full' );
 
-		$image = ' src="' . $this->get_upload_url() . '/logo-small.gif" alt=""';
+		$image = ' src="' . $this->get_upload_url() . '/large.gif" alt=""';
 
 		$this->assertEquals( $image, $result );
 	}
 
 	public function test_get_timber_image_full_with_gif_apiv1() {
-		$attachment = $this->create_image( [ 'file' => 'logo-small.gif' ] );
+		$attachment = $this->create_image( [ 'file' => 'large.gif' ] );
 
 		$image  = Timmy::get_image( $attachment, 'full' );
 		$result = $image->src();
 
-		$expected = $this->get_upload_url() . '/logo-small.gif';
+		$expected = $this->get_upload_url() . '/large.gif';
 
 		$this->assertEquals( $expected, $result );
 	}
 
 	public function test_get_timber_image_large_with_gif() {
-		$attachment = $this->create_image( [ 'file' => 'logo-small.gif' ] );
+		$attachment = $this->create_image( [ 'file' => 'large.gif' ] );
 
 		$image  = Timmy::get_image( $attachment, 'large' );
 		$result = $image->src();
 
-		$expected = $this->get_upload_url() . '/logo-small.gif';
+		$expected = $this->get_upload_url() . '/large.gif';
 
 		$this->assertEquals( $expected, $result );
 	}
 
 	public function test_get_timber_image_full_with_gif_without_metadata() {
-		$attachment = $this->create_image( [ 'file' => 'logo-small.gif' ] );
+		$attachment = $this->create_image( [ 'file' => 'large.gif' ] );
 
 		// Remove attachment metadata.
 		wp_update_attachment_metadata( $attachment->ID, [] );
 
 		$result = get_timber_image( $attachment, 'full' );
 
-		$image = ' src="' . $this->get_upload_url() . '/logo-small.gif" alt=""';
+		$image = ' src="' . $this->get_upload_url() . '/large.gif" alt=""';
 
 		$this->assertEquals( $image, $result );
 	}
@@ -372,17 +372,24 @@ class TestFunctions extends TimmyUnitTestCase {
 		$this->assertEquals( $expected, $result );
 	}
 
+	public function test_get_timber_image_srcset_with_gif() {
+		$attachment = $this->create_image( [ 'file' => 'large.gif' ] );
+		$result     = get_timber_image_srcset( $attachment, 'large' );
+
+		$this->assertSame( false, $result );
+	}
+
 	public function test_get_timber_image_srcset_non_image() {
 		$result = get_timber_image_srcset( 0, 'large' );
 
-		$this->assertEquals( false, $result );
+		$this->assertSame( false, $result );
 	}
 
 	public function test_get_timber_image_srcset_without_srcset() {
 		$attachment = $this->create_image();
 		$result     = get_timber_image_srcset( $attachment, 'resize-only' );
 
-		$this->assertEquals( false, $result );
+		$this->assertSame( false, $result );
 	}
 
 	public function test_get_timber_image_srcset_x_descriptors() {
@@ -413,6 +420,15 @@ class TestFunctions extends TimmyUnitTestCase {
 
 	public function test_get_timber_image_width() {
 		$attachment = $this->create_image();
+
+		$image  = Timmy::get_image( $attachment, 'large' );
+		$result = $image->width();
+
+		$this->assertEquals( 1400, $result );
+	}
+
+	public function test_get_timber_image_width_with_gif() {
+		$attachment = $this->create_image( [ 'file' => 'large.gif' ] );
 
 		$image  = Timmy::get_image( $attachment, 'large' );
 		$result = $image->width();

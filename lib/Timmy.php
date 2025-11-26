@@ -59,7 +59,7 @@ class Timmy {
 		add_filter('timber/twig/filters', [ $self, 'add_filters' ]);
 		add_filter('timber/twig/functions', [ $self, 'add_functions' ]);
 
-		add_filter( 'timmy/resize/ignore', array( __CLASS__, 'ignore_unallowed_files' ), 10, 2 );
+		add_filter( 'timmy/resize/ignore', [__CLASS__, 'ignore_unallowed_files'], 10, 2 );
 	}
 
 	/**
@@ -518,29 +518,8 @@ class Timmy {
 			return $return;
 		}
 
-		$ignore = false;
-
-		/**
-		 * Filters whether we should resize an image size.
-		 *
-		 * When true is returned in this filter, the function will bail out early and the
-		 * image will not be processed further.
-		 *
-		 * @since 0.13.0
-		 *
-		 * @param bool   $ignore     Whether to ignore an image size. Default false.
-		 * @param int    $attachment The attachment post.
-		 * @param string $size       The requested image size.
-		 * @param string $file_src   The file src URL.
-		 */
-		$ignore = apply_filters( 'timmy/resize/ignore',
-			$ignore,
-			$attachment,
-			$size,
-			$file_src
-		);
-
-		if ( true === $ignore ) {
+        // Maybe ignore image for resizing.
+		if ( true === self::apply_ignore_filter($attachment_id, $size, $file_src) ) {
 			return $return;
 		}
 
@@ -1373,6 +1352,43 @@ class Timmy {
 			}
 		}
 	}
+
+    /**
+     * Applies the timmy/resize/ignore filter.
+     *
+     * @param int $attachment_id The attachment ID.
+     * @param string $size The requested image size.
+     * @param string $file_src The file src URL.
+     *
+     * @return bool
+     */
+    public static function apply_ignore_filter(int $attachment_id, string $size, string $file_src) : bool
+    {
+        $attachment = get_post( $attachment_id );
+
+		/**
+		 * Filters whether we should resize an image size.
+		 *
+		 * When true is returned in this filter, the function will bail out early and the
+		 * image will not be processed further.
+		 *
+		 * @since 0.13.0
+		 *
+		 * @param bool   $ignore     Whether to ignore an image size. Default false.
+		 * @param int    $attachment The attachment post.
+		 * @param string $size       The requested image size. Empty string if the image size is
+		 *                           passed as an array directly.
+		 * @param string $file_src   The file src URL.
+		 */
+		$ignore = apply_filters( 'timmy/resize/ignore',
+            false,
+			$attachment,
+			$size,
+			$file_src
+		);
+
+        return $ignore;
+    }
 
 	/**
 	 * Ignore resizing files that are not images or non-resizable images.
