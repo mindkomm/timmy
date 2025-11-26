@@ -199,3 +199,24 @@ add_filter( 'timmy/src_default', function( $src_default, $image ) {
     return $attributes['default_src'];
 }, 10, 2 );
 ```
+
+### timmy/allowed_file_extensions
+
+Filters the allowed file extensions to be processed with Timmy.
+ 
+**Parameters**
+
+- **$allowed_file_extensions**  
+    *(array)* Allowed file extensions. Default `[ 'jpg', 'jpeg', 'jpe', 'png' ]`.
+
+**Example**
+
+```php
+// Add support for AVIF and WebP files.
+add_filter( 'timmy/allowed_file_extensions', function( $allowed_file_extensions ) {
+    $allowed_file_extensions[] = 'avif';
+    $allowed_file_extensions[] = 'webp';
+    
+    return $allowed_file_extensions;
+} );
+```
