@@ -1427,11 +1427,20 @@ class Timmy {
 			return true;
 		}
 
-		$allowed_ext = [ 'jpg', 'jpeg', 'jpe', 'png' ];
-		$file_ext    = wp_check_filetype( $file, Helper::get_mime_types() )['ext'];
+		$file_ext = wp_check_filetype( $file, Helper::get_mime_types() )['ext'];
+
+		$allowed_extensions = [ 'jpg', 'jpeg', 'jpe', 'png' ];
+
+		/**
+		 * Filters the allowed file extensions to be processed with Timmy.
+		 *
+		 * @since 2.5.0
+		 * @param array $allowed_extensions Array of allowed file extensions. Default ['jpg', 'jpeg', 'jpe', 'png'].
+		 */
+		$allowed_extensions = apply_filters( 'timmy/allowed_file_extensions', $allowed_extensions );
 
 		// We can’t use wp_attachment_is() for the check, because that will also allow GIF images.
-		if ( ! $file_ext || ! in_array( $file_ext, $allowed_ext, true ) ) {
+		if ( ! $file_ext || ! in_array( $file_ext, $allowed_extensions, true ) ) {
 			// Ignore.
 			return true;
 		}
