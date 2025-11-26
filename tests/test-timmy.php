@@ -135,7 +135,7 @@ class TestTimmy extends TimmyUnitTestCase {
 	}
 
 	public function test_timmy_ignores_gif_when_generating_metadata() {
-		$attachment = $this->create_image( [ 'file' => 'logo-small.gif' ] );
+		$attachment = $this->create_image( [ 'file' => 'large.gif' ] );
 		$file_src   = get_attached_file( $attachment->ID );
 		$meta       = wp_generate_attachment_metadata( $attachment->ID, $file_src );
 

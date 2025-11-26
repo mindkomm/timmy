@@ -165,13 +165,13 @@ class TestWebP extends TimmyUnitTestCase {
 	}
 
 	public function test_timmy_ignores_gif_when_using_webp() {
-		$attachment = $this->create_image( [ 'file' => 'logo-small.gif' ] );
+		$attachment = $this->create_image( [ 'file' => 'large.gif' ] );
 
 		$image = Timmy::get_image( $attachment, 'webp' );
 
 		$result   = $image->picture_responsive();
 		$expected = sprintf(
-			'<source srcset="%1$s/logo-small.gif">%2$s<img src="%1$s/logo-small.gif" width="100" height="50" alt="" loading="lazy">',
+			'<source srcset="%1$s/large.gif">%2$s<img src="%1$s/large.gif" width="1400" height="1400" alt="" loading="lazy">',
 			$this->get_upload_url(),
 			PHP_EOL
 		);

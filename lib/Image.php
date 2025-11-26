@@ -196,7 +196,7 @@ class Image {
 	 */
 	public function src( $args = [] ) {
 		// @todo Test with false image or wrong image size key.
-		if ( $this->is_full_size() || $this->is_svg() ) {
+		if ( $this->is_full_size() || $this->is_ignored_for_resize() ) {
 			return $this->auto_full_src();
 		}
 
@@ -406,11 +406,14 @@ class Image {
 	 * @return false|string
 	 */
 	public function srcset( $args = [] ) {
+		if ($this->is_ignored_for_resize()) {
+			return false;
+		}
+
 		$args = wp_parse_args( $args, [
 			'webp' => $this->is_webp(),
 		] );
 
-		$return = false;
 		$width  = $this->width();
 		/**
 		 * Always use height from size configuration, because otherwise we would get images with
@@ -500,10 +503,10 @@ class Image {
 			// Sort entries from smallest to highest
 			ksort( $srcset );
 
-			$return = implode( ', ', $srcset );
+			return implode( ', ', $srcset );
 		}
 
-		return $return;
+		return false;
 	}
 
 	/**
@@ -823,12 +826,13 @@ class Image {
 		$attributes = [];
 
 		/**
-		 * Directly return full source when full source or an SVG image is requested.
+		 * Directly return full source when full source or an unsupported image for resize is
+         * requested.
 		 *
 		 * The full size may be a scaled version of the image. To always request the original
 		 * version, 'original' has to be used as the size.
 		 */
-		if ( $this->is_full_size() || $this->is_svg() ) {
+		if ( $this->is_full_size() || $this->is_ignored_for_resize() ) {
 			$attributes['src'] = $this->auto_full_src();
 		} else {
 			$srcset = $this->srcset( [ 'webp' => $args['webp'] ] );
@@ -1046,9 +1050,10 @@ class Image {
 	 *
 	 * @return void
 	 */
-	public function set_webp( bool $webp ) {
-		$this->size['webp'] = $webp;
-	}
+	public function set_webp( bool $webp )
+    {
+        $this->size['webp'] = $webp;
+    }
 
 	/**
 	 * Checks whether an image is an SVG image.
@@ -1076,4 +1081,16 @@ class Image {
 	public function is_pdf() {
 		return 'application/pdf' === $this->mime_type();
 	}
+
+    /**
+     * Checks whether an image should be ignored for resize.
+     *
+     * @return bool
+     */
+    protected function is_ignored_for_resize() : bool
+    {
+        return $this->is_svg()
+               || $this->is_gif()
+               || Timmy::apply_ignore_filter($this->id, $this->size_key ?? '', $this->auto_full_src());
+    }
 }

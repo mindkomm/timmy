@@ -20,6 +20,24 @@ class TestPicture extends TimmyUnitTestCase {
 		$this->assertEquals( $expected, $result );
 	}
 
+	public function test_picture_with_gif() {
+		$alt_text   = 'Burrito Wrap';
+		$attachment = $this->create_image( [
+			'alt'         => $alt_text,
+			'description' => 'Burritolino',
+			'file'        => 'large.gif',
+		] );
+		$result     = get_timber_picture_responsive( $attachment, 'picture' );
+
+		$expected = sprintf(
+			'<source srcset="%1$s/large.gif">%2$s<img src="%1$s/large.gif" width="1400" height="1400" alt="Burrito Wrap" loading="lazy">',
+			$this->get_upload_url(),
+			PHP_EOL
+		);
+
+		$this->assertEquals( $expected, $result );
+	}
+
 	public function test_picture_with_full_src() {
 		$attachment = $this->create_image( [
 			'alt' => 'Burrito Wrap',
