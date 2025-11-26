@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.5.0](https://github.com/mindkomm/timmy/compare/v2.4.0...v2.5.0) (2025-11-26)
+
+
+### Features
+
+* Add `timmy/allowed_file_extensions` filter ([#108](https://github.com/mindkomm/timmy/issues/108)) ([f624bf4](https://github.com/mindkomm/timmy/commit/f624bf46687ca28d7939ced58ebcd05290b0e773))
+
+
+### Bug Fixes
+
+* Fix bugs when .gif images were unexpectedly resized ([#107](https://github.com/mindkomm/timmy/issues/107)) ([95a2d7c](https://github.com/mindkomm/timmy/commit/95a2d7c8ff242c7f9864cb4c8da98d16cba2b6d0))
+
 ## [2.4.0](https://github.com/mindkomm/timmy/compare/v2.3.0...v2.4.0) (2025-11-18)
 
 
