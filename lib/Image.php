@@ -1091,6 +1091,6 @@ class Image {
     {
         return $this->is_svg()
                || $this->is_gif()
-               || Timmy::apply_ignore_filter($this->id, $this->size_key ?? '', $this->auto_full_src());
+               || Timmy::apply_ignore_filter($this->id, $this->size_key, $this->auto_full_src());
     }
 }
