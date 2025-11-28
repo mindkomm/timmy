@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.1](https://github.com/mindkomm/timmy/compare/v2.5.0...v2.5.1) (2025-11-28)
+
+
+### Bug Fixes
+
+* Fix a type bug with parameter in `timmy/resize/ignore` filter ([#111](https://github.com/mindkomm/timmy/issues/111)) ([bbcefcf](https://github.com/mindkomm/timmy/commit/bbcefcfd31b4ac377c8c0c4e3ea02886d9de6fb6))
+
 ## [2.5.0](https://github.com/mindkomm/timmy/compare/v2.4.0...v2.5.0) (2025-11-26)
 
 
