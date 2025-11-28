@@ -35,7 +35,7 @@ When true is returned in this filter, the function will bailout early and the im
 - **$attachment**  
 	*(string)* The attachment post.
 - **$size**  
-	*(string)* The requested image size.
+	*(string|array)* The requested image size as a string or array.
 - **$file_src**  
 	*(string)* The file src URL.
 

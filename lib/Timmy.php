@@ -1357,12 +1357,12 @@ class Timmy {
      * Applies the timmy/resize/ignore filter.
      *
      * @param int $attachment_id The attachment ID.
-     * @param string $size The requested image size.
+     * @param string|array $size The requested image size.
      * @param string $file_src The file src URL.
      *
      * @return bool
      */
-    public static function apply_ignore_filter(int $attachment_id, string $size, string $file_src) : bool
+    public static function apply_ignore_filter(int $attachment_id, $size, string $file_src) : bool
     {
         $attachment = get_post( $attachment_id );
 
@@ -1376,8 +1376,7 @@ class Timmy {
 		 *
 		 * @param bool   $ignore     Whether to ignore an image size. Default false.
 		 * @param int    $attachment The attachment post.
-		 * @param string $size       The requested image size. Empty string if the image size is
-		 *                           passed as an array directly.
+		 * @param string|array $size The requested image size as a string or array.
 		 * @param string $file_src   The file src URL.
 		 */
 		$ignore = apply_filters( 'timmy/resize/ignore',
