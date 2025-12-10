@@ -569,7 +569,7 @@ class Image {
 		if ( $this->is_svg() ) {
 			$dimensions = $this->svg_dimensions();
 
-			if ( $dimensions['width'] > 0 ) {
+			if ( isset($dimensions['width']) && $dimensions['width'] > 0 ) {
 				$this->max_width = round( $dimensions['width'] );
 			}
 		} else {
@@ -591,7 +591,7 @@ class Image {
 		if ( $this->is_svg() ) {
 			$dimensions = $this->svg_dimensions();
 
-			if ( $dimensions['height'] > 0 ) {
+			if ( isset($dimensions['height']) && $dimensions['height'] > 0 ) {
 				$this->max_height = round( $dimensions['height'] );
 			}
 		} else {
