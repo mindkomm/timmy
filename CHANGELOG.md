@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.5.2](https://github.com/mindkomm/timmy/compare/v2.5.1...v2.5.2) (2025-12-23)
+
+
+### Bug Fixes
+
+* Fix bug for attachments without width and height ([#115](https://github.com/mindkomm/timmy/issues/115)) ([6fd5c6b](https://github.com/mindkomm/timmy/commit/6fd5c6bd48a0ce1487e5b96343a9b55ead69e899))
+* Fix PHP warnings when SVG dimensions can’t be loaded ([#113](https://github.com/mindkomm/timmy/issues/113)) ([24b12cd](https://github.com/mindkomm/timmy/commit/24b12cdbe50290bea07b40457d7dbabcc65903b0))
+
+
+### Miscellaneous Chores
+
+* Update workflow configuration ([#114](https://github.com/mindkomm/timmy/issues/114)) ([358915b](https://github.com/mindkomm/timmy/commit/358915bb05d541c3258c56d3fb136fc2b50e2d52))
+
 ## [2.5.1](https://github.com/mindkomm/timmy/compare/v2.5.0...v2.5.1) (2025-11-28)
 
 
