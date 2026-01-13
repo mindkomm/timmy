@@ -109,19 +109,19 @@ add_filter( 'timmy/sizes', function( $sizes ) {
 				'allow' => true,
 			],
 		],
-		'deprecated-oversize'                 => [
-			'resize'   => [ 1404 ],
-			'srcset'   => [ [ 150 ] ],
-			'oversize' => [
-				'allow' => true,
-			],
-		],
 		'upscale-allow-true-style-attr-false' => [
 			'resize'  => [ 1405 ],
 			'srcset'  => [ [ 150 ] ],
 			'upscale' => [
 				'allow'      => true,
 				'style_attr' => false,
+			],
+		],
+		'deprecated-oversize'                 => [
+			'resize'   => [ 1404 ],
+			'srcset'   => [ [ 150 ] ],
+			'oversize' => [
+				'allow' => true,
 			],
 		],
 	] );

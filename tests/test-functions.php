@@ -154,7 +154,7 @@ class TestFunctions extends TimmyUnitTestCase {
 		$result     = get_timber_image_responsive( $attachment, 'large' );
 
 		$expected = sprintf(
-			' srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" width="1400" height="933" loading="lazy" alt="Burrito Wrap"', $this->get_upload_url()
+			' srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" sizes="100vw" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" width="1400" height="933" loading="lazy" alt="Burrito Wrap"', $this->get_upload_url()
 		);
 
 		$this->assertEquals( $expected, $result );
@@ -171,7 +171,7 @@ class TestFunctions extends TimmyUnitTestCase {
 		$result = $image->responsive();
 
 		$expected = sprintf(
-			' srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" width="1400" height="933" loading="lazy" alt="Burrito Wrap"', $this->get_upload_url()
+			' srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" sizes="100vw" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" width="1400" height="933" loading="lazy" alt="Burrito Wrap"', $this->get_upload_url()
 		);
 
 		$this->assertEquals( $expected, $result );
@@ -190,7 +190,7 @@ class TestFunctions extends TimmyUnitTestCase {
 		$result = get_timber_image_responsive( $attachment, 'large' );
 
 		$expected = sprintf(
-			' srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" width="1400" loading="lazy" alt="Burrito Wrap"',
+			' srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" sizes="100vw" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" width="1400" loading="lazy" alt="Burrito Wrap"',
 			$this->get_upload_url()
 		);
 
@@ -202,7 +202,7 @@ class TestFunctions extends TimmyUnitTestCase {
 		$result     = get_timber_image_responsive_src( $attachment, 'large' );
 
 		$expected = sprintf(
-			' srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" width="1400" height="933" loading="lazy"',
+			' srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" sizes="100vw" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" width="1400" height="933" loading="lazy"',
 			$this->get_upload_url()
 		);
 
@@ -217,7 +217,7 @@ class TestFunctions extends TimmyUnitTestCase {
 		wp_update_attachment_metadata( $attachment->ID, [] );
 
 		$expected = sprintf(
-			' srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" width="1400" height="933" loading="lazy"',
+			' srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" sizes="100vw" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" width="1400" height="933" loading="lazy"',
 			$this->get_upload_url()
 		);
 
@@ -247,7 +247,7 @@ class TestFunctions extends TimmyUnitTestCase {
 		] );
 
 		$expected = sprintf(
-			' srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" height="933" loading="lazy"',
+			' srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" sizes="100vw" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" height="933" loading="lazy"',
 			$this->get_upload_url()
 		);
 
@@ -261,7 +261,7 @@ class TestFunctions extends TimmyUnitTestCase {
 		] );
 
 		$expected = sprintf(
-			' srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" width="1400" loading="lazy"',
+			' srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" sizes="100vw" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" width="1400" loading="lazy"',
 			$this->get_upload_url()
 		);
 
@@ -275,7 +275,7 @@ class TestFunctions extends TimmyUnitTestCase {
 		] );
 
 		$expected = sprintf(
-			' srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" width="1400" height="933" loading="eager"',
+			' srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" sizes="100vw" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" width="1400" height="933" loading="eager"',
 			$this->get_upload_url()
 		);
 
@@ -289,7 +289,7 @@ class TestFunctions extends TimmyUnitTestCase {
 		] );
 
 		$expected = sprintf(
-			' srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" width="1400" height="933"',
+			' srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" sizes="100vw" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" width="1400" height="933"',
 			$this->get_upload_url()
 		);
 
@@ -306,7 +306,7 @@ class TestFunctions extends TimmyUnitTestCase {
 		] );
 
 		$expected = sprintf(
-			' srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" width="1400" height="933"',
+			' srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" sizes="100vw" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" width="1400" height="933"',
 			$this->get_upload_url()
 		);
 
