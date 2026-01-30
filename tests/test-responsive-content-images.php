@@ -14,7 +14,7 @@ class TestResponsiveContentImages extends TimmyUnitTestCase {
 		);
 
 		$expected = sprintf(
-			'<p><img srcset="%1$s/test-370x0-c-default.jpg 370w, %1$s/test-400x0-c-default.jpg 400w, %1$s/test-768x0-c-default.jpg 768w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" width="400" height="267" loading="lazy" alt="" class="alignnone size-responsive-content-image wp-image-%2$s"></p>',
+			'<p><img srcset="%1$s/test-370x0-c-default.jpg 370w, %1$s/test-400x0-c-default.jpg 400w, %1$s/test-768x0-c-default.jpg 768w" sizes="100vw" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" width="400" height="267" loading="lazy" alt="" class="alignnone size-responsive-content-image wp-image-%2$s"></p>',
 			$this->get_upload_url(),
 			$image->ID
 		);
@@ -35,7 +35,7 @@ class TestResponsiveContentImages extends TimmyUnitTestCase {
 		) ) );
 
 		$expected = sprintf(
-			'<figure class="wp-block-image size-responsive-content-image"><img srcset="%1$s/test-370x0-c-default.jpg 370w, %1$s/test-400x0-c-default.jpg 400w, %1$s/test-768x0-c-default.jpg 768w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" width="400" height="267" loading="lazy" alt="" class="wp-image-%2$s"></figure>',
+			'<figure class="wp-block-image size-responsive-content-image"><img srcset="%1$s/test-370x0-c-default.jpg 370w, %1$s/test-400x0-c-default.jpg 400w, %1$s/test-768x0-c-default.jpg 768w" sizes="100vw" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" width="400" height="267" loading="lazy" alt="" class="wp-image-%2$s"></figure>',
 			$this->get_upload_url(),
 			$image->ID
 		);
@@ -61,10 +61,10 @@ class TestResponsiveContentImages extends TimmyUnitTestCase {
 		$content = trim( do_blocks( $content ) );
 
 		$expected = sprintf(
-			'<p><img srcset="%1$s/test-370x0-c-default.jpg 370w, %1$s/test-400x0-c-default.jpg 400w, %1$s/test-768x0-c-default.jpg 768w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" width="400" height="267" loading="lazy" alt="" class="alignnone size-responsive-content-image wp-image-%2$s"></p>
+			'<p><img srcset="%1$s/test-370x0-c-default.jpg 370w, %1$s/test-400x0-c-default.jpg 400w, %1$s/test-768x0-c-default.jpg 768w" sizes="100vw" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" width="400" height="267" loading="lazy" alt="" class="alignnone size-responsive-content-image wp-image-%2$s"></p>
 
 
-<figure class="wp-block-image size-responsive-content-image"><img srcset="%1$s/test-370x0-c-default.jpg 370w, %1$s/test-400x0-c-default.jpg 400w, %1$s/test-768x0-c-default.jpg 768w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" width="400" height="267" loading="lazy" alt="" class="wp-image-%2$s"></figure>',
+<figure class="wp-block-image size-responsive-content-image"><img srcset="%1$s/test-370x0-c-default.jpg 370w, %1$s/test-400x0-c-default.jpg 400w, %1$s/test-768x0-c-default.jpg 768w" sizes="100vw" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" width="400" height="267" loading="lazy" alt="" class="wp-image-%2$s"></figure>',
 			$this->get_upload_url(),
 			$image->ID
 		);
@@ -87,7 +87,7 @@ class TestResponsiveContentImages extends TimmyUnitTestCase {
 		$content = trim( do_blocks( $content ) );
 
 		$expected = sprintf(
-			'<figure class="wp-block-image size-responsive-content-image"><img srcset="%1$s/test-370x0-c-default.jpg 370w, %1$s/test-400x0-c-default.jpg 400w, %1$s/test-768x0-c-default.jpg 768w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" width="400" height="267" loading="lazy" alt="" class="wp-image-%2$s"><figcaption>Image with a caption and a break<br>at 100 percent</figcaption></figure>',
+			'<figure class="wp-block-image size-responsive-content-image"><img srcset="%1$s/test-370x0-c-default.jpg 370w, %1$s/test-400x0-c-default.jpg 400w, %1$s/test-768x0-c-default.jpg 768w" sizes="100vw" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" width="400" height="267" loading="lazy" alt="" class="wp-image-%2$s"><figcaption>Image with a caption and a break<br>at 100 percent</figcaption></figure>',
 			$this->get_upload_url(),
 			$image->ID
 		);
@@ -110,7 +110,7 @@ class TestResponsiveContentImages extends TimmyUnitTestCase {
 		$content = trim( do_blocks( $content ) );
 
 		$expected = sprintf(
-			'<figure class="wp-block-image size-responsive-content-image is-resized"><img width="300" height="200" srcset="%1$s/test-370x0-c-default.jpg 370w, %1$s/test-400x0-c-default.jpg 400w, %1$s/test-768x0-c-default.jpg 768w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" loading="lazy" alt="" class="wp-image-%2$s"><figcaption>Image with a caption and a break<br>at 100 percent</figcaption></figure>',
+			'<figure class="wp-block-image size-responsive-content-image is-resized"><img width="300" height="200" srcset="%1$s/test-370x0-c-default.jpg 370w, %1$s/test-400x0-c-default.jpg 400w, %1$s/test-768x0-c-default.jpg 768w" sizes="100vw" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" loading="lazy" alt="" class="wp-image-%2$s"><figcaption>Image with a caption and a break<br>at 100 percent</figcaption></figure>',
 			$this->get_upload_url(),
 			$image->ID
 		);
@@ -133,7 +133,7 @@ class TestResponsiveContentImages extends TimmyUnitTestCase {
 		$content = trim( do_blocks( $content ) );
 
 		$expected = sprintf(
-			'<figure class="wp-block-image size-responsive-content-image"><img alt="A dog wrapped in a blanket" srcset="%1$s/test-370x0-c-default.jpg 370w, %1$s/test-400x0-c-default.jpg 400w, %1$s/test-768x0-c-default.jpg 768w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" width="400" height="267" loading="lazy" class="wp-image-%2$s"></figure>',
+			'<figure class="wp-block-image size-responsive-content-image"><img alt="A dog wrapped in a blanket" srcset="%1$s/test-370x0-c-default.jpg 370w, %1$s/test-400x0-c-default.jpg 400w, %1$s/test-768x0-c-default.jpg 768w" sizes="100vw" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" width="400" height="267" loading="lazy" class="wp-image-%2$s"></figure>',
 			$this->get_upload_url(),
 			$image->ID
 		);
@@ -156,7 +156,7 @@ class TestResponsiveContentImages extends TimmyUnitTestCase {
 		);
 
 		$expected = sprintf(
-			'\n<figure class="wp-block-image size-large"><a href="https://foo"><img srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" width="1400" height="933" loading="lazy" alt="" class="wp-image-%2$s"></a></figure>\n',
+			'\n<figure class="wp-block-image size-large"><a href="https://foo"><img srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" sizes="100vw" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" width="1400" height="933" loading="lazy" alt="" class="wp-image-%2$s"></a></figure>\n',
 			$this->get_upload_url(),
 			$image->ID
 		);
@@ -180,7 +180,7 @@ class TestResponsiveContentImages extends TimmyUnitTestCase {
 		);
 
 		$expected = sprintf(
-			'\n<figure class="wp-block-image alignfull size-large"><a href="https://example.org"><img srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" width="1400" height="933" loading="lazy" alt="" class="wp-image-%2$s"></a></figure>\n',
+			'\n<figure class="wp-block-image alignfull size-large"><a href="https://example.org"><img srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" sizes="100vw" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" width="1400" height="933" loading="lazy" alt="" class="wp-image-%2$s"></a></figure>\n',
 			$this->get_upload_url(),
 			$image->ID
 		);
@@ -204,7 +204,7 @@ class TestResponsiveContentImages extends TimmyUnitTestCase {
 		);
 
 		$expected = sprintf(
-			'\n<figure class="wp-block-image alignfull is-style-special size-large and-another"><a href="https://example.org"><img srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" width="1400" height="933" loading="lazy" alt="" class="wp-image-%2$s"></a></figure>\n',
+			'\n<figure class="wp-block-image alignfull is-style-special size-large and-another"><a href="https://example.org"><img srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" sizes="100vw" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" width="1400" height="933" loading="lazy" alt="" class="wp-image-%2$s"></a></figure>\n',
 			$this->get_upload_url(),
 			$image->ID
 		);
@@ -240,7 +240,7 @@ class TestResponsiveContentImages extends TimmyUnitTestCase {
 		);
 
 		$expected = sprintf(
-			'\n<figure class="wp-block-image alignfull size-gallery/full_screen.and-other"><a href="https://example.org"><img srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" sizes="100vw" width="1400" height="933" loading="lazy" alt="" class="wp-image-%2$s"></a></figure>\n',
+			'\n<figure class="wp-block-image alignfull size-gallery/full_screen.and-other"><a href="https://example.org"><img srcset="%1$s/test-560x0-c-default.jpg 560w, %1$s/test-1400x0-c-default.jpg 1400w" sizes="100vw" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" width="1400" height="933" loading="lazy" alt="" class="wp-image-%2$s"></a></figure>\n',
 			$this->get_upload_url(),
 			$image->ID
 		);

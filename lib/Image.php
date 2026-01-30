@@ -50,6 +50,8 @@ class Image {
 
 	protected $upscale;
 
+    protected AttributeSet $html_attributes;
+
 	/**
 	 * Image ID for dark mode / dark color scheme.
 	 *
@@ -99,6 +101,8 @@ class Image {
 		$image->resize_force = Helper::get_force_for_size( $image->size );
 		$image->upscale      = Helper::get_upscale_for_size( $image->size );
 
+        $image->html_attributes = new AttributeSet();
+
 		return $image;
 	}
 
@@ -120,6 +124,18 @@ class Image {
 	public function set_color_scheme_dark_image( int $image_id ) {
 		$this->color_scheme_dark_image = $image_id;
 	}
+
+    /**
+     * Sets an HTML attribute on the image
+     *
+     * @param string $attribute
+     * @param string $value
+     *
+     * @return void
+     */
+    public function set_attribute( string $attribute, string $value ) {
+        $this->html_attributes->set($attribute, $value);
+    }
 
 	protected function load_attachment_image_src() {
 		if ( empty( $this->full_src ) ) {
@@ -238,7 +254,7 @@ class Image {
 	/**
 	 * Get srcset and size for the image.
 	 *
-	 * @return string Image srcset, sizes, width, height alt attributes.
+	 * @return string Image srcset, sizes, width, height attributes.
 	 */
 	public function responsive_src( array $args = [] ) : string {
 		return Helper::get_attribute_html( $this->responsive_attributes( $args ) );
@@ -247,7 +263,7 @@ class Image {
 	/**
 	 * Get the responsive markup for the image.
 	 *
-	 * @return string Image srcset, sizes, width, height alt attributes.
+	 * @return string Image srcset, sizes, width, height, alt attributes.
 	 */
 	public function responsive( array $args = [] ) : string {
 		return Helper::get_attribute_html( array_merge( $this->responsive_attributes( $args ), [
@@ -341,21 +357,24 @@ class Image {
 
 		$args = wp_parse_args( $args, $default_args );
 
-		$fallback_attributes = [
-			'src'     => $this->src( [ 'webp' => false ] ),
-			'width'   => $this->width(),
-			'height'  => $this->height(),
-			'alt'     => $this->alt(),
-			'loading' => $this->loading( $args['loading'] ),
-		];
+        $attributes = new AttributeSet();
+
+        $attributes->set('src', $this->src([ 'webp' => false ]));
+        $attributes->set('width', $this->width());
+        $attributes->set('height', $this->height());
+        $attributes->set('alt', $this->alt());
+        $attributes->set('loading', $this->loading($args['loading']));
 
 		if (!empty($args['img_class'])) {
-			$fallback_attributes['class'] = $args['img_class'];
+            $attributes->set('class', $args['img_class']);
 		}
 
-		$fallback_attributes = $this->add_data_attributes( $fallback_attributes, $args );
+		$attributes = $this->add_data_attributes($attributes, $args);
 
-		return '<img' . Helper::get_attribute_html( $fallback_attributes ) . '>';
+		return '<img' . Helper::get_attribute_html( array_merge(
+            $attributes->get_all(),
+            $this->html_attributes->get_all()
+        ) ) . '>';
 	}
 
 	/**
@@ -823,7 +842,7 @@ class Image {
 
 		$args = wp_parse_args( $args, $default_args );
 
-		$attributes = [];
+		$attributes = new AttributeSet();
 
 		/**
 		 * Directly return full source when full source or an unsupported image for resize is
@@ -833,84 +852,76 @@ class Image {
 		 * version, 'original' has to be used as the size.
 		 */
 		if ( $this->is_full_size() || $this->is_ignored_for_resize() ) {
-			$attributes['src'] = $this->auto_full_src();
+            $attributes->set('src', $this->auto_full_src());
 		} else {
 			$srcset = $this->srcset( [ 'webp' => $args['webp'] ] );
 
 			if ( $srcset ) {
-				$attributes['srcset'] = $srcset;
+                $attributes->set('srcset', $srcset);
+                $attributes->set('sizes', $this->sizes());
 
 				if ( $args['src_default'] ) {
-					$attributes['src'] = $this->src_default();
+                    $attributes->set('src', $this->src_default());
 				}
-
-				$attributes['sizes'] = $this->sizes();
 			} else {
-				$attributes['src'] = $this->src( [ 'webp' => $args['webp'] ] );
+                $attributes->set('src', $this->src( [ 'webp' => $args['webp'] ] ));
 			}
 
-			$attributes['style'] = $this->style();
+            $attributes->set('style', $this->style());
 		}
 
 		if ( $args['attr_width'] ) {
-			$attributes['width'] = $this->width();
-			$attributes['style'] = false;
+            $attributes->set('width', $this->width());
+            $attributes->remove('style');
 		}
 
 		if ( $args['attr_height'] ) {
-			$attributes['height'] = $this->height();
-			$attributes['style']  = false;
+            $attributes->set('height', $this->height());
+            $attributes->remove('style');
 		}
 
 		// Lazy-loading.
-		$attributes['loading'] = $this->loading( $args['loading'] );
+        $attributes->set('loading', $this->loading( $args['loading'] ));
 
 		// Maybe update attributes with "data-" prefixes.
-		$attributes = $this->add_data_attributes( $attributes, $args );
+		$attributes = $this->add_data_attributes($attributes, $args);
 
 		// Maybe rename src attribute to srcset
-		if ( $args['is_source'] && ! empty( $attributes['src'] ) ) {
-			$attributes['srcset'] = $attributes['src'];
-			unset( $attributes['src'] );
+		if ( $args['is_source'] && ! empty( $attributes->get('src') ) ) {
+            $attributes->rename('src', 'srcset');
 		}
 
-		// Remove any falsy attributes.
-		$attributes = array_filter( $attributes );
-
-		return $attributes;
+		return $attributes->get_all();
 	}
 
 	/**
 	 * Adds "data-" attributes for usage with JavaScript lazy loading libraries.
 	 *
-	 * @param array $args       Args.
-	 * @param array $attributes Updated attributes.
+	 * @param AttributeSet $attributes
+	 * @param array $args
 	 *
 	 * @return mixed
 	 */
-	protected function add_data_attributes( array $attributes, array $args ) {
+	protected function add_data_attributes(AttributeSet $attributes, array $args) : AttributeSet {
 		$args = wp_parse_args( $args, [
 			'lazy_srcset' => false,
 			'lazy_src'    => false,
 			'lazy_sizes'  => false,
 		] );
 
-		if ( $args['lazy_srcset'] && ! empty( $attributes['srcset'] ) ) {
-			$attributes['data-srcset'] = $attributes['srcset'];
-			unset( $attributes['srcset'] );
+		if ( $args['lazy_srcset'] ) {
+            $attributes->rename('srcset', 'data-srcset');
 		}
 
-		if ( $args['lazy_src'] && ! empty( $attributes['src'] ) ) {
-			$attributes['data-src'] = $attributes['src'];
-			unset( $attributes['src'] );
+		if ( $args['lazy_src'] ) {
+            $attributes->rename('src', 'data-src');
 		}
 
-		if ( $args['lazy_sizes'] && ! empty( $attributes['sizes'] ) ) {
-			$attributes['data-sizes'] = $attributes['sizes'];
-			unset( $attributes['sizes'] );
+		if ( $args['lazy_sizes'] ) {
+            $attributes->rename('sizes', 'data-sizes');
 		}
 
-		return $attributes;
+        return $attributes;
 	}
 
 	public function resize_crop() {
