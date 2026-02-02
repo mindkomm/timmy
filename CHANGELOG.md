@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.6.0](https://github.com/mindkomm/timmy/compare/v2.5.2...v2.6.0) (2026-01-30)
+
+
+### Features
+
+* Introduce new Image::set_attribute() ([#117](https://github.com/mindkomm/timmy/issues/117)) ([0656317](https://github.com/mindkomm/timmy/commit/065631713c048f3debf91f3b2476d5aa6a8a50c6))
+
+
+### Miscellaneous Chores
+
+* **deps-dev:** Bump phpunit/phpunit from 9.6.29 to 9.6.33 ([#118](https://github.com/mindkomm/timmy/issues/118)) ([28d3703](https://github.com/mindkomm/timmy/commit/28d370379e06310102f8b5ba2ceb38d7367a6704))
+
 ## [2.5.2](https://github.com/mindkomm/timmy/compare/v2.5.1...v2.5.2) (2025-12-23)
 
 
