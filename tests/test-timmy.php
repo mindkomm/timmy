@@ -149,4 +149,14 @@ class TestTimmy extends TimmyUnitTestCase {
 
 		$this->assertArrayNotHasKey( 'sizes', $meta );
 	}
+
+	/**
+	 * Test whether an invalid attachment id does not throw a fatal error in Timmy.
+	 *
+	 * @return void
+	 */
+	public function test_invalid_attachment_id() {
+		$url = wp_get_attachment_image_url('');
+		$this->assertFalse($url);
+	}
 }
