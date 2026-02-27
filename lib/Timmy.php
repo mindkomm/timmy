@@ -499,6 +499,13 @@ class Timmy {
 	 *                    the image is an intermediate size. False on failure.
 	 */
 	public function filter_image_downsize( $return, $attachment_id, $size ) {
+		// Guard against plugins that send in invalid attachment IDs, e.g. an
+		// empty string, which could cause type errors in Timmy’s function that
+		// have strict parameter types.
+		if (! $attachment_id || ! is_numeric($attachment_id)) {
+			return $return;
+		}
+
         $file_src = $this->get_image_src_for_resize($attachment_id);
 
 		if ( ! $file_src ) {
@@ -1429,6 +1436,13 @@ class Timmy {
 	 * @return bool
 	 */
 	private static function ignore_attachment( $attachment_id ) {
+		// Guard against plugins that send in invalid attachment IDs, e.g. an
+		// empty string, which could cause type errors in Timmy’s function that
+		// have strict parameter types.
+		if (!$attachment_id || !is_numeric($attachment_id)) {
+			return false;
+		}
+
 		$file = get_attached_file( $attachment_id );
 
 		if ( ! $file ) {
