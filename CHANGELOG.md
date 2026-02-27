@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.1](https://github.com/mindkomm/timmy/compare/v2.6.0...v2.6.1) (2026-02-27)
+
+
+### Bug Fixes
+
+* Prevent fatal error when an invalid attachment ID is processed by Timmy ([#120](https://github.com/mindkomm/timmy/issues/120)) ([97734cb](https://github.com/mindkomm/timmy/commit/97734cb04c5e38da5b8d9e27ed861936f6055760))
+
 ## [2.6.0](https://github.com/mindkomm/timmy/compare/v2.5.2...v2.6.0) (2026-01-30)
 
 
