@@ -43,7 +43,8 @@
   ],
   "support": {
     "issues": "https://github.com/mindkomm/timmy/issues",
-    "source": "https://github.com/mindkomm/timmy"
+    "source": "https://github.com/mindkomm/timmy",
+    "changelog": "https://github.com/mindkomm/timmy/releases"
   },
   "repositories": [
     {
