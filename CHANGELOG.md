@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.6.2](https://github.com/mindkomm/timmy/compare/v2.6.1...v2.6.2) (2026-05-13)
+
+
+### Bug Fixes
+
+* Fix a deprecation for PHP 8.4 ([14369e3](https://github.com/mindkomm/timmy/commit/14369e3905f64bb058a77c7f5b35afa4765b7343))
+
+
+### Miscellaneous Chores
+
+* Add changelog URL to support section in composer.json ([#123](https://github.com/mindkomm/timmy/issues/123)) ([883321c](https://github.com/mindkomm/timmy/commit/883321c53fc8905da2a5c84981b031fb63ef3832))
+
 ## [2.6.1](https://github.com/mindkomm/timmy/compare/v2.6.0...v2.6.1) (2026-02-27)
 
 
