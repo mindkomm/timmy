@@ -53,27 +53,33 @@ jobs:
             dependency-version: 'prefer-stable'
             multisite: '0'
             experimental: false
-          # WP Trunk
-          - php: '8.2'
-            wp: 'trunk'
-            dependency-version: 'prefer-stable'
-            multisite: '0'
-            experimental: true
-          # PHP with Imagick
-          - php: '8.2'
-            wp: 'latest'
-            dependency-version: 'prefer-stable'
-            multisite: '0'
-            extensions: 'imagick'
-            experimental: false
           # PHP 8.3
           - php: '8.3'
             wp: 'latest'
             dependency-version: 'prefer-stable'
             multisite: '0'
             experimental: false
+          # WP Trunk
+          - php: '8.3'
+            wp: 'trunk'
+            dependency-version: 'prefer-stable'
+            multisite: '0'
+            experimental: true
+          # PHP with Imagick
+          - php: '8.3'
+            wp: 'latest'
+            dependency-version: 'prefer-stable'
+            multisite: '0'
+            extensions: 'imagick'
+            experimental: false
+          # PHP 8.4
+          - php: '8.4'
+            wp: 'latest'
+            dependency-version: 'prefer-stable'
+            multisite: '0'
+            experimental: false
           # Coverage
-          - php: '8.2'
+          - php: '8.3'
             wp: 'latest'
             dependency-version: 'prefer-stable'
             multisite: '0'

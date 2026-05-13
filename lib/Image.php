@@ -91,7 +91,7 @@ class Image {
 	 *
 	 * @return \Timmy\Image
 	 */
-	public static function build( int $image_id, array $size = null ) {
+	public static function build( int $image_id, ?array $size = null ) {
 		$image = new static;
 
 		$image->id   = $image_id;
