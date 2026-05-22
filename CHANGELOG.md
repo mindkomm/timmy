@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.3](https://github.com/mindkomm/timmy/compare/v2.6.2...v2.6.3) (2026-05-22)
+
+
+### Miscellaneous Chores
+
+* **deps:** Bump twig/twig from 3.21.1 to 3.26.0 ([#125](https://github.com/mindkomm/timmy/issues/125)) ([20aded6](https://github.com/mindkomm/timmy/commit/20aded64ebada5043b9238fc43fe33132b99e6d9))
+
 ## [2.6.2](https://github.com/mindkomm/timmy/compare/v2.6.1...v2.6.2) (2026-05-13)
 
 
