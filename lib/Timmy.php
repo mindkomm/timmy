@@ -169,7 +169,7 @@ class Timmy {
 			return null;
 		}
 
-		$class      = apply_filters( 'timmy/image/class', Image::class );
+		$attachment = (int) $wp_post->ID;
 		$size_array = $size;
 
 		if ( is_string( $size ) ) {
@@ -179,6 +179,23 @@ class Timmy {
 				$size_array = Helper::get_image_size( $size );
 			}
 		}
+
+		/**
+		 * Filters the class that is used to build a Timmy image.
+		 *
+		 * The class must extend `Timmy\Image`, because Timmy relies on
+		 * `Timmy\Image::build()` and on the API of that class.
+		 *
+		 * @since 1.0.0
+		 *
+		 * @param string       $class      Class name. Default `Timmy\Image::class`.
+		 * @param int          $attachment Attachment ID. Added in 2.7.0.
+		 * @param array|null   $size_array Image size configuration array. An empty array for the
+		 *                                 `full` and `original` sizes. Added in 2.7.0.
+		 * @param string|array $size       The image size as it was requested. Either an image size
+		 *                                 key or an image size configuration array. Added in 2.7.0.
+		 */
+		$class = apply_filters( 'timmy/image/class', Image::class, $attachment, $size_array, $size );
 
 		$image = $class::build( $attachment, $size_array );
 
