@@ -145,6 +145,30 @@ class TestWebP extends TimmyUnitTestCase {
 	}
 
 	/**
+	 * The `webp` argument is only evaluated for truthiness, because the `webp` key of an image
+	 * size configuration may also be an array of WebP options.
+	 */
+	public function test_webp_arg_is_only_evaluated_for_truthiness() {
+		$attachment = $this->create_image();
+		$image      = Timmy::get_image( $attachment, 'large' );
+
+		$webp_arg = [ 'webp' => [ 'quality' => 100 ] ];
+
+		$this->assertEquals(
+			$this->get_upload_url() . '/test-1400x0-c-default.webp',
+			$image->src( $webp_arg )
+		);
+
+		$this->assertEquals(
+			sprintf(
+				'%1$s/test-560x0-c-default.webp 560w, %1$s/test-1400x0-c-default.webp 1400w',
+				$this->get_upload_url()
+			),
+			$image->srcset( $webp_arg )
+		);
+	}
+
+	/**
 	 * Checks whether the large image metadata always returns a non-WebP image even if WebP is
 	 * activated.
 	 *
