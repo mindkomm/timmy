@@ -131,6 +131,60 @@ class TestFilters extends TimmyUnitTestCase {
 	}
 
 	/**
+	 * Makes sure that the filter is also applied when the original image already has the
+	 * requested width and no resizing is needed.
+	 */
+	public function test_image_url_for_original_width() {
+		$this->add_filter_temporarily( 'timmy/image/url', function() {
+			return 'https://cdn.example.com/image.webp';
+		} );
+
+		$attachment = $this->create_image( [ 'file' => 'test-200px.jpg' ] );
+		$image      = \Timmy\Timmy::get_image( $attachment, [
+			'resize' => [ 200 ],
+			'webp'   => true,
+		] );
+
+		$this->assertEquals( 'https://cdn.example.com/image.webp', $image->src() );
+		$this->assertEquals( 'https://cdn.example.com/image.webp', $image->src( [ 'webp' => false ] ) );
+		$this->assertFileDoesNotExist( $this->get_upload_path() . '/test-200px.webp' );
+	}
+
+	/**
+	 * Makes sure that the original image is used without resizing when the filter doesn’t return
+	 * a URL and the original image already has the requested width.
+	 */
+	public function test_image_url_for_original_width_falls_back_to_original() {
+		$called = 0;
+
+		$this->add_filter_temporarily( 'timmy/image/url', function( $url ) use ( &$called ) {
+			$called++;
+
+			return $url;
+		} );
+
+		$attachment = $this->create_image( [ 'file' => 'test-200px.jpg' ] );
+		$image      = \Timmy\Timmy::get_image( $attachment, [ 'resize' => [ 200 ] ] );
+
+		$this->assertEquals( $this->get_upload_url() . '/test-200px.jpg', $image->src() );
+		$this->assertEquals( 1, $called );
+	}
+
+	/**
+	 * Makes sure that values other than a URL let Timmy build the URL itself.
+	 */
+	public function test_image_url_false_falls_back_to_resizing() {
+		$this->add_filter_temporarily( 'timmy/image/url', '__return_false' );
+
+		$attachment = $this->create_image();
+
+		$this->assertEquals(
+			$this->get_upload_url() . '/test-1400x0-c-default.jpg',
+			get_timber_image_src( $attachment, 'large' )
+		);
+	}
+
+	/**
 	 * @ticket https://github.com/mindkomm/timmy/issues/28
 	 */
 	function test_generate_srcset_sizes_active() {

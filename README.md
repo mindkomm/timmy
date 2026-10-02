@@ -69,4 +69,4 @@ Timber already comes with a set of really nice features for handling images. Esp
 
 ### Limitations
 
-* Timmy resizes images itself and expects the original image to be a local file. If your images are hosted on a Content Delivery Network (CDN) that resizes images for you, you can use the [`timmy/image/url`](./docs/hooks.md#timmyimageurl) filter to build the URLs for the image sizes yourself. Timmy will then still take care of the srcset, the sizes attribute and the `<picture>` markup, but it will never touch the filesystem for those images.
+* Timmy resizes images itself and expects the original image to be a local file. If your images are hosted on a Content Delivery Network (CDN) that resizes images for you, you can use the [`timmy/image/url`](./docs/hooks.md#timmyimageurl) filter to build the URLs for the image sizes yourself. Timmy will then still take care of the srcset, the sizes attribute and the `<picture>` markup, but it won’t read or write any image files for those sizes.

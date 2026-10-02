@@ -225,8 +225,10 @@ add_filter( 'timmy/allowed_file_extensions', function( $allowed_file_extensions 
 ### timmy/image/url
 
 Filters the URL for a resized image size.
+Filters the URL for an image size.
 
 Returning a non-null value short-circuits the resizing of the image. This makes it possible to serve image sizes that are generated somewhere else, for example by a Content Delivery Network (CDN). No image file is read from or written to disk in that case.
+Returning a URL short-circuits the resizing of the image. This makes it possible to serve image sizes that are generated somewhere else, for example by a Content Delivery Network (CDN). No image file is read from or written to disk in that case. If you return any other value than a non-empty string, like `null` or `false`, Timmy will build the URL itself.
 
 **Parameters**
 
@@ -237,7 +239,7 @@ Returning a non-null value short-circuits the resizing of the image. This makes 
 - **$height**  
     *(int)* The height the image should be resized to. Can be `0`, which means that the height is calculated from the aspect ratio of the image.
 - **$webp**  
-    *(bool)* Whether the image should be converted to WebP.
+    *(bool)* Whether the image should be converted to WebP. If you need the WebP options of the image size, like the quality, you can get them from `$image->size()['webp']`.
 - **$image**  
     *(Timmy\Image)* Timmy image instance.
 
