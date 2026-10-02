@@ -315,9 +315,11 @@ Controls whether the image should be resized to a bigger size than its original 
 
 This parameter was named `oversize` before, but was changed to `upscale`. Using `oversize` should still work.
 
-When `allow` is `true`, Timmy will check the size of the original image to see if it’s big enough to be resized with the given parameters. If not, Timmy returns the image at the original size, but still considers additional image sizes smaller than the original size to be added to srcset.
+When `allow` is `false`, Timmy will check the size of the original image to see if it’s big enough to be resized with the given parameters. If not, Timmy returns the image at the original size, but still considers additional image sizes smaller than the original size to be added to srcset. A srcset size that is bigger than the original image in either width or height will be skipped.
 
-If you want to disable this and allow images to grow bigger than the original size, set the value of `allow` to `true`:
+When `allow` is `true`, Timmy doesn’t check the size of the original image. The image and all srcset sizes are resized to the exact dimensions you define, even if that means upscaling the original image.
+
+If you want to allow images to grow bigger than the original size, set the value of `allow` to `true`:
 
 ```php
 // Allow srcset sizes bigger than the original size of the image
@@ -358,7 +360,7 @@ You can use a boolean for `upscale` to set both `allow` and `style_attr` values 
 This is a shortcut for: 
 
 ```php
-// Allow srcset sizes bigger than the original size of the image
+// Do not allow srcset sizes bigger than the original size of the image
 'upscale' => array(
     'allow'      => false,
     'style_attr' => false,

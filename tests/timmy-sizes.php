@@ -102,6 +102,10 @@ add_filter( 'timmy/sizes', function( $sizes ) {
 			'resize' => [ 0, 1402 ],
 			'srcset' => [ [ 0, 150 ] ],
 		],
+		'upscale-crop'                        => [
+			'resize' => [ 100, 100, 'center' ],
+			'srcset' => [ 2, 3 ],
+		],
 		'upscale-allow-true'                  => [
 			'resize'  => [ 1403 ],
 			'srcset'  => [ [ 150 ] ],

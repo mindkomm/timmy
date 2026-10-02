@@ -1177,11 +1177,15 @@ class Timmy {
 				$srcset_size
 			);
 
-			list( $width, $height ) = Helper::get_dimensions_upscale( $width, $height, [
-				'upscale'    => $upscale,
-				'max_width'  => $max_width,
-				'max_height' => $max_height,
-			] );
+			// Skip if the size is bigger than the original image and upscaling is not allowed.
+			if ( ! $upscale['allow']
+				&& (
+					( $max_width > 0 && $width > $max_width )
+					|| ( $max_height > 0 && $height > $max_height )
+				)
+			) {
+				continue;
+			}
 
 			// Skip if no resize is needed.
 			if ( $width === $max_width ) {
