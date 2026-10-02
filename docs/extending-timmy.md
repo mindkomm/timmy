@@ -12,6 +12,18 @@ add_filter( 'timmy/image/class', function( $class ) {
 } );
 ```
 
+The filter also receives the attachment ID and the image size, which you can use to pick a different class per image. This is useful if only some of your images need special treatment – images that are served from a Content Delivery Network (CDN), for example.
+
+```php
+add_filter( 'timmy/image/class', function( $class, $attachment_id ) {
+    if ( get_post_meta( $attachment_id, 'my_cdn_key', true ) ) {
+        return CdnImage::class;
+    }
+
+    return $class;
+}, 10, 2 );
+```
+
 **TimmyImage.php**
 
 ```php

@@ -8,6 +8,7 @@
 	- [timmy/upscale](#timmyupscale)
 	- [timmy/use_src_default](#timmyuse_src_default)
 	- [timmy/src_default](#timmysrc_default)
+	- [timmy/image/class](#timmyimageclass)
 
 ## Filters
 
@@ -219,4 +220,34 @@ add_filter( 'timmy/allowed_file_extensions', function( $allowed_file_extensions 
     
     return $allowed_file_extensions;
 } );
+```
+
+### timmy/image/class
+
+Filters the class that is used to build a Timmy image.
+
+The class must extend `Timmy\Image`. See [Extending Timmy](./extending-timmy.md) for a full example.
+
+**Parameters**
+
+- **$class**  
+    *(string)* Class name. Default `Timmy\Image::class`.
+- **$attachment_id**  
+    *(int)* The attachment ID.
+- **$size_array**  
+    *(array|null)* The image size configuration array. An empty array for the `full` and `original` sizes.
+- **$size**  
+    *(string|array)* The image size as it was requested. Either an image size key or an image size configuration array.
+
+**Example**
+
+```php
+// Use a different image class for images that are served from a CDN.
+add_filter( 'timmy/image/class', function( $class, $attachment_id ) {
+    if ( get_post_meta( $attachment_id, 'my_cdn_key', true ) ) {
+        return CdnImage::class;
+    }
+
+    return $class;
+}, 10, 2 );
 ```
