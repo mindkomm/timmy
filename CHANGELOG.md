@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.7.0](https://github.com/mindkomm/timmy/compare/v2.6.2...v2.7.0) (2026-10-02)
+
+
+### Features
+
+* Add attachment ID and size arguments to the timmy/image/class filter ([#128](https://github.com/mindkomm/timmy/issues/128)) ([0304927](https://github.com/mindkomm/timmy/commit/0304927d03bf2a0b26907d25ec0aea9452b53495)), closes [#49](https://github.com/mindkomm/timmy/issues/49)
+
+
+### Bug Fixes
+
+* Change default for `style_attr` to `false` to make it more clear and update docs ([#131](https://github.com/mindkomm/timmy/issues/131)) ([5e19e5d](https://github.com/mindkomm/timmy/commit/5e19e5d5f08d1aea478a5a42794722b94d658903))
+* Fix bug when upscale didn’t consider the height of the image for cropped sizes ([#130](https://github.com/mindkomm/timmy/issues/130)) ([18a4144](https://github.com/mindkomm/timmy/commit/18a4144aeab11f9cc7996c6c562842538d1ff232))
+
+
+### Miscellaneous Chores
+
+* **deps:** Bump twig/twig from 3.21.1 to 3.26.0 ([#125](https://github.com/mindkomm/timmy/issues/125)) ([20aded6](https://github.com/mindkomm/timmy/commit/20aded64ebada5043b9238fc43fe33132b99e6d9))
+
 ## [2.6.2](https://github.com/mindkomm/timmy/compare/v2.6.1...v2.6.2) (2026-05-13)
 
 
