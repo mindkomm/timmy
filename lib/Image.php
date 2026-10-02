@@ -212,7 +212,12 @@ class Image {
 	 */
 	public function src( $args = [] ) {
 		// @todo Test with false image or wrong image size key.
-		if ( $this->is_full_size() || $this->is_ignored_for_resize() ) {
+		if ( $this->is_full_size() ) {
+			// Full sizes are never resized or converted to WebP.
+			return $this->build_src( (int) $this->max_width(), (int) $this->max_height(), false, false );
+		}
+
+		if ( $this->is_ignored_for_resize() ) {
 			return $this->auto_full_src();
 		}
 
@@ -243,8 +248,10 @@ class Image {
 	 *
 	 * @since 2.7.0
 	 *
-	 * @param int   $width  The width the image should be resized to.
-	 * @param int   $height The height the image should be resized to.
+	 * @param int   $width  The width the image should be resized to. For the `full` and
+	 *                      `original` sizes, the width of the image.
+	 * @param int   $height The height the image should be resized to. For the `full` and
+	 *                      `original` sizes, the height of the image.
 	 * @param mixed $webp   Whether the image should be converted to WebP. Only evaluated for
 	 *                      truthiness, because the `webp` key of an image size configuration can
 	 *                      also be an array of WebP options.
@@ -263,11 +270,16 @@ class Image {
 		 * Network (CDN). No image file is read from or written to disk in that case. Any other
 		 * value than a non-empty string, like `null` or `false`, lets Timmy build the URL itself.
 		 *
+		 * The filter also runs for the `full` and `original` sizes, which are never resized or
+		 * converted to WebP. Use `$image->is_full_size()` to check for these sizes.
+		 *
 		 * @since 2.7.0
 		 *
 		 * @param string|null  $url    The image URL. Default null.
-		 * @param int          $width  The width the image should be resized to.
-		 * @param int          $height The height the image should be resized to.
+		 * @param int          $width  The width the image should be resized to. For the `full`
+		 *                             and `original` sizes, the width of the image.
+		 * @param int          $height The height the image should be resized to. For the `full`
+		 *                             and `original` sizes, the height of the image.
 		 * @param bool         $webp   Whether the image should be converted to WebP.
 		 * @param \Timmy\Image $image  Timmy image instance.
 		 */
@@ -876,7 +888,7 @@ class Image {
 		 * version, 'original' has to be used as the size.
 		 */
 		if ( $this->is_full_size() || $this->is_ignored_for_resize() ) {
-            $attributes->set('src', $this->auto_full_src());
+            $attributes->set('src', $this->src());
 		} else {
 			$srcset = $this->srcset( [ 'webp' => $args['webp'] ] );
 

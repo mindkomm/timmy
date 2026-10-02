@@ -170,6 +170,49 @@ class TestFilters extends TimmyUnitTestCase {
 		$this->assertEquals( 1, $called );
 	}
 
+	public function test_image_url_for_full_and_original_size() {
+		$received = [];
+
+		$this->add_filter_temporarily( 'timmy/image/url', function( $url, $width, $height, $webp, $image ) use ( &$received ) {
+			$received[] = [ $width, $height, $webp, $image->is_full_size() ];
+
+			return 'https://cdn.example.com/image.jpg';
+		}, 10, 5 );
+
+		$attachment = $this->create_image();
+
+		foreach ( [ 'full', 'original' ] as $size ) {
+			$image = \Timmy\Timmy::get_image( $attachment, $size );
+
+			$this->assertEquals( 'https://cdn.example.com/image.jpg', $image->src(), $size );
+			$this->assertStringContainsString(
+				'src="https://cdn.example.com/image.jpg"',
+				get_timber_image_responsive( $attachment, $size ),
+				$size
+			);
+		}
+
+		$max_width  = \Timmy\Timmy::get_image( $attachment, 'full' )->max_width();
+		$max_height = \Timmy\Timmy::get_image( $attachment, 'full' )->max_height();
+
+		$this->assertNotEmpty( $received );
+
+		foreach ( $received as $arguments ) {
+			$this->assertEquals( [ $max_width, $max_height, false, true ], $arguments );
+		}
+	}
+
+	public function test_image_url_for_full_size_falls_back_to_attachment_url() {
+		$this->add_filter_temporarily( 'timmy/image/url', '__return_null' );
+
+		$attachment = $this->create_image();
+
+		$this->assertEquals(
+			wp_get_attachment_url( $attachment->ID ),
+			\Timmy\Timmy::get_image( $attachment, 'full' )->src()
+		);
+	}
+
 	/**
 	 * Makes sure that values other than a URL let Timmy build the URL itself.
 	 */

@@ -224,11 +224,13 @@ add_filter( 'timmy/allowed_file_extensions', function( $allowed_file_extensions 
 
 ### timmy/image/url
 
-Filters the URL for a resized image size.
 Filters the URL for an image size.
 
-Returning a non-null value short-circuits the resizing of the image. This makes it possible to serve image sizes that are generated somewhere else, for example by a Content Delivery Network (CDN). No image file is read from or written to disk in that case.
 Returning a URL short-circuits the resizing of the image. This makes it possible to serve image sizes that are generated somewhere else, for example by a Content Delivery Network (CDN). No image file is read from or written to disk in that case. If you return any other value than a non-empty string, like `null` or `false`, Timmy will build the URL itself.
+
+The filter runs for every image size, including sizes where the original image already has the requested width and the `full` and `original` sizes. Timmy never resizes the `full` and `original` sizes or converts them to WebP, so `$width` and `$height` are the dimensions of the image and `$webp` is always `false`. You can check for these sizes with `$image->is_full_size()`.
+
+For sizes other than `full` and `original`, the filter doesn’t run for SVG and GIF images and for images that are ignored through the [`timmy/resize/ignore`](#timmyresizeignore) filter. For these, Timmy uses the attachment URL, which you can change with WordPress’s `wp_get_attachment_url` filter.
 
 **Parameters**
 
@@ -248,6 +250,11 @@ Returning a URL short-circuits the resizing of the image. This makes it possible
 ```php
 // Serve image sizes from a CDN that resizes images on the fly.
 add_filter( 'timmy/image/url', function( $url, $width, $height, $webp, $image ) {
+    // Use the attachment URL for the full and original sizes.
+    if ( $image->is_full_size() ) {
+        return $url;
+    }
+
     $key = get_post_meta( $image->id, 'my_cdn_key', true );
 
     if ( ! $key ) {
