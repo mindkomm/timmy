@@ -309,7 +309,7 @@ You can use the [`timmy/generate_srcset_sizes` filter](./hooks.md#timmygenerate_
 
 ### upscale
 
-(`bool|array`), optional, Default: `array( 'allow' => false, 'style_attr' => true )`
+(`bool|array`), optional, Default: `array( 'allow' => false, 'style_attr' => false )`
 
 Controls whether the image should be resized to a bigger size than its original size.
 
@@ -332,22 +332,21 @@ You can also use the [`timmy/upscale` filter](https://github.com/mindkomm/timmy/
 
 #### Inline style attributes
 
-Timmy adds inline style attributes to the image to set the width or height in px. This prevents the image to be displayed bigger than its size. This is useful if you autosize the image to the size of its container with CSS (`max-width: 100%; height: auto;`).
+Timmy can add an inline style attribute to the image that sets its width or height to the width or height of the original image in px. This prevents the image from being displayed bigger than its original size. This is useful if you autosize the image to the size of its container with CSS (`max-width: 100%; height: auto;`).
 
-If you want to disable inline style attributes, set `style_attr` to `false`.
+To add an inline style attribute, set `style_attr` to `'width'` or `'height'`:
 
 ```php
-/**
- * Only output srcset sizes smaller or equal the original size of the image,
- * but do not add style attributes.
- */ 
+// Add a style attribute with the width of the original image, e.g. style="width:800px;".
 'upscale' => array(
     'allow'      => false,
-    'style_attr' => false,
+    'style_attr' => 'width',
 ),
 ```
 
-If `allow` is set to `true`, inline styles will never be applied.
+With the default value `false`, Timmy doesn’t add a style attribute. Any other value, including `true`, has the same effect. The style attribute is added independently of the `allow` value.
+
+Timmy only adds the style attribute if you disable the `width` and `height` attributes for the image with `attr_width` and `attr_height` (see [Lazy Loading](./lazy-loading.md)). If either of these attributes is added, the style attribute is removed.
 
 #### Shortcuts
 
