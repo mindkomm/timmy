@@ -212,7 +212,17 @@ class Image {
 	 */
 	public function src( $args = [] ) {
 		// @todo Test with false image or wrong image size key.
-		if ( $this->is_full_size() || $this->is_ignored_for_resize() ) {
+		if ( $this->is_full_size() ) {
+			// Full sizes are never resized or converted to WebP.
+			return $this->build_src(
+				width: (int) $this->max_width(),
+				height: (int) $this->max_height(),
+				webp: false,
+				resize: false
+			);
+		}
+
+		if ( $this->is_ignored_for_resize() ) {
 			return $this->auto_full_src();
 		}
 
@@ -227,12 +237,70 @@ class Image {
 			'max_height' => $this->max_height(),
 		] );
 
-		if ( $this->upscale['allow']
+		$resize = $this->upscale['allow']
 			|| ( $this->max_width() !== $width )
-			|| ( 0 === $width && $height !== $this->max_height() )
-		) {
-			// Resize the image for that size.
-			$src = Timmy::resize(
+			|| ( 0 === $width && $height !== $this->max_height() );
+
+		return $this->build_src(
+			width: $width,
+			height: $height,
+			webp: $args['webp'],
+			resize: $resize
+		);
+	}
+
+	/**
+	 * Builds the URL for an image size of this image.
+	 *
+	 * Every URL for an image size that Timmy generates goes through this method. Extend this
+	 * class and overwrite this method or use the `timmy/image/url` filter if the images should be
+	 * served from somewhere else than the WordPress uploads folder.
+	 *
+	 * @since 2.7.0
+	 *
+	 * @param int   $width  The width the image should be resized to. For the `full` and
+	 *                      `original` sizes, the width of the image.
+	 * @param int   $height The height the image should be resized to. For the `full` and
+	 *                      `original` sizes, the height of the image.
+	 * @param mixed $webp   Whether the image should be converted to WebP. Only evaluated for
+	 *                      truthiness, because the `webp` key of an image size configuration can
+	 *                      also be an array of WebP options.
+	 * @param bool  $resize Optional. Whether the image needs to be resized. If `false`, the
+	 *                      original image already has the requested size and is used as it is.
+	 *                      Default true.
+	 *
+	 * @return string The URL of the image size.
+	 */
+	protected function build_src( $width, $height, $webp, $resize = true ) {
+		/**
+		 * Filters the URL for an image size.
+		 *
+		 * Returning a URL short-circuits the resizing of the image. This makes it possible to
+		 * serve image sizes that are generated somewhere else, for example by a Content Delivery
+		 * Network (CDN). No image file is read from or written to disk in that case. Any other
+		 * value than a non-empty string, like `null` or `false`, lets Timmy build the URL itself.
+		 *
+		 * The filter also runs for the `full` and `original` sizes, which are never resized or
+		 * converted to WebP. Use `$image->is_full_size()` to check for these sizes.
+		 *
+		 * @since 2.7.0
+		 *
+		 * @param string|null  $url    The image URL. Default null.
+		 * @param int          $width  The width the image should be resized to. For the `full`
+		 *                             and `original` sizes, the width of the image.
+		 * @param int          $height The height the image should be resized to. For the `full`
+		 *                             and `original` sizes, the height of the image.
+		 * @param bool         $webp   Whether the image should be converted to WebP.
+		 * @param \Timmy\Image $image  Timmy image instance.
+		 */
+		$url = apply_filters( 'timmy/image/url', null, $width, $height, (bool) $webp, $this );
+
+		if ( is_string( $url ) && '' !== $url ) {
+			return $url;
+		}
+
+		if ( $resize ) {
+			$url = Timmy::resize(
 				$this->size,
 				$this->full_src(),
 				$width,
@@ -241,14 +309,14 @@ class Image {
 				$this->resize_force
 			);
 		} else {
-			$src = $this->auto_full_src();
+			$url = $this->auto_full_src();
 		}
 
-		if ( $args['webp'] ) {
-			$src = Timmy::to_webp( $src, $this->size );
+		if ( $webp ) {
+			$url = Timmy::to_webp( $url, $this->size );
 		}
 
-		return $src;
+		return $url;
 	}
 
 	/**
@@ -448,18 +516,11 @@ class Image {
 		] );
 
 		// Get default size for image.
-		$default_size = Timmy::resize(
-			$this->size,
-			$this->full_src(),
-			$width,
-			$height,
-			$this->resize_crop,
-			$this->resize_force
+		$default_size = $this->build_src(
+			width: $width,
+			height: $height,
+			webp: $args['webp']
 		);
-
-		if ( $args['webp'] ) {
-			$default_size = Timmy::to_webp( $default_size, $this->size );
-		}
 
 		// Get proper width descriptor to handle width values of 0.
 		$width_descriptor = $this->srcset_width_descriptor( $width, $height );
@@ -495,18 +556,11 @@ class Image {
 					: " {$width_descriptor}w";
 
 				// For the new source, we use the same $crop and $force values as the default image.
-				$src = Timmy::resize(
-					$this->size,
-					$this->full_src(),
-					$width_intermediate,
-					$height_intermediate,
-					$this->resize_crop,
-					$this->resize_force
+				$src = $this->build_src(
+					width: $width_intermediate,
+					height: $height_intermediate,
+					webp: $args['webp']
 				);
-
-				if ( $args['webp'] ) {
-					$src = Timmy::to_webp( $src, $this->size );
-				}
 
 				$srcset[ $width_descriptor ] = $src . $suffix;
 			}
@@ -852,7 +906,7 @@ class Image {
 		 * version, 'original' has to be used as the size.
 		 */
 		if ( $this->is_full_size() || $this->is_ignored_for_resize() ) {
-            $attributes->set('src', $this->auto_full_src());
+            $attributes->set('src', $this->src());
 		} else {
 			$srcset = $this->srcset( [ 'webp' => $args['webp'] ] );
 

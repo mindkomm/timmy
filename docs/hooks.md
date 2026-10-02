@@ -8,6 +8,7 @@
 	- [timmy/upscale](#timmyupscale)
 	- [timmy/use_src_default](#timmyuse_src_default)
 	- [timmy/src_default](#timmysrc_default)
+	- [timmy/image/url](#timmyimageurl)
 
 ## Filters
 
@@ -220,3 +221,53 @@ add_filter( 'timmy/allowed_file_extensions', function( $allowed_file_extensions 
     return $allowed_file_extensions;
 } );
 ```
+
+### timmy/image/url
+
+Filters the URL for an image size.
+
+Returning a URL short-circuits the resizing of the image. This makes it possible to serve image sizes that are generated somewhere else, for example by a Content Delivery Network (CDN). No image file is read from or written to disk in that case. If you return any other value than a non-empty string, like `null` or `false`, Timmy will build the URL itself.
+
+The filter runs for every image size, including sizes where the original image already has the requested width and the `full` and `original` sizes. Timmy never resizes the `full` and `original` sizes or converts them to WebP, so `$width` and `$height` are the dimensions of the image and `$webp` is always `false`. You can check for these sizes with `$image->is_full_size()`.
+
+For sizes other than `full` and `original`, the filter doesn’t run for SVG and GIF images and for images that are ignored through the [`timmy/resize/ignore`](#timmyresizeignore) filter. For these, Timmy uses the attachment URL, which you can change with WordPress’s `wp_get_attachment_url` filter.
+
+**Parameters**
+
+- **$url**  
+    *(string|null)* The image URL. Default `null`.
+- **$width**  
+    *(int)* The width the image should be resized to.
+- **$height**  
+    *(int)* The height the image should be resized to. Can be `0`, which means that the height is calculated from the aspect ratio of the image.
+- **$webp**  
+    *(bool)* Whether the image should be converted to WebP. If you need the WebP options of the image size, like the quality, you can get them from `$image->size()['webp']`.
+- **$image**  
+    *(Timmy\Image)* Timmy image instance.
+
+**Example**
+
+```php
+// Serve image sizes from a CDN that resizes images on the fly.
+add_filter( 'timmy/image/url', function( $url, $width, $height, $webp, $image ) {
+    // Use the attachment URL for the full and original sizes.
+    if ( $image->is_full_size() ) {
+        return $url;
+    }
+
+    $key = get_post_meta( $image->id, 'my_cdn_key', true );
+
+    if ( ! $key ) {
+        return $url;
+    }
+
+    return sprintf(
+        'https://cdn.example.com/%d/%s/%s',
+        $width,
+        $webp ? 'webp' : 'jpeg',
+        $key
+    );
+}, 10, 5 );
+```
+
+If you need more control than a filter can give you, you can also overwrite the protected `Timmy\Image::build_src()` method in [your own image class](./extending-timmy.md).
