@@ -39,7 +39,7 @@ jobs:
       fail-fast: false
       matrix:
         php: ['8.2']
-        wp: ['6.5', 'latest']
+        wp: ['6.7', 'latest']
         multisite: ['0', '1']
         dependency-version: [prefer-stable] # prefer-lowest
         webp: [false]
@@ -59,31 +59,25 @@ jobs:
             dependency-version: 'prefer-stable'
             multisite: '0'
             experimental: false
-          # WP Trunk
-          - php: '8.3'
-            wp: 'trunk'
-            dependency-version: 'prefer-stable'
-            multisite: '0'
-            experimental: true
-          # PHP with Imagick
-          - php: '8.3'
+          # PHP 8.4 + Imagick
+          - php: '8.4'
             wp: 'latest'
             dependency-version: 'prefer-stable'
             multisite: '0'
             extensions: 'imagick'
             experimental: false
-          # PHP 8.4
+          # PHP 8.4 + Coverage
           - php: '8.4'
             wp: 'latest'
             dependency-version: 'prefer-stable'
             multisite: '0'
+            coverage: true
             experimental: false
-          # Coverage
-          - php: '8.3'
+          # PHP 8.5
+          - php: '8.5'
             wp: 'latest'
             dependency-version: 'prefer-stable'
             multisite: '0'
-            coverage: true
             experimental: false
 
     name: PHP ${{ matrix.php }} ${{ matrix.extensions == 'imagick' && ' (Imagick)' || '' }}${{ matrix.coverage && ' (with coverage)' || '' }} ${{ matrix.webp && ' (webp)' || '' }} | WP ${{ matrix.wp }}${{ matrix.multisite == 1 && ' (MS)' || '' }} | ${{ matrix.dependency-version }}
