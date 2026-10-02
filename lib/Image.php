@@ -214,7 +214,12 @@ class Image {
 		// @todo Test with false image or wrong image size key.
 		if ( $this->is_full_size() ) {
 			// Full sizes are never resized or converted to WebP.
-			return $this->build_src( (int) $this->max_width(), (int) $this->max_height(), false, false );
+			return $this->build_src(
+				width: (int) $this->max_width(),
+				height: (int) $this->max_height(),
+				webp: false,
+				resize: false
+			);
 		}
 
 		if ( $this->is_ignored_for_resize() ) {
@@ -236,7 +241,12 @@ class Image {
 			|| ( $this->max_width() !== $width )
 			|| ( 0 === $width && $height !== $this->max_height() );
 
-		return $this->build_src( $width, $height, $args['webp'], $resize );
+		return $this->build_src(
+			width: $width,
+			height: $height,
+			webp: $args['webp'],
+			resize: $resize
+		);
 	}
 
 	/**
@@ -506,7 +516,11 @@ class Image {
 		] );
 
 		// Get default size for image.
-		$default_size = $this->build_src( $width, $height, $args['webp'] );
+		$default_size = $this->build_src(
+			width: $width,
+			height: $height,
+			webp: $args['webp']
+		);
 
 		// Get proper width descriptor to handle width values of 0.
 		$width_descriptor = $this->srcset_width_descriptor( $width, $height );
@@ -542,7 +556,11 @@ class Image {
 					: " {$width_descriptor}w";
 
 				// For the new source, we use the same $crop and $force values as the default image.
-				$src = $this->build_src( $width_intermediate, $height_intermediate, $args['webp'] );
+				$src = $this->build_src(
+					width: $width_intermediate,
+					height: $height_intermediate,
+					webp: $args['webp']
+				);
 
 				$srcset[ $width_descriptor ] = $src . $suffix;
 			}
