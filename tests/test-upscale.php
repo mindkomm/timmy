@@ -86,6 +86,38 @@ class TestUpscale extends TimmyUnitTestCase {
 		$this->assertEquals( $expected, $result );
 	}
 
+	/**
+	 * Tests whether srcset sizes of cropped sizes bigger than the original image are skipped.
+	 *
+	 * @see https://github.com/mindkomm/timmy/issues/127
+	 */
+	public function test_upscale_default_allow_false_crop() {
+		$attachment = $this->create_image( [
+			'file' => 'test-200px.jpg',
+		] );
+		$result     = get_timber_image_responsive( $attachment, 'upscale-crop' );
+
+		$expected = ' src="' . $this->get_upload_url() . '/test-200px-100x100-c-center.jpg" width="100" height="100" loading="lazy" alt=""';
+
+		$this->assertEquals( $expected, $result );
+	}
+
+	/**
+	 * Tests whether srcset sizes of cropped sizes bigger than the original image are not
+	 * generated on upload.
+	 *
+	 * @see https://github.com/mindkomm/timmy/issues/127
+	 */
+	public function test_timmy_do_not_generate_srcset_sizes_crop() {
+		$this->add_filter_temporarily( 'timmy/generate_srcset_sizes', '__return_true' );
+
+		$this->create_image( [
+			'file' => 'test-200px.jpg',
+		] );
+
+		$this->assertFileDoesNotExist( $this->get_upload_path() . '/test-200px-133x133-c-center.jpg' );
+	}
+
 	public function test_upscale_allow_true() {
 		$attachment = $this->create_image( [
 			'file' => 'test-200px.jpg',

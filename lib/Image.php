@@ -475,13 +475,14 @@ class Image {
 					$height_intermediate
 				) = Helper::get_dimensions_for_srcset_size( $this->size['resize'], $srcset_src );
 
-				$max_width = $this->max_width();
+				$max_width  = $this->max_width();
+				$max_height = $this->max_height();
 
-				// Bail out if the current size’s width is bigger than available width.
+				// Bail out if the current size is bigger than the available width or height.
 				if ( ! $this->upscale['allow']
 					&& (
 						( $max_width > 0 && $width_intermediate > $max_width )
-						|| ( 0 === $width_intermediate && $height_intermediate > $this->max_height() )
+						|| ( $max_height > 0 && $height_intermediate > $max_height )
 					)
 				) {
 					continue;
