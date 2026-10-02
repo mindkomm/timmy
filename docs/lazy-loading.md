@@ -51,7 +51,7 @@ img {
 }
 ```
 
-Timmy will automatically add a `style` attribute to constrain the width of an image if it’s smaller than the width you want it to display at. And you can control that with the [upscale](https://github.com/mindkomm/timmy/blob/master/docs/image-configuration.md#upscale) configuration parameter.
+If you disable the width and height attributes, Timmy can add a `style` attribute to constrain the width or height of an image to the size of the original image. You can enable that with the `style_attr` option of the [upscale](https://github.com/mindkomm/timmy/blob/master/docs/image-configuration.md#upscale) configuration parameter.
 
 If you need to disable the width and height attributes for single images, you can use `attr_width` and `attr_height`.
 

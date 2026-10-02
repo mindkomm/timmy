@@ -289,7 +289,7 @@ class Helper {
 	public static function get_upscale_for_size( $img_size ) {
 		$upscale_defaults = array(
 			'allow'      => false,
-			'style_attr' => true,
+			'style_attr' => false,
 		);
 
 		/**
@@ -304,7 +304,7 @@ class Helper {
 		 * @param array|bool $upscale Default upscale parameters. Can be a boolean to set all
 		 *                            values in the array or an array with keys `allow` and
 		 *                            `style_attr`.
-		 *                            Default `array( 'allow' => false, 'style_attr' => true )`.
+		 *                            Default `array( 'allow' => false, 'style_attr' => false )`.
 		 */
 		$upscale = apply_filters( 'timmy/oversize', $upscale_defaults );
 		$upscale = apply_filters( 'timmy/upscale', $upscale );

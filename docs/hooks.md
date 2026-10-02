@@ -144,14 +144,14 @@ An upscale parameter set for an individual image size will always overwrite valu
 **Parameters**
 
 - **$upscale_defaults**  
-	*(array|bool)* Default upscale parameters. Can be a boolean to set all values in the array or an associative array with keys `allow` and `style_attr`. Default `array( 'allow' => false, 'style_attr' => true )`.
+	*(array|bool)* Default upscale parameters. Can be a boolean to set all values in the array or an associative array with keys `allow` and `style_attr`. Default `array( 'allow' => false, 'style_attr' => false )`.
 
 **Example**
 
 ```php
 add_filter( 'timmy/upscale', function( $upscale ) {
-    // Never set the style_attr for an image
-    $upscale['style_attr'] = false;
+    // Add a style attribute with the width of the original image to all images
+    $upscale['style_attr'] = 'width';
 
     return $upscale;
 } );
