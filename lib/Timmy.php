@@ -516,6 +516,27 @@ class Timmy {
 	 *                    the image is an intermediate size. False on failure.
 	 */
 	public function filter_image_downsize( $return, $attachment_id, $size ) {
+		/**
+		 * Respect a short-circuit from an earlier filter.
+		 *
+		 * WordPress documents this filter as: “Returning a truthy value from the
+		 * filter will effectively short-circuit down-sizing the image, returning
+		 * that value instead.” Honouring that makes Timmy compose with the other
+		 * plugins that hook `image_downsize` to serve images from elsewhere —
+		 * Jetpack/Photon, WP Offload Media, Cloudinary, S3-Uploads and similar.
+		 *
+		 * Without this check Timmy not only overwrites their answer, it still does
+		 * the work: `get_image_src_for_resize()` resolves through
+		 * `wp_get_attachment_url()`, which such a plugin has filtered to a remote
+		 * URL, and `self::resize()` then has Timber sideload that remote file into
+		 * `uploads/external/` before resizing it locally.
+		 *
+		 * @see image_downsize()
+		 */
+		if ( false !== $return ) {
+			return $return;
+		}
+
 		// Guard against plugins that send in invalid attachment IDs, e.g. an
 		// empty string, which could cause type errors in Timmy’s function that
 		// have strict parameter types.
